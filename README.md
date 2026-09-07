@@ -1,79 +1,72 @@
-# A Little World
+# Little World — persistent-world Beta milestone 1
 
-A pixel-art village where every villager's next move — and a short first-person
-"thought" — comes from a real call to Claude. Four files:
+The pixel-art canvas, villager cards, scenery, sharing, and Chronicle remain. The original simulation rules now run on the server. Every visitor to the same environment reads one authoritative Upstash world.
 
-- `index.html` — the page (hero, the game, an about section, share button)
-- `styles.css` — all the styling
-- `game.js` — the simulation, rendering, and the calls out to the AI backend
-- `api/decide.js` — a small serverless function that holds the API key and
-  talks to Claude on the villagers' behalf
+## Architecture
 
-The game runs perfectly well with **no backend at all** — it just uses its
-original built-in instincts. The AI layer is additive: deploy the backend and
-villagers start actually thinking; don't, and nothing breaks.
+- `lib/engine.js`: the original simulation, extracted from commit `b878762e1bd431ee691929b223b3534097c8ed6c`; deterministic saved random sequence and request-local state.
+- `lib/store.js`: Upstash REST commands with four-second timeouts. Atomic Lua initialization and compare-and-swap prevent lost updates. Reads run through EVAL on the primary.
+- `lib/world.js`: versioned state, validation, bounded simulation, and structured logs.
+- `GET /api/state`: reads the shared world; initializes only on the first visit.
+- `POST /api/tick`: advances from server elapsed time, returns the resulting shared snapshot. No client state, time, speed, or reset accepted. Same-origin browser requests only.
+- `GET /api/tick`: scheduler entry point; requires `Authorization: Bearer <CRON_SECRET>`.
+- `game.js`: polls every five seconds while visible, animates pixel art and interpolates positions without simulating local outcomes. An interrupted connection retains the last snapshot and retries.
+- `chronicle.html`: reads shared history every 15 seconds.
 
-## 1. Get an Anthropic API key
+There is no production fallback to an in-memory or localStorage world. Existing browser saves are left untouched and never imported automatically. First initialization creates the original nine settlers. Preserving an individual browser civilization would require a separate reviewed import process.
 
-1. Go to [console.anthropic.com](https://console.anthropic.com) and sign up.
-2. Add a payment method (it's pay-per-use — no monthly minimum).
-3. **Set a spending limit** under Settings → Billing so it can never surprise
-   you. Start small (e.g. $5) and raise it once you know your usage.
-4. Settings → API Keys → Create Key. Copy it somewhere safe — you won't be
-   able to see it again.
+## Database configuration
 
-This project uses Claude Haiku, the cheapest current model, specifically
-because villagers "think" often — each thought costs a small fraction of a
-cent, but it adds up if it's not the cheap model.
+Use the existing Vercel integration variables on the server:
 
-## 2. Deploy the backend + site to Vercel (free tier is plenty)
+- `KV_REST_API_URL` and `KV_REST_API_TOKEN`, or
+- `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
 
-1. Go to [vercel.com](https://vercel.com) and sign up (GitHub login is
-   easiest).
-2. Put these four files/folders in a GitHub repo (or use the `vercel` CLI to
-   deploy the folder directly — either works).
-3. Import the repo in Vercel ("Add New… → Project"), or run `vercel` from
-   this folder if you have the CLI installed.
-4. Before (or right after) the first deploy, add the environment variable:
-   **Settings → Environment Variables** → add `ANTHROPIC_API_KEY` with the
-   key you copied above → redeploy.
-5. Vercel gives you a live URL immediately, like
-   `https://a-little-world.vercel.app`. Open it — villagers should now
-   occasionally show a "thought" in their profile card, and the log should
-   eventually show *"The village grows a mind of its own."*
+Do not use the read-only token. No database secrets enter browser code, logs, or Git. Missing variables return HTTP 503 with a request ID.
 
-## 3. Point your GoDaddy domain at it
+Production uses `little-world:{production}:v1`. Each preview branch gets its own hashed namespace; subsequent deployments of that branch resume the same preview world. Development uses a separate namespace. Preview without branch metadata fails closed. Keep Vercel system environment variables enabled.
 
-GoDaddy is just the address book entry — the actual site lives on Vercel.
+World and initialization-marker keys have no expiration. If the state disappears but its marker remains, initialization refuses to replace it. Restore from a trusted backup; do not remove the marker to hide data loss. If both keys are deleted, no application can distinguish this from first use. Configure database retention/eviction appropriately and back up before rollout.
 
-1. In Vercel: your project → **Settings → Domains** → add your domain
-   (e.g. `alittleworld.com`). Vercel will show you a DNS record to add.
-2. In GoDaddy: **My Products → DNS** for that domain → add the record Vercel
-   showed you (usually an `A` record pointing at Vercel's IP, or a `CNAME`
-   for a subdomain like `www`).
-3. DNS changes can take a few minutes to a few hours to fully spread. Vercel's
-   domain page will show a green check once it sees it correctly.
+## Time and concurrency
 
-## Cost reality check
+Ticks use 100 ms simulation steps and a five-second minimum interval. At most 120 simulated seconds advance per request. Longer absences discard excess elapsed time, record `skippedMs` in logs, and consume that gap once. This intentionally avoids replaying weeks of births, deaths, and work in one invocation.
 
-Each villager "thought" is roughly $0.001 (a tenth of a cent) on Haiku.
-Villagers think on a per-agent cooldown (roughly once every 15–25 simulated
-seconds, not every frame), so a single visitor watching one village for an
-hour is well under a dime. Where it can add up is many people watching many
-*separate* villages at once, since right now each visitor's browser runs and
-"thinks for" its own private village. If this takes off and cost becomes a
-concern, the natural next step is merging everyone into one shared village
-that thinks on a server-side schedule regardless of how many people are
-watching — cost stops scaling with visitors. Worth revisiting once you see
-real usage.
+Two competing requests may compute the same interval, but only one can atomically commit. Losers return the latest saved world. Retrying after an ambiguous network failure cannot advance the same interval twice. Wall-clock rollback never rewinds the simulation.
 
-## Notes
+The world persists with no browser open. **This milestone advances on visits unless an external scheduler is configured.** No paid scheduler or Vercel cron has been enabled. For unattended ticks, configure a scheduler to call authenticated `GET /api/tick`, set `CRON_SECRET` privately, and select a cadence permitted by the hosting plan. Preview schedulers must target only the preview deployment.
 
-- Villager life autosaves to each visitor's own browser (`localStorage`) —
-  everyone gets their own private village that resumes where they left off.
-- If the AI call fails, times out, or the backend isn't deployed, a villager
-  just falls back to their original built-in instincts for that decision —
-  the game never breaks or freezes waiting on it.
-- The real-world flavor (day of week, season, moon phase, a small set of
-  whimsical real holidays) is computed from the visitor's own clock — no
-  external API, no extra cost, no extra thing that can go down.
+## Scope of this milestone
+
+Villagers use the original built-in instincts. AI calls are disabled, including the legacy public `/api/decide` route, until server-side AI scheduling and atomic decision persistence are implemented. This avoids per-visitor AI spend and asynchronous decisions lost after a function exits. The existing Anthropic environment variable is not changed.
+
+The public UI no longer offers global reset, pause, or speed controls. Selection and sharing remain local UI actions. Chronicle retains the original last 400 entries and the village log retains 40; this is not a permanent full-history archive. Public reads/tick requests still consume hosting/database resources; the cadence protects simulation time, not against arbitrary request floods.
+
+## Run and test
+
+Node 24, no production dependencies required:
+
+```sh
+node --test test/*.test.js
+node scripts/build.js
+node scripts/dev.js
+```
+
+The local test server at `http://127.0.0.1:3000` uses an explicit memory test store. It never loads Upstash credentials and resets when stopped. Production handlers never import that store. `npm test`, `npm run build`, and `npm run dev` are equivalent where npm is installed.
+
+The build copies only the four public site files to `public/`; server modules, tests, and documentation are excluded from static hosting. Vercel builds `/api` functions separately.
+
+## Preview rollout and rollback
+
+The local `preserved/pre-beta-2026-09-07` tag records the exact original revision. `main` remains unchanged. Work is on `beta/persistent-world`.
+
+1. Push the preservation tag and Beta branch with authorized GitHub write access.
+2. Open a draft pull request against `main`. Use the Vercel Git integration preview; do not merge yet.
+3. Verify preview environment variables and system branch metadata. Preview never reads or overwrites production keys.
+4. Confirm two independent browsers see the same world, refresh/resume works, Chronicle matches, and logs show successful ticks. Test concurrent requests and catch-up on preview only.
+5. Confirm the deployed Upstash write/read path and retained data across a redeployment. Local tests alone do not establish this.
+6. Only then merge for a new production-environment build. Do not simply alias a preview build onto production: its runtime namespace may still be preview.
+
+Rollback code to the preserved revision or the previous production deployment. The old UI resumes browser saves; the Upstash world remains untouched. Database rollback is a separate deliberate restore, never a side effect of code rollback.
+
+Useful log events: `world_initialization_checked`, `world_tick` (revision, simulatedMs, skippedMs, population, day), `world_tick_conflict`, and `world_request_failed` (sanitized code and request ID). Do not add raw request headers, upstream response bodies, or environment values to logs.

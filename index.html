@@ -24,7 +24,7 @@
 
 <section class="hero">
   <h1 class="pixel">A Little World</h1>
-  <p class="tagline">A handful of pixel villagers live out their own days in your browser — gathering, building, eating, resting, falling into conversation, sometimes starting a family. Nobody is scripted. You just watch.</p>
+  <p class="tagline">A handful of pixel villagers live out their own days in one shared world — gathering, building, eating, resting, falling into conversation, sometimes starting a family. Nobody is scripted. You just watch.</p>
   <a class="cta" href="#play">▶ Watch the village</a>
   <p class="subnote">No sign-up, no download — runs right here.</p>
   <div class="villageStrip" aria-hidden="true">🌲 🏘️ 🌾 ⛏️ 🧑‍🌾</div>
@@ -32,7 +32,7 @@
 
 <section class="gameSection" id="play">
   <div class="stageWrap">
-    <div class="stageLabel"><span class="rec"><i></i>live</span><span id="clockLabel">Day 1 · Morning</span></div>
+    <div class="stageLabel"><span class="rec"><i></i><span id="liveLabel">connecting</span></span><span id="clockLabel">Shared village</span></div>
     <canvas id="world"></canvas>
   </div>
 
@@ -45,11 +45,7 @@
   </div>
 
   <div class="controls">
-    <button class="spdBtn" data-speed="0">Pause</button>
-    <button class="spdBtn active" data-speed="1">1×</button>
-    <button class="spdBtn" data-speed="2">2×</button>
-    <button class="spdBtn" data-speed="4">4×</button>
-    <button id="resetBtn">Start over</button>
+    <span id="syncStatus" role="status" aria-live="polite">Connecting to the shared world…</span>
   </div>
 
   <div id="agentCard" class="card hidden"></div>
@@ -88,14 +84,14 @@
     <li><b>A small economy.</b> Once the market opens, surplus goods get sold for coins, and coins buy food when your own stores run dry.</li>
     <li><b>A full life.</b> Conversations sometimes lead to a newborn villager. Everyone eventually dies of old age, or of hunger if the village falls on hard times.</li>
   </ul>
-  <p>It autosaves as it runs, so closing the tab and coming back later picks up right where the village left off — Start over resets it to a fresh settlement.</p>
+  <p>Everyone watches the same village. Its life is saved on the server, and returning after a break gently catches it up. Your old browser village stays saved separately.</p>
 </section>
 
 <footer>
   <div class="shareRow">
     <button id="shareBtn">🔗 Share this village</button>
   </div>
-  <p>Built as a small, self-contained experiment in emergent behavior. Runs entirely in your browser — no accounts, no server, no ads.</p>
+  <p>A small experiment in emergent behavior. One shared world, watched in your browser — no sign-up, no ads.</p>
 </footer>
 
 <div id="toast"></div>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>The Chronicle — A Little World</title>
+<meta name="description" content="The story of one village in A Little World, told day by day." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><rect width=%2216%22 height=%2216%22 fill=%22%23101a12%22/><rect x=%223%22 y=%227%22 width=%2210%22 height=%227%22 fill=%22%23c98a4b%22/><polygon points=%221,7 8,1 15,7%22 fill=%22%237a3f2c%22/></svg>" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .chronicleWrap{max-width:560px;margin:0 auto;padding:30px 20px 60px;}
+  .chronicleWrap h1.pixel{font-size:16px;margin:0 0 8px;}
+  .chronicleWrap .sub{color:var(--muted);font-size:13px;margin:0 0 22px;}
+  .chronStats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin-bottom:26px;}
+  .dayGroup{margin-bottom:22px;}
+  .dayGroup h3{font-size:12px;color:var(--muted);margin:0 0 8px;letter-spacing:.5px;text-transform:uppercase;}
+  .entry{background:var(--panel);border-left:3px solid var(--line);border-radius:0 6px 6px 0;padding:10px 14px;margin-bottom:8px;font-size:14px;line-height:1.55;}
+  .entry.log-birth{border-left-color:var(--accent2);}
+  .entry.log-death{border-left-color:var(--danger);}
+  .entry.log-build{border-left-color:var(--accent);}
+  .entry.log-market{border-left-color:var(--accent);}
+  .entry.log-social{border-left-color:var(--social);}
+  .entry.log-role{border-left-color:var(--muted);}
+  .emptyState{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:32px 24px;text-align:center;}
+  .emptyState p{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 18px;}
+</style>
+</head>
+<body>
+
+<div class="siteNav">
+  <div class="brand pixel"><span class="ico">🏡</span>A Little World</div>
+  <nav>
+    <a href="index.html#play">Play</a>
+    <a href="chronicle.html">Chronicle</a>
+    <a href="index.html#about">About</a>
+  </nav>
+</div>
+
+<div class="chronicleWrap">
+  <h1 class="pixel">The Chronicle</h1>
+  <p class="sub">The story of this village, as it's happened — pulled from your own browser's saved village.</p>
+
+  <div id="chronStats" class="chronStats"></div>
+  <div id="chronBody"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function escapeHtml(s){ return s.replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+
+  function loadState(){
+    if(typeof window!=='undefined' && window.storage){
+      return window.storage.get('villageState', false).then(function(res){
+        if(!res || !res.value) return null;
+        try{ return JSON.parse(res.value); }catch(e){ return null; }
+      }).catch(function(){ return null; });
+    }
+    try{
+      var raw = localStorage.getItem('villageState');
+      if(!raw) return Promise.resolve(null);
+      return Promise.resolve(JSON.parse(raw));
+    }catch(e){ return Promise.resolve(null); }
+  }
+
+  function render(S){
+    var statsEl = document.getElementById('chronStats');
+    var bodyEl = document.getElementById('chronBody');
+
+    if(!S || !S.chronicle || !S.chronicle.length){
+      statsEl.style.display = 'none';
+      bodyEl.innerHTML =
+        '<div class="emptyState">'+
+          '<p>No village history saved in this browser yet. Go build one, then come back — every notable moment will show up here.</p>'+
+          '<a class="cta" href="index.html#play">▶ Start a village</a>'+
+        '</div>';
+      return;
+    }
+
+    var houses = 0;
+    (S.buildings||[]).forEach(function(b){ if(b.type==='house') houses++; });
+    statsEl.innerHTML =
+      '<div class="stat"><div class="k">Day</div><div class="v pixel">'+S.day+'</div></div>'+
+      '<div class="stat"><div class="k">Population</div><div class="v pixel">'+(S.agents?S.agents.length:0)+'</div></div>'+
+      '<div class="stat"><div class="k">Homes built</div><div class="v pixel">'+houses+'</div></div>'+
+      '<div class="stat"><div class="k">Market</div><div class="v pixel">'+(S.market?'Open':'Not yet')+'</div></div>';
+
+    var byDay = {};
+    var order = [];
+    S.chronicle.forEach(function(e){
+      var d = e.day || 1;
+      if(!byDay[d]){ byDay[d] = []; order.push(d); }
+      byDay[d].push(e);
+    });
+
+    var html = '';
+    order.forEach(function(d){
+      html += '<div class="dayGroup"><h3>Day '+d+'</h3>';
+      byDay[d].forEach(function(e){
+        html += '<div class="entry log-'+e.type+'">'+escapeHtml(e.msg)+'</div>';
+      });
+      html += '</div>';
+    });
+    bodyEl.innerHTML = html;
+  }
+
+  loadState().then(render);
+})();
+</script>
+</body>
+</html>

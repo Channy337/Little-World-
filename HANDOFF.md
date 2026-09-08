@@ -9,13 +9,13 @@ This is a project status record, not permission to deploy or change accounts. Fo
 |---|---|
 | Updated | 2026-09-08; see Git commit timestamp for exact time |
 | Last assistant | Codex |
-| Status | Codex active: implementing unattended ticking on preview |
+| Status | Preview heartbeat code ready; awaiting scheduler/pace choices and service setup |
 | Last completed task | Released persistent-world Beta; added shared progress and assistant startup instructions |
 | Production | main; milestone release af3804602839b888bc4adcf52ebf5c6e5dd4ff2e; later commits are documentation |
-| Work branch / PR | beta/unattended-world; PR pending; production milestone remains unchanged |
-| Completed verification | 19 local tests; hosted reload/redeployment; owner confirmed phone/desktop match; production village and Chronicle verified |
-| Not implemented | Unattended scheduler, server-side AI decisions, Civoria UI rebranding |
-| Next action | Build/test scheduled heartbeat; owner pace and scheduler preference requested. Do not overlap edits with Codex. |
+| Work branch / PR | beta/unattended-world; draft PR #2 https://github.com/Channy337/Little-World-/pull/2; implementation 160c46e0b6d8444c3c6eedc091c3cfaeb1f21aa0 |
+| Completed verification | 24 local tests pass and static build succeeds for heartbeat branch; previous production verification retained below |
+| Not implemented | External scheduler activation/hosted heartbeat verification, pace adjustment, server-side AI decisions, Civoria UI rebranding |
+| Next action | Resolve pending owner scheduler/pace choices; configure preview CRON_SECRET and scheduler; verify two automatic deliveries with all viewer pages closed. See branch SCHEDULING.md. Do not release yet. |
 | Access | GitHub works; Vercel connector team scope failed, but owner's signed-in browser worked |
 | Local-only work | Old Codex Beta checkout may lag main and contains a verification-document edit; inspect it before reuse |
 | Claude checkpoint | No Claude progress report received yet; do not infer Claude has read this |
@@ -23,6 +23,8 @@ This is a project status record, not permission to deploy or change accounts. Fo
 Each assistant replaces this table with its latest checkpoint and appends a short entry to Session history. Check both main and any active work branch before resuming.
 
 ## Session history
+
+- **2026-09-08 — Codex:** Prepared authenticated heartbeat on beta/unattended-world, draft PR #2. Added api/heartbeat.js, test/heartbeat.test.js, SCHEDULING.md; edited lib/world.js and lib/http.js. All 24 tests and build pass locally. No scheduler, credentials, account or production change activated. Hosted testing and pace adjustment unfinished. Local worktree Little-World-unattended contains the same five published file changes; original checkout preserved.
 
 - **2026-09-08 — Codex:** Persistent-world milestone released through PR #1, production verified. Created HANDOFF.md, then AGENTS.md and CLAUDE.md startup instructions. No new feature work active. Next milestone awaits owner direction. No secrets added.
 - **Claude:** No session entry received yet.
@@ -139,8 +141,8 @@ Limits: local Redis adapter tests are mocked, hosted destructive database fault 
 ## Current handoff checkpoint
 
 Last completed task: released persistent-world milestone, then prepared this handoff.
-Next owner decision: which feature to tackle next, likely unattended ticking and then server-side AI.
-No feature implementation is currently in progress by Codex.
+Next owner decisions: scheduler provider and village pace; pending questions propose QStash every two minutes and one village day per real hour.
+Unattended heartbeat preparation is saved in draft PR #2; scheduler activation and pace choice remain unfinished. Production is unchanged.
 The owner has not yet confirmed that Claude has read this document.
 
 Local-only recovery artifacts from the Codex workspace: full-history Little-World-beta.bundle and preserved/pre-beta-2026-09-07 tag at baseline b878762e1bd431ee691929b223b3534097c8ed6c. The original local bundle predates later verification commits and production merge; use GitHub for latest history. A local checkout may remain on the old Beta commit with a documentation edit; do not assume it matches origin/main.

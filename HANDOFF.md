@@ -9,13 +9,13 @@ This is a project status record, not permission to deploy or change accounts. Fo
 |---|---|
 | Updated | 2026-09-08; see Git commit timestamp for exact time |
 | Last assistant | Codex |
-| Status | Ready for handoff; no implementation task active |
+| Status | Codex active: implementing unattended ticking on preview |
 | Last completed task | Released persistent-world Beta; added shared progress and assistant startup instructions |
 | Production | main; milestone release af3804602839b888bc4adcf52ebf5c6e5dd4ff2e; later commits are documentation |
-| Work branch / PR | No new feature branch active; PR #1 merged |
+| Work branch / PR | beta/unattended-world; PR pending; production milestone remains unchanged |
 | Completed verification | 19 local tests; hosted reload/redeployment; owner confirmed phone/desktop match; production village and Chronicle verified |
 | Not implemented | Unattended scheduler, server-side AI decisions, Civoria UI rebranding |
-| Next action | Read current implementation and ask owner which next milestone to pursue; no new feature is authorized by this checkpoint |
+| Next action | Build/test scheduled heartbeat; owner pace and scheduler preference requested. Do not overlap edits with Codex. |
 | Access | GitHub works; Vercel connector team scope failed, but owner's signed-in browser worked |
 | Local-only work | Old Codex Beta checkout may lag main and contains a verification-document edit; inspect it before reuse |
 | Claude checkpoint | No Claude progress report received yet; do not infer Claude has read this |

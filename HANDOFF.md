@@ -3,6 +3,30 @@
 Updated: 2026-09-08. Prepared by Codex for the owner and Claude.
 This is a project status record, not permission to deploy or change accounts. Follow the owner's current instructions and verify the current repository before editing.
 
+## Current progress
+
+| Field | Latest checkpoint |
+|---|---|
+| Updated | 2026-09-08; see Git commit timestamp for exact time |
+| Last assistant | Codex |
+| Status | Ready for handoff; no implementation task active |
+| Last completed task | Released persistent-world Beta; added shared progress and assistant startup instructions |
+| Production | main; milestone release af3804602839b888bc4adcf52ebf5c6e5dd4ff2e; later commits are documentation |
+| Work branch / PR | No new feature branch active; PR #1 merged |
+| Completed verification | 19 local tests; hosted reload/redeployment; owner confirmed phone/desktop match; production village and Chronicle verified |
+| Not implemented | Unattended scheduler, server-side AI decisions, Civoria UI rebranding |
+| Next action | Read current implementation and ask owner which next milestone to pursue; no new feature is authorized by this checkpoint |
+| Access | GitHub works; Vercel connector team scope failed, but owner's signed-in browser worked |
+| Local-only work | Old Codex Beta checkout may lag main and contains a verification-document edit; inspect it before reuse |
+| Claude checkpoint | No Claude progress report received yet; do not infer Claude has read this |
+
+Each assistant replaces this table with its latest checkpoint and appends a short entry to Session history. Check both main and any active work branch before resuming.
+
+## Session history
+
+- **2026-09-08 — Codex:** Persistent-world milestone released through PR #1, production verified. Created HANDOFF.md, then AGENTS.md and CLAUDE.md startup instructions. No new feature work active. Next milestone awaits owner direction. No secrets added.
+- **Claude:** No session entry received yet.
+
 ## Start here
 
 - Repository: https://github.com/Channy337/Little-World-

@@ -1,19 +1,19 @@
 # Milestone 1 verification — September 7, 2026
 
-## Completed locally
+## Local checks
 
-- 19 Node tests pass: initialization races, concurrent ticks, retry/idempotency, bounded catch-up, backwards clocks, read-only retrieval, process restart, corrupt/missing data, write failure, namespace isolation, market reference restoration, long simulation bounds, Upstash HTTP adapter shape/error sanitization, endpoint access checks, and removal of browser persistence.
-- Public site build succeeds; only index.html, chronicle.html, game.js, and styles.css are copied to the static output.
-- Chrome browser checks pass with two independent desktop/mobile contexts: identical API state, a deliberately conflicting old localStorage save ignored and retained, no new browser save, canvas rendered, reset/speed controls absent, shared Chronicle entries, last snapshot retained during simulated HTTP 503, and automatic reconnection.
-- No browser page errors during those checks. Desktop/mobile screenshots visually reviewed; original scene and styling retained.
-- Tests use an explicit in-memory store. The Upstash adapter's requests are mocked; the actual Lua scripts have not yet been exercised against the connected database.
+19 Node tests passed for concurrency, initialization, bounded catch-up, recovery, namespace isolation, storage adapter requests and HTTP guards. Desktop/mobile Chrome checks passed using an explicit memory test store: identical state in independent contexts, old browser saves preserved and ignored, shared Chronicle, retained snapshot on simulated HTTP 503, automatic recovery, and no page errors. Public build passed.
 
-## Deployment blockers
+## Hosted preview
 
-- GitHub repository read succeeded. GitHub create-branch returned HTTP 403: `Resource not accessible by integration`, despite repository metadata advertising push permissions.
-- Vercel list-teams returned an empty array. Project settings, Upstash variable presence, preview deployment, and deployed database persistence could not be verified through that connection.
-- No remote branch, pull request, preview deployment, or production update has been confirmed. Production remains unchanged.
+GitHub write access was restored. Draft PR #1 and beta/persistent-world are published. Vercel Git integration reported Ready. Production main remains unchanged.
 
-## Required before production
+After signing into the preview through the in-app browser, the deployed village displayed Shared world · Live on Day 26 with 20 villagers, 7 homes and an open market. Reloading retained those values and history; Chronicle matched. This confirms the deployed frontend can read and advance server-backed state; no memory fallback exists in the production handlers.
 
-Restore connector write/project access, publish beta/persistent-world, confirm a preview deployment, and exercise the real Upstash initialization/CAS path with two visitors and a redeployment. Verify the preview namespace before writes. Review the catch-up policy and optional scheduler described in README.md. This is a locally tested candidate, not a verified hosted release.
+Before the redeployment triggered by this documentation update, Chronicle showed Day 28, 19 villagers, 7 homes and an open market. Retained history includes Sana funding the market on Day 4 and Kesh building a home on Day 9. These are the baseline for the redeployment check; its result is pending.
+
+## Remaining limitations
+
+The Vercel connector still returns HTTP 403 for small-villager. The signed-in preview browser works, but direct account settings/logs inspection is unavailable. Browser navigation directly to /api/state was blocked by the browser; verification uses rendered application pages.
+
+Persistence across this new deployment and multiple hosted views still require confirmation. Local concurrency and failure injection tests are not a substitute for full hosted fault testing. No production rollout, scheduler, new account, or paid service has been configured. AI decisions remain deferred. See README.md for clock policy, namespace isolation and rollout instructions.

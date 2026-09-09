@@ -7,7 +7,7 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 | Field | Latest checkpoint |
 |---|---|
 | Status | Codex active: fixing incomplete visible work routines. Production animates but does not yet show repeated travel/work/return loops. |
-| Active work | beta/visible-work-routines; preview implementation and tests in progress; production unchanged |
+| Active work | beta/visible-work-routines; PR #7 https://github.com/Channy337/Little-World-/pull/7; candidate 0a1ad23276cedd01aae2663bf3891df74c7017ab; hosted verification in progress |
 | Live site | https://www.thecivoria.com |
 | Production branch | `main`; two-clock fix merged via PR #6 as `36ca79f8f92910465d73948f6dd505042821066d` |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
@@ -19,6 +19,10 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Still pending | Observe and record at least one heartbeat run whose GitHub event is `schedule` if still unverified; server-side AI minds remain deferred to Civoria 0.3 |
 | AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
+
+## Visible routine follow-up — 2026-09-09
+
+Owner reported no actual travel, only animation. Codex found two problems: the previous viewer stops at a destination while waiting on the macro clock, and scripts/build.js omitted activity-clock.js entirely from public output. Earlier release/CI success did not establish browser delivery of the activity layer. PR #7 adds the missing build asset, an output-asset regression test, and repeating visual outbound/work/return/pause routines with a return-leg prop. No canonical resource, clock, API, or database changes. Seven targeted activity tests pass locally; full checks passed the first candidate, new build-fix candidate still under verification. Production is unchanged.
 
 ## Two-clock activity fix — released 2026-09-09
 

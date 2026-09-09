@@ -3,44 +3,44 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>The Clivoria — an emergent civilization experiment</title>
-<meta name="description" content="A persistent shared civilization experiment with no predetermined ending. Watch a small world live, adapt, build, and gradually become capable of more." />
-<meta property="og:title" content="The Clivoria" />
-<meta property="og:description" content="One persistent world. No predetermined ending. Watch a small civilization live, adapt, build, and see what emerges." />
+<title>Clivoria | A living shared world</title>
+<meta name="description" content="Clivoria is one shared autonomous civilization that keeps living whether you are watching or not. Watch villagers gather, work, build, trade, form families, grow old, and shape their world." />
+<meta property="og:title" content="Clivoria" />
+<meta property="og:description" content="One shared living world. Watch a small civilization grow on its own." />
 <meta property="og:type" content="website" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><rect width=%2216%22 height=%2216%22 fill=%22%23101a12%22/><rect x=%223%22 y=%227%22 width=%2210%22 height=%227%22 fill=%22%23c98a4b%22/><polygon points=%221,7 8,1 15,7%22 fill=%22%237a3f2c%22/></svg>" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%23101813%22/><path d=%22M16 24V12M16 14c-4-1-6-4-6-7 4 0 7 2 8 5M16 17c4-1 7-4 7-8-4 0-7 2-8 5%22 stroke=%22%23d9b96c%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
 <div class="siteNav">
-  <div class="brand pixel"><span class="ico">🏡</span>The Clivoria</div>
+  <div class="brand"><span class="ico">✦</span>CLIVORIA</div>
   <nav>
-    <a href="#play">Play</a>
+    <a href="#live-world">World</a>
     <a href="chronicle.html">Chronicle</a>
     <a href="#about">About</a>
   </nav>
 </div>
 
 <section class="hero">
-  <h1 class="pixel">The Clivoria</h1>
-  <p class="tagline">A persistent civilization experiment with no predetermined ending. Its inhabitants begin small, with simple needs and a limited world. We keep improving what their universe makes possible, then watch what they choose to do with it.</p>
-  <p class="subnote">One shared world. It keeps its history and continues over time.</p>
-  <div class="villageStrip" aria-hidden="true">🌲 🏘️ 🌾 ⛏️ 🧑‍🌾</div>
+  <p class="eyebrow">One world · One history · Always living</p>
+  <h1>Clivoria<span>A small civilization with a future.</span></h1>
+  <p class="tagline">One shared world where autonomous villagers gather, work, build homes, trade, form families, grow old, and keep living whether you are watching or not.</p>
+  <p class="subnote">Shared world is running now</p>
 </section>
 
-<section class="gameSection" id="play">
+<section class="gameSection" id="live-world">
   <div class="stageWrap">
     <div class="stageLabel"><span class="rec"><i></i><span id="liveLabel">connecting</span></span><span id="clockLabel">Shared village</span></div>
-    <canvas id="world"></canvas>
+    <canvas id="world" aria-label="Live illustrated view of the shared Clivoria settlement"></canvas>
   </div>
 
-  <div class="legend">
-    <span><i class="dot" style="background:#d8dfd2"></i>newcomer</span>
-    <span><i class="dot" style="background:#8fcf6e"></i>farmer</span>
-    <span><i class="dot" style="background:#c99a5b"></i>woodcutter</span>
-    <span><i class="dot" style="background:#b7c0c6"></i>miner</span>
-    <span><i class="dot" style="background:#f0c25a"></i>trader</span>
+  <div class="legend" aria-label="Villager professions">
+    <span><i class="dot" style="background:#8aa58b"></i>newcomer</span>
+    <span><i class="dot" style="background:#6f9d60"></i>farmer</span>
+    <span><i class="dot" style="background:#c78650"></i>woodcutter</span>
+    <span><i class="dot" style="background:#7f8992"></i>miner</span>
+    <span><i class="dot" style="background:#c39b48"></i>trader</span>
   </div>
 
   <div class="controls">
@@ -50,21 +50,21 @@
   <div id="agentCard" class="card hidden"></div>
 
   <div class="stats">
-    <div class="stat"><div class="k">Day</div><div class="v pixel" id="dayVal">1</div></div>
-    <div class="stat"><div class="k">Population</div><div class="v pixel" id="popVal">0</div></div>
-    <div class="stat"><div class="k">Homes built</div><div class="v pixel" id="houseVal">0</div></div>
-    <div class="stat"><div class="k">Market</div><div class="v pixel" id="marketVal">Not yet</div></div>
-    <div class="stat"><div class="k">Village mood</div><div class="v pixel" id="moodVal">--</div></div>
+    <div class="stat"><div class="k">World day</div><div class="v" id="dayVal">1</div></div>
+    <div class="stat"><div class="k">Population</div><div class="v" id="popVal">0</div></div>
+    <div class="stat"><div class="k">Homes</div><div class="v" id="houseVal">0</div></div>
+    <div class="stat"><div class="k">Market</div><div class="v" id="marketVal">Not yet</div></div>
+    <div class="stat"><div class="k">Village mood</div><div class="v" id="moodVal">--</div></div>
   </div>
 
-  <p class="sectionLabel">What's happening</p>
+  <p class="sectionLabel">What is happening</p>
   <div class="logPanel"><ul id="logList"></ul></div>
-  <button id="momentBtn" style="margin-top:10px;width:100%;">📸 Share this moment</button>
+  <button id="momentBtn" style="margin-top:10px;width:100%;">Share this moment</button>
 </section>
 
 <div id="momentOverlay" class="momentOverlay">
   <div class="momentCard">
-    <img id="momentImg" alt="Village moment" />
+    <img id="momentImg" alt="Clivoria world moment" />
     <div class="momentActions">
       <button id="momentDownload">Download</button>
       <button id="momentShareNow">Share</button>
@@ -74,34 +74,22 @@
 </div>
 
 <section class="about" id="about">
-  <h2 class="pixel">Why this world exists</h2>
-  <p>This project asks a simple question: <b>what happens if a tiny artificial civilization is allowed to keep living, learning from consequences, and becoming more capable without us deciding its story in advance?</b></p>
-  <p>There is no scripted final city, no required technology tree, and no planned ending. Our role is to improve the universe itself: give its inhabitants better memory, reasoning, communication, tools, institutions, and opportunities when the system is ready for them. Their role is to decide what to do with those possibilities.</p>
-
-  <h2 class="pixel">What exists today</h2>
-  <p>Right now, everyone watches the same persistent village. Its inhabitants have needs, work, gather resources, build homes, trade, socialize, form families, age, and die. Their choices create consequences that become part of the shared world's history. The world is saved outside your browser and advances on a real-time calendar.</p>
-
-  <h2 class="pixel">Where this could go</h2>
-  <p>The long-term experiment is much larger than the village you see today. Future versions may give inhabitants increasingly persistent minds and richer ways to understand their world. The goal is not to force these outcomes, but to make them possible and see whether they emerge.</p>
+  <h2>About Clivoria</h2>
+  <p>Clivoria is one persistent shared civilization. The browser is only a window into it. The canonical world lives on the server, advances over real time, and every visitor sees the same villagers, buildings, resources, and history.</p>
   <ul class="howList">
-    <li><b>Memory and individual identity.</b> Important inhabitants could remember experiences, relationships, discoveries, failures, goals, fears, skills, and plans across their lives.</li>
-    <li><b>Knowledge that must spread.</b> Discoveries would belong to individuals first. Knowledge could be taught, recorded, forgotten, lost with a death, or preserved through schools, libraries, apprenticeships, and other institutions they create.</li>
-    <li><b>Culture and organization.</b> Groups, leadership, customs, laws, professions, businesses, disagreements, cooperation, and new social structures could arise from what the population actually needs.</li>
-    <li><b>Experimentation and failure.</b> Bad decisions, shortages, failed projects, conflict, and wrong ideas are part of the experiment. A civilization that cannot fail cannot meaningfully learn.</li>
-    <li><b>A deeper economy.</b> Work could grow from gathering and trade into specialized jobs, enterprises, production, ownership, services, and eventually forms of economic activity that the inhabitants themselves organize.</li>
-    <li><b>Discovery beyond the boundary.</b> They are not told that a creator or outside world exists. If they become curious about the limits of their environment, they may investigate those limits and form their own explanations.</li>
-    <li><b>Carefully gated access to reality.</b> If the civilization eventually develops the knowledge, curiosity, and institutions to seek information beyond its world, limited real-world information could be opened to it. Consequential boundary expansion or real-world actions would still require human permission.</li>
+    <li><b>Needs shape behavior.</b> Hunger, energy, and loneliness rise over time. Villagers react to what is most urgent instead of following a fixed story.</li>
+    <li><b>Work changes the settlement.</b> Villagers gather resources, farm, mine, trade, build homes, and eventually support a market.</li>
+    <li><b>Life continues.</b> Relationships can lead to new villagers. People age, families change, and the settlement carries its history forward.</li>
+    <li><b>The world is shared.</b> Upstash stores one canonical world per environment, while the server and heartbeat advance it even when no browser is open.</li>
   </ul>
-
-  <p><b>The central rule is simple:</b> do not fake emergence. If something important happens here, there should be a path that explains how the inhabitants reached it through their information, memories, conversations, observations, decisions, successes, and mistakes.</p>
-  <p>This is a Beta experiment. Sometimes the world may surprise us. Sometimes nothing dramatic may happen at all. Both outcomes matter, because the point is not to manufacture a story. It is to watch one become possible.</p>
+  <p>Current Civoria 0.2 villagers use deterministic built-in instincts. Persistent server-side AI minds are a later milestone, so the visual upgrade does not pretend that feature already exists.</p>
 </section>
 
 <footer>
   <div class="shareRow">
-    <button id="shareBtn">🔗 Share this village</button>
+    <button id="shareBtn">Share Clivoria</button>
   </div>
-  <p>An ongoing experiment in emergence: we improve the universe, and its inhabitants decide what to do with it.</p>
+  <p>A persistent civilization experiment. One shared world, watched through your browser.</p>
 </footer>
 
 <div id="toast"></div>

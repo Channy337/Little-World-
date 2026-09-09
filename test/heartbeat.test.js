@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {createWorldService}=require('../lib/world');
+const {createWorldService,SIMULATION_RATE}=require('../lib/world');
 const {makeHandler}=require('../lib/http');
 const {memoryStore}=require('./helpers');
 function fixture(){
@@ -9,11 +9,15 @@ function fixture(){
   const service=createWorldService({store,now:()=>time,seed:()=>42,logger:()=>{}});
   return {store,service,advance:ms=>time+=ms};
 }
-test('scheduled calls advance a village with no browser present',async()=>{
+test('scheduled calls advance a village with no browser present at real-time pace',async()=>{
   const f=fixture(),first=await f.service.state();
   for(let i=0;i<5;i++){f.advance(120000);const h=await f.service.heartbeat();assert.equal(h.catchUpSeconds,120);assert.equal(h.state,undefined);}
   const last=await f.service.state();
-  assert.ok(last.state.day>first.state.day);assert.equal(last.lastHeartbeatAt,1600000);
+  assert.equal(last.state.day,first.state.day);
+  assert.ok(last.state.time>first.state.time);
+  const expectedAdvance=600*SIMULATION_RATE/55;
+  assert.ok(Math.abs((last.state.time-first.state.time)-expectedAdvance)<1e-9);
+  assert.equal(last.lastHeartbeatAt,1600000);
   f.advance(5000);await f.service.tick();assert.equal((await f.service.state()).lastHeartbeatAt,1600000);
 });
 test('concurrent browser and heartbeat do not double advance',async()=>{

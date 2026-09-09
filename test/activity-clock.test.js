@@ -40,6 +40,9 @@ test('activity clock turns visual arrival into a work animation without changing
   assert.ok(data.state.agents[0].x>34);
   h.setTime(12000);
   data=await (await h.sandbox.window.fetch('/api/tick')).json();
+  assert.ok(data.state.agents[0].x>60&&data.state.agents[0].x<61);
+  h.setTime(18000);
+  data=await (await h.sandbox.window.fetch('/api/tick')).json();
   assert.equal(data.state.agents[0].x,70);
   assert.equal(data.state.agents[0].state,'working');
   assert.equal(h.canonical.state.agents[0].state,'moving');

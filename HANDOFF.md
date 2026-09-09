@@ -6,30 +6,29 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Owner approved the stronger second-pass 2.5D visual redesign for production rollout; final CI gate is being retriggered before merge |
+| Status | Approved stronger 2.5D living-world visuals released to production successfully |
 | Live site | https://www.thecivoria.com |
-| Production branch | `main` at `14449c3a22834dee69ad926181114da1f9c67156`; unchanged until PR #3 merges |
-| Active visual work | `beta/living-world-visuals`, PR #3; presentation-only living-world redesign |
-| Current visual head before this checkpoint | `baefe2b16690f4e842f7ea6331a7dc94e3d714fb` |
-| Visual preview | `https://little-world-git-beta-living-world-visuals-small-villager.vercel.app` |
-| Visual preview verification | Vercel reports the approved preview Ready. Previous Beta checks passed before the final presentation commits; this checkpoint is intended to retrigger full `npm test` + `npm run build` against the final candidate before merge. |
-| Owner approval | Explicit production rollout approval received 2026-09-09 after owner reviewed the stronger preview; yellow “Enter the living world” CTA removed before approval |
+| Production branch | `main`; visual release merged via PR #5 as `1facd30a1176548c6188ce74347af02552f741f2` |
+| Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged after fresh Beta checks and Vercel preview passed |
+| Visual verification | GitHub Beta checks run 26 passed on exact release candidate `cab9c38a2ba939ab2ee7654ff4646fee8c4cf965`; Vercel production status for merge `1facd30a` reported success |
+| Superseded preview | PR #3 closed without merge after current `main` was found to contain a parallel earlier graphics upgrade; release PR #5 was rebuilt cleanly on top of that newer production history |
+| Owner approval | Explicit production rollout approval received 2026-09-09 after review of stronger preview; yellow “Enter the living world” CTA removed before release |
 | Civoria 0.2 release | PR #2 merged as `1ffe7f42db1f148ba44cfe85020c9482ab6dcc97` |
 | World storage | One canonical Upstash-backed world per environment |
 | World pace | Approximately 1 Civoria day = 1 real day |
 | Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
-| Still pending | Fresh Beta checks for the final approved visual head, production merge/deployment verification, observe at least one heartbeat run whose GitHub event is `schedule`; server-side AI minds remain deferred to Civoria 0.3 |
+| Still pending | Observe and record at least one heartbeat run whose GitHub event is `schedule`; server-side AI minds remain deferred to Civoria 0.3 |
 | AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
 
-## Approved visual rollout — 2026-09-09
+## Production visual release — 2026-09-09
 
-The owner reviewed the stronger `beta/living-world-visuals` preview and explicitly approved rolling it to production. The final approved presentation includes removal of the yellow “Enter the living world” CTA.
+The owner reviewed the stronger `beta/living-world-visuals` preview and explicitly approved rolling it to production. During the final release check, `main` was found to have moved independently through a separate earlier graphics upgrade. To avoid overwriting or force-merging parallel work, the approved presentation files were rebased cleanly onto the then-current production `main` and released through PR #5.
 
-The visual branch changes only presentation files and this handoff note. It does not modify `lib/`, `/api`, Upstash configuration, heartbeat scheduling, canonical world state, or simulation mechanics.
+The release changes presentation only. It does not modify `lib/`, `/api`, Upstash configuration, heartbeat scheduling, canonical world state, or simulation mechanics.
 
-Approved visual changes include:
+Released visual changes include:
 
 - Perspective projection from the existing 480×304 simulation coordinate system into a taller 2.5D scene with a horizon and depth scaling.
 - Distant sky, sun/moon, mountains, layered forest line, moving clouds and birds.
@@ -44,6 +43,16 @@ Approved visual changes include:
 - Public-facing Clivoria branding and non-pixel UI treatment.
 - Yellow “Enter the living world” hero CTA removed at the owner's request.
 
+### Release verification
+
+- Release candidate branch: `release/living-world-visuals`.
+- Exact candidate commit: `cab9c38a2ba939ab2ee7654ff4646fee8c4cf965`.
+- Fresh GitHub Beta checks run 26: **success** (`npm test` and `npm run build`).
+- Vercel preview status on candidate: **success**.
+- PR #5 merged to `main` as `1facd30a1176548c6188ce74347af02552f741f2`.
+- Vercel production status for `1facd30a`: **success**.
+- Superseded PR #3 was closed and not merged.
+
 ## Civoria 0.2 behavior now live
 
 The browser is a viewer of one shared server-side civilization. It does not own or save the canonical world. Upstash stores the world state, Vercel serves the state/tick/heartbeat endpoints, and GitHub Actions supplies the unattended pulse.
@@ -53,14 +62,6 @@ The original engine was tuned around a 55-second internal day. `lib/world.js` sc
 `/api/heartbeat` advances the same canonical world as browser ticks. It records `lastHeartbeatAt` atomically, retries bounded write conflicts, never accepts client world state, and returns compact timing/revision/day metadata rather than the full village.
 
 The GitHub Actions workflow `.github/workflows/heartbeat.yml` is scheduled at `2,17,32,47 * * * *`. It requests a short-lived OIDC token with audience `civoria-heartbeat`, then calls `https://www.thecivoria.com/api/heartbeat`. The server validates GitHub's signature and requires the expected repository, repository ID, owner ID, `main` ref, workflow ref, audience and permitted workflow event. A legacy `CRON_SECRET` remains supported as an optional fallback.
-
-## Production verification completed for Civoria 0.2
-
-- PR #2 was merged only after the latest Beta tests and build passed.
-- Vercel reported the production deployment for merge `1ffe7f42db1f148ba44cfe85020c9482ab6dcc97` as successful.
-- GitHub Actions immediately ran the Civoria heartbeat workflow from the merge-triggered `push` event.
-- That production heartbeat job completed successfully. Its log reported `Heartbeat ok: revision=236 day=88 catchUpSeconds=302.7` after one retry during the Vercel rollout race.
-- A separate normal `schedule` event has not yet been observed. Do not claim the recurring scheduler is fully observed until a later `schedule` run succeeds.
 
 ## Key files
 
@@ -90,18 +91,15 @@ The GitHub Actions workflow `.github/workflows/heartbeat.yml` is scheduled at `2
 
 ## Services and secrets
 
-Existing services: GitHub, Vercel and Upstash. No new paid service was created for Civoria 0.2 or the visual rollout.
+Existing services: GitHub, Vercel and Upstash. No new paid service was created for Civoria 0.2 or the visual release.
 
 Upstash server variables remain managed in Vercel. Existing `ANTHROPIC_API_KEY` was not changed and is not used by the current canonical persistent engine. Never paste secret values into chats, commits or logs.
 
 ## Next exact action
 
-1. Confirm fresh Beta checks pass on the final approved PR #3 head and Vercel preview remains Ready.
-2. Merge PR #3 to `main` using the exact expected head SHA.
-3. Confirm Vercel production deployment is Ready and `https://www.theclivoria.com` serves the approved living-world visuals.
-4. Record the production merge/deployment checkpoint in this handoff.
-5. Separately, observe and record the first successful `Civoria heartbeat` run whose GitHub event is `schedule`.
-6. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
+1. Observe and record the first successful `Civoria heartbeat` run whose GitHub event is `schedule` if that has not already been verified.
+2. Owner may continue iterating on presentation or choose the next milestone.
+3. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
 
 ## Coordination rule
 
@@ -109,6 +107,7 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 
 ## Session history
 
-- 2026-09-09 — ChatGPT traced the Vercel `little-world` deployment to `Channy337/Little-World-`, created `beta/living-world-visuals`, replaced the pixel-art presentation with an illustrated Canvas/UI pass, opened PR #3, confirmed Vercel preview Ready and Beta checks successful, and left production untouched.
+- 2026-09-09 — ChatGPT traced the Vercel `little-world` deployment to `Channy337/Little-World-`, created `beta/living-world-visuals`, replaced the pixel-art presentation with an illustrated Canvas/UI pass, and opened preview PR #3.
 - 2026-09-09 — At the owner's request, ChatGPT pushed the real renderer substantially further: perspective 2.5D camera, distant landscape layers, stronger buildings/citizen variation, depth sorting and atmospheric animation.
-- 2026-09-09 — Owner requested removal of the yellow “Enter the living world” CTA, reviewed the updated preview, then explicitly approved production rollout. Final CI and production deployment verification are now in progress.
+- 2026-09-09 — Owner requested removal of the yellow “Enter the living world” CTA, reviewed the updated preview, then explicitly approved production rollout.
+- 2026-09-09 — Final release detected a parallel earlier graphics change already on `main`. ChatGPT rebuilt the approved visuals cleanly on top of current production, opened PR #5, confirmed fresh Beta checks and Vercel preview success, merged as `1facd30a`, confirmed Vercel production success, and closed superseded PR #3.

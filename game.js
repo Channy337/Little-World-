@@ -439,6 +439,12 @@
     var armSwing=moving?step:working?Math.sin(tNow*8.7+phase)*3:0;
     ctx.strokeStyle=shirt; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(-5,bodyY+2); ctx.lineTo(-8-armSwing*.3,bodyY+8+armSwing*.25); ctx.moveTo(5,bodyY+2); ctx.lineTo(8+armSwing*.3,bodyY+8-armSwing*.25); ctx.stroke();
 
+    // Return-leg prop only; canonical inventory remains unchanged.
+    if(a.visualCarry){
+      ctx.fillStyle=a.visualCarry==='tree'?'#92613c':a.visualCarry==='rock'?'#a3aba8':'#b79b54';
+      roundedRect(-7,bodyY+5,14,6,2);ctx.fill();
+      ctx.strokeStyle='#594735';ctx.lineWidth=.8;ctx.stroke();
+    }
     if(a.role==='trader'){
       ctx.strokeStyle='#7a5438'; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(-4,bodyY); ctx.lineTo(5,bodyY+10); ctx.stroke();
       ctx.fillStyle='#8c603c'; roundedRect(4,bodyY+6,4,5,1); ctx.fill();

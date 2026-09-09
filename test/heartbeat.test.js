@@ -20,6 +20,14 @@ test('scheduled calls advance a village with no browser present at real-time pac
   assert.equal(last.lastHeartbeatAt,1600000);
   f.advance(5000);await f.service.tick();assert.equal((await f.service.state()).lastHeartbeatAt,1600000);
 });
+test('fifteen minute scheduler cadence catches up without losing village time',async()=>{
+  const f=fixture(),first=await f.service.state();
+  f.advance(15*60*1000);const heartbeat=await f.service.heartbeat();
+  assert.equal(heartbeat.catchUpSeconds,900);
+  const last=await f.service.state();
+  const expectedAdvance=900*SIMULATION_RATE/55;
+  assert.ok(Math.abs((last.state.time-first.state.time)-expectedAdvance)<1e-9);
+});
 test('concurrent browser and heartbeat do not double advance',async()=>{
   const f=fixture();await f.service.state();f.advance(10000);
   await Promise.all([f.service.tick(),f.service.heartbeat(),f.service.tick()]);
@@ -45,4 +53,17 @@ test('heartbeat always requires server authorization and rejects client commands
     assert.equal(res.code,code);
   }
   assert.equal(calls,2);
+});
+test('heartbeat accepts a verified GitHub OIDC token without a static secret',async()=>{
+  let calls=0,verified=[];
+  const handler=makeHandler('heartbeat',{
+    env:{},
+    oidcVerifier:async token=>{verified.push(token);return token==='header.payload.signature';},
+    service:{heartbeat:async()=>{calls++;return {day:1};}}
+  });
+  const response=()=>({setHeader(){},status(c){this.code=c;return this;},json(b){this.body=b;return this;}});
+  let res=response();await handler({method:'POST',headers:{authorization:'Bearer header.payload.signature'},body:{}},res);
+  assert.equal(res.code,200);assert.equal(calls,1);assert.deepEqual(verified,['header.payload.signature']);
+  res=response();await handler({method:'POST',headers:{authorization:'Bearer bad.token.value'},body:{}},res);
+  assert.equal(res.code,401);assert.equal(calls,1);
 });

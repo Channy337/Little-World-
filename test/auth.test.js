@@ -12,7 +12,7 @@ function token(overrides={}){
   const claims={
     iss:ISSUER,aud:AUDIENCE,exp:nowSeconds+300,nbf:nowSeconds-30,iat:nowSeconds-30,
     repository:REPOSITORY,repository_id:REPOSITORY_ID,repository_owner_id:OWNER_ID,
-    ref:REF,job_workflow_ref:WORKFLOW_REF,event_name:'schedule',...overrides
+    ref:REF,workflow_ref:WORKFLOW_REF,event_name:'schedule',...overrides
   };
   const payload=Buffer.from(JSON.stringify(claims)).toString('base64url');
   const signingInput=header+'.'+payload;
@@ -36,7 +36,7 @@ test('OIDC token must be for this repository, main ref, workflow and audience',a
     {repository_id:'1'},
     {repository_owner_id:'2'},
     {ref:'refs/heads/other'},
-    {job_workflow_ref:'other'},
+    {workflow_ref:'other'},
     {aud:'other'},
     {event_name:'pull_request'},
     {exp:nowSeconds-120}

@@ -1,26 +1,52 @@
-# Unattended world setup (preview work, not active in production)
+# Civoria unattended world scheduler
 
-The new `/api/heartbeat` accepts authenticated GET or POST requests. It advances the same canonical world as browser ticks and records `lastHeartbeatAt` atomically. Browser ticks preserve that timestamp but cannot set it. A successful response contains timing/revision/day information, not the full village. Conflicts retry twice, then return 503 so a scheduler can retry. Failed writes never claim a completed heartbeat.
+`/api/heartbeat` advances the same canonical Upstash-backed world as browser ticks and records `lastHeartbeatAt` atomically. Browser ticks preserve that timestamp but cannot forge it. A successful heartbeat returns timing, revision and day metadata, never the full village. Conflicts retry twice; failed writes never claim a completed heartbeat.
 
 ## World pace
 
-The owner selected a real-time calendar: approximately **one village day equals one real day**. The original simulation was tuned around a 55-second internal day, so the world service now scales elapsed real time before handing it to the existing engine. This preserves the relative behavior of hunger, energy, movement, work, farming, aging, births, and resource regeneration instead of changing only the displayed calendar.
+The owner selected a real-time calendar: approximately **one Civoria day equals one real day**.
 
-At the selected two-minute heartbeat cadence, 720 on-time deliveries represent one real day and therefore approximately one village day. The existing 120-second catch-up cap remains in place, so a delayed or missed scheduler delivery can discard excess elapsed time rather than replaying an unbounded backlog.
+The original village engine was tuned around a 55-second internal day. The world service therefore scales elapsed real time before handing it to the engine. This keeps hunger, energy, movement, work, farming, aging, births, deaths and resource regeneration in the same proportions while mapping one internal day to 24 real hours.
 
-## Remaining activation steps
+## Scheduler selected for Beta 0.2
 
-1. Keep the owner-approved pace at one village day per real day. Do not restore the legacy 55-real-seconds-per-day pace.
-2. Configure a strong random `CRON_SECRET` in Vercel for this preview branch only. Keep its value out of chat, source, URLs and logs. Production needs its own secret at release.
-3. Configure an external scheduler against the preview branch's HTTPS `/api/heartbeat`, forwarding `Authorization: Bearer <CRON_SECRET>`. No request body is needed. Vercel preview protection may require a separate automation bypass credential; keep that out of source and logs too.
-4. Confirm two automatic deliveries while all village browser pages are closed. Check successful `world_heartbeat` logs and increasing stored heartbeat timestamps. Opening a viewer and seeing movement alone does not establish unattended operation.
-5. Only after preview verification and owner release approval, deploy and configure the production destination. Remove/pause the preview schedule when finished testing.
+Beta 0.2 uses **GitHub Actions** rather than adding another paid scheduler service. `.github/workflows/heartbeat.yml` calls the production heartbeat at minutes 2, 17, 32 and 47 of each hour, or roughly every 15 minutes.
 
-## Scheduler options checked 2026-09-08
+The workflow does not store a long-lived heartbeat password. It requests a short-lived GitHub Actions OIDC token with audience `civoria-heartbeat`. The server validates the JWT signature against GitHub's OIDC keys and requires all of the following claims:
 
-- Vercel Hobby cron runs at most daily, unsuitable for this milestone: https://vercel.com/docs/cron-jobs/usage-and-pricing
-- Upstash QStash free allowance is 1,000 messages/day. Every two minutes is 720 scheduled deliveries/day, before retries or other usage. This is a separate product from the existing Redis integration and is not yet configured: https://upstash.com/pricing/qstash
-- QStash schedules support an explicit schedule ID, forwarded authorization header, GET method and configurable retries. Use one stable schedule ID to prevent accidental duplicate schedules: https://upstash.com/docs/qstash/api-reference/schedules/create-a-schedule
-- GitHub Actions is another option, but scheduled jobs can be delayed and five-minute cadence exceeds the current two-minute catch-up cap. It would need a reviewed timing change before use.
+- issuer: GitHub Actions OIDC
+- audience: `civoria-heartbeat`
+- repository: `Channy337/Little-World-`
+- repository ID: `1360527457`
+- repository owner ID: `326168246`
+- ref: `refs/heads/main`
+- workflow: `.github/workflows/heartbeat.yml` on `main`
+- event: `schedule`, `workflow_dispatch`, or the one-time `push` activation path
 
-The current cap remains 120 real seconds per invocation. A long scheduler outage discards excess elapsed time once, logging `skippedMs`. This prevents unbounded work; it does not replay a full outage. A two-minute schedule can still lose small amounts of village time when delivery is late. No new account, scheduler or paid plan has been activated by this commit. AI decisions remain deferred.
+A legacy `CRON_SECRET` remains supported as a fallback, but Beta 0.2 does not require one for GitHub Actions.
+
+## Catch-up behavior
+
+The previous two-minute catch-up cap was appropriate for the old fast simulation but would lose time with a 15-minute scheduler. Beta 0.2 allows up to **seven real days** of elapsed time to be replayed in one invocation. Because the real-time scale compresses 24 real hours into only 55 internal simulation seconds, seven real days require only about 385 internal simulation seconds of work.
+
+If the world has been unattended for more than seven real days without any browser tick or scheduler heartbeat, the excess is deliberately discarded once and logged as `skippedMs`. This is the safety fuse against unbounded catch-up.
+
+## Release and verification
+
+GitHub scheduled workflows only run from the repository's default branch, so the schedule is inert while this file remains on `beta/unattended-world`.
+
+Release procedure:
+
+1. Run the full automated test suite and static build on the Beta branch.
+2. Confirm the Vercel preview build succeeds.
+3. Merge PR #2 to `main`. This deploys the corrected real-time pace and heartbeat endpoint together.
+4. The workflow's `push` activation path should make one immediate authenticated production heartbeat after merge.
+5. Confirm at least one later run whose event is `schedule`, with all village browser pages closed.
+6. Verify the heartbeat response succeeds and `lastHeartbeatAt` advances.
+7. If any production heartbeat fails repeatedly, disable or fix the workflow before changing simulation rules.
+
+## Known Beta limitation
+
+GitHub says scheduled Actions can be delayed during high load, and scheduled workflows in public repositories may be disabled after 60 days with no repository activity. Civoria's elapsed-time catch-up makes ordinary delays harmless, but long-term production should eventually move to a dedicated scheduler if the experiment becomes inactive at the code level for long periods.
+
+AI decision-making is still deferred to Civoria 0.3. The heartbeat only advances the deterministic persistent-world engine.

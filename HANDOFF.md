@@ -6,37 +6,47 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Production visuals are live; owner approved a follow-up two-clock viewer fix because 1:1 world time made villagers appear frozen |
+| Status | Two-clock viewer activity fix released to production successfully; villagers now move at a watchable visual pace while the canonical civilization remains on its 1:1 real-time schedule |
 | Live site | https://www.thecivoria.com |
-| Production branch | `main`; approved visual release merged via PR #5 as `1facd30a1176548c6188ce74347af02552f741f2`; final documentation follow-up on main was `e7dfdf530408d43b34b7978aa9593d1fd470e3f2` |
-| Active fix | `beta/two-clock-activity`; presentation-only activity clock for visible movement without accelerating canonical simulation |
-| Active fix commits | `620308f8` adds `activity-clock.js`; `3768f59a` loads it before `game.js`; `610fafec` adds tests |
+| Production branch | `main`; two-clock fix merged via PR #6 as `36ca79f8f92910465d73948f6dd505042821066d` |
+| Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
+| Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged earlier as `1facd30a1176548c6188ce74347af02552f741f2` |
 | World storage | One canonical Upstash-backed world per environment |
-| World pace | Approximately 1 Civoria day = 1 real day; this remains unchanged |
+| World pace | Approximately 1 Civoria day = 1 real day; unchanged by the viewer activity fix |
 | Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
-| Still pending | Fresh Beta checks and Vercel preview for the two-clock viewer fix, then production rollout under the owner's explicit approval; observe and record at least one heartbeat run whose GitHub event is `schedule`; server-side AI minds remain deferred to Civoria 0.3 |
+| Still pending | Observe and record at least one heartbeat run whose GitHub event is `schedule` if still unverified; server-side AI minds remain deferred to Civoria 0.3 |
 | AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
 
-## Two-clock activity fix — 2026-09-09
+## Two-clock activity fix — released 2026-09-09
 
-After the richer 2.5D visuals shipped, the owner noticed villagers appeared to stand in one place. The cause is real: Civoria 0.2 maps the original 55-second internal day to 24 real hours, so the engine's original movement speed of 42 world units per simulation second also became extremely slow in real time.
+After the richer 2.5D visuals shipped, the owner noticed villagers appeared to stand in one place. The cause was the Civoria 0.2 real-time scale: the original 55-second internal day is mapped to 24 real hours, so the engine's original movement speed also became extremely slow in wall-clock time.
 
-The owner explicitly approved keeping the 1:1 civilization clock but separating visible activity from long-term progression.
+The owner explicitly approved keeping the 1:1 civilization clock while separating visible activity from long-term progression. The fix was implemented as a browser-only viewer layer rather than changing the canonical engine.
 
-The implementation on `beta/two-clock-activity` deliberately does **not** modify `lib/engine.js`, `lib/world.js`, `/api`, Upstash state, resources, hunger, aging, crops, births, buildings, heartbeat behavior, or any other canonical mechanic. Instead:
+Production behavior now:
 
-- New `activity-clock.js` runs only in the browser and wraps the viewer's `/api/tick` response before `game.js` renders it.
+- `activity-clock.js` runs only in the browser and wraps the viewer's `/api/tick` response before `game.js` renders it.
 - Canonical server state remains authoritative and untouched.
 - Villagers in a canonical `moving` state are visually advanced toward their existing canonical `tx/ty` at about 4.2 world units per real second, so a typical 60-unit trip takes about 14 seconds to watch.
-- If the visual proxy reaches its canonical target before the slow macro engine does, it switches only the browser's drawing state into a work/rest animation. No server action is completed early.
+- If the visual proxy reaches its canonical target before the slow macro engine does, only the browser drawing state switches into a work/rest animation. No server action completes early.
 - Idle villagers take small local visual strolls around their canonical position so quiet periods still look alive.
-- Working, socializing and resting villagers receive only small presentation offsets/animations. Long-term consequences continue at the real-time 1:1 pace.
-- Large discrepancies re-anchor to canonical position to avoid inventing travel after restores or large catch-up events.
-- The activity clock is loaded before `game.js`, so it affects the viewer without changing the canonical engine.
+- Working, socializing and resting villagers receive only small presentation offsets/animations. Hunger, aging, crops, resources, births, buildings and other canonical consequences continue on the 1:1 world schedule.
+- Large discrepancies re-anchor to canonical position to avoid inventing travel after restores or major catch-up events.
+- The activity clock loads before `game.js` and has no write path back to the canonical world.
 
-New tests verify visible real-time movement, visual arrival behavior, non-tick fetch pass-through, load order, absence of browser persistence hooks, and that the transformed viewer state cannot mutate the canonical server fixture.
+### Two-clock release verification
+
+- Branch: `beta/two-clock-activity`.
+- PR: #6, **Fix villager motion with a separate viewer activity clock**.
+- Exact tested candidate: `2d16d5a8baf09137cde2fd3ce841542ada25237f`.
+- First Beta check run 27 failed only because the arrival test expected a target after two capped visual updates instead of three; implementation behavior was correct. The test was corrected without changing the activity algorithm.
+- Fresh Beta checks run 28: **success** (`npm test` and `npm run build`).
+- Vercel preview on the final candidate: **success**.
+- PR #6 merged to `main` as `36ca79f8f92910465d73948f6dd505042821066d`.
+- Vercel production status for `36ca79f8`: **success**.
+- No `lib/engine.js`, `lib/world.js`, `/api`, Upstash, scheduler, or canonical state changes were made by this fix.
 
 ## Production visual release — 2026-09-09
 
@@ -59,7 +69,7 @@ Released visual changes include:
 - Public-facing Clivoria branding and non-pixel UI treatment.
 - Yellow “Enter the living world” hero CTA removed at the owner's request.
 
-### Release verification
+### Visual release verification
 
 - Release candidate branch: `release/living-world-visuals`.
 - Exact candidate commit: `cab9c38a2ba939ab2ee7654ff4646fee8c4cf965`.
@@ -105,7 +115,7 @@ The GitHub Actions workflow `.github/workflows/heartbeat.yml` is scheduled at `2
 - Production and preview namespaces remain separate.
 - World and initialization marker are persistent; do not delete keys to recover from an error without a reviewed restore plan.
 - Chronicle is capped at 400 entries and the recent log at 40, so this is not yet a permanent historical archive.
-- The two-clock activity layer is presentation-only and must not introduce any write path back to the canonical world.
+- The two-clock activity layer is presentation-only and has no canonical write path.
 
 ## Services and secrets
 
@@ -115,13 +125,10 @@ Upstash server variables remain managed in Vercel. Existing `ANTHROPIC_API_KEY` 
 
 ## Next exact action
 
-1. Open a PR from `beta/two-clock-activity` to `main` and trigger fresh Beta checks.
-2. Confirm `npm test`, `npm run build`, and Vercel preview all succeed on the exact candidate.
-3. Under the owner's explicit approval to “go with that fix,” merge only after those checks pass.
-4. Confirm Vercel production deployment succeeds and the live villagers visibly move while the world day remains on the existing 1:1 schedule.
-5. Record the final production checkpoint here.
-6. Separately, observe and record the first successful `Civoria heartbeat` run whose GitHub event is `schedule` if still pending.
-7. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
+1. Observe the live site and confirm villagers visibly travel and take small local strolls while world-day progression remains unchanged.
+2. Separately, observe and record the first successful `Civoria heartbeat` run whose GitHub event is `schedule` if still pending.
+3. Owner may continue presentation tuning or choose the next milestone.
+4. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
 
 ## Coordination rule
 
@@ -132,5 +139,5 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-09 — ChatGPT traced the Vercel `little-world` deployment to `Channy337/Little-World-`, created `beta/living-world-visuals`, replaced the pixel-art presentation with an illustrated Canvas/UI pass, and opened preview PR #3.
 - 2026-09-09 — At the owner's request, ChatGPT pushed the real renderer substantially further: perspective 2.5D camera, distant landscape layers, stronger buildings/citizen variation, depth sorting and atmospheric animation.
 - 2026-09-09 — Owner requested removal of the yellow “Enter the living world” CTA, reviewed the updated preview, then explicitly approved production rollout.
-- 2026-09-09 — Final release detected a parallel earlier graphics change already on `main`. ChatGPT rebuilt the approved visuals cleanly on top of current production, opened PR #5, confirmed fresh Beta checks and Vercel preview success, merged as `1facd30a`, confirmed Vercel production success, and closed superseded PR #3.
-- 2026-09-09 — Owner noticed villagers appeared frozen under the 1:1 real-time scale and approved a two-clock fix. ChatGPT created `beta/two-clock-activity` and implemented a browser-only activity layer plus tests, leaving the canonical engine and Upstash world untouched.
+- 2026-09-09 — Final visual release detected a parallel earlier graphics change already on `main`. ChatGPT rebuilt the approved visuals cleanly on top of current production, opened PR #5, confirmed fresh Beta checks and Vercel preview success, merged as `1facd30a`, confirmed Vercel production success, and closed superseded PR #3.
+- 2026-09-09 — Owner noticed villagers appeared frozen under the 1:1 real-time scale and approved a two-clock fix. ChatGPT created `beta/two-clock-activity`, implemented a browser-only activity layer plus tests, corrected one test expectation caught by CI, passed Beta checks run 28, merged PR #6 as `36ca79f8`, and confirmed Vercel production success without changing canonical simulation mechanics.

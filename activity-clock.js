@@ -37,6 +37,20 @@
     if(a.pending&&a.pending.targetType) return 'working';
     return 'moving';
   }
+  function workTarget(a,s){
+    var lists={tree:s.trees||[],rock:s.rocks||[],farm:s.farms||[],bush:s.bushes||[],market:s.market?[s.market]:[]};
+    var job=a.pending||a.action;
+    if(job&&lists[job.targetType]){
+      var exact=lists[job.targetType].find(function(v){return v.id===job.targetId;});
+      if(exact)return {x:exact.x,y:exact.y,id:exact.id,kind:job.targetType};
+      // Missing targets must not keep an obsolete routine alive.
+      return null;
+    }
+    var kind={woodcutter:'tree',miner:'rock',farmer:'farm',trader:'market'}[a.role];
+    var list=lists[kind]||[];
+    var target=list.reduce(function(best,v){return !best||distance(a.x,a.y,v.x,v.y)<distance(a.x,a.y,best.x,best.y)?v:best;},null);
+    return target?{x:target.x,y:target.y,id:target.id,kind:kind}:null;
+  }
   function enhance(data){
     if(!data||!data.state||!Array.isArray(data.state.agents)) return data;
     var now=nowMs();
@@ -49,27 +63,46 @@
       var p=visualAgents.get(a.id);
       if(!p) p={x:a.x,y:a.y};
 
-      // A very large discrepancy means this is a genuinely different canonical position,
-      // such as a restore or major catch-up. Re-anchor rather than animating across the map.
-      if(distance(p.x,p.y,a.x,a.y)>120){ p.x=a.x;p.y=a.y; }
-
+      // Compare canonical snapshots, not the visual proxy: a legitimate long trip
+      // can be far from its slow server position without being a restore.
+      if(p.canonicalX!==undefined&&distance(p.canonicalX,p.canonicalY,a.x,a.y)>120) p={x:a.x,y:a.y};
+      p.canonicalX=a.x;p.canonicalY=a.y;
+      var target=workTarget(a,data.state);
       var displayState=a.state;
-      if(a.state==='moving'&&finite(a.tx)&&finite(a.ty)){
-        var arrived=moveToward(p,a.tx,a.ty,VISUAL_MOVE_SPEED*dt);
-        if(arrived) displayState=visualArrivalState(a);
+      if(target&&!a.pending?.home&&a.state!=='resting'&&a.state!=='socializing'&&a.action?.targetType!=='self'){
+        var key=target.kind+':'+target.id;
+        if(p.key!==key){
+          p.key=key;p.phase='outbound';p.timer=0;
+          var home=(data.state.buildings||[]).find(function(b){return b.id===a.home;});
+          var base=home||data.state.market||data.state.well||{x:a.x,y:a.y};
+          p.base={x:base.x,y:base.y};
+          if(distance(p.base.x,p.base.y,target.x,target.y)<16)
+            p.base={x:clamp(target.x-40,8,472),y:clamp(target.y+24,8,296)};
+        }
+        // These are presentation phases only. Never complete work or grant inventory here.
+        if(p.phase==='outbound'){
+          displayState='moving';
+          if(moveToward(p,target.x,target.y,VISUAL_MOVE_SPEED*dt)){p.phase='work';p.timer=10;displayState='working';}
+        }else if(p.phase==='work'){
+          displayState='working';p.timer-=dt;
+          if(p.timer<=0){p.phase='return';displayState='moving';}
+        }else if(p.phase==='return'){
+          displayState='moving';
+          if(moveToward(p,p.base.x,p.base.y,VISUAL_MOVE_SPEED*dt)){p.phase='pause';p.timer=5;displayState='idle';}
+        }else{
+          displayState='idle';p.timer-=dt;
+          if(p.timer<=0)p.phase='outbound';
+        }
+        a.visualCarry=p.phase==='return'?target.kind:null;
+        a.visualRoutine=p.phase;
       }else{
-        // Ease the visual proxy back to the authoritative position whenever the canonical
-        // state is no longer traveling. This preserves shared-world truth while avoiding snaps.
-        moveToward(p,a.x,a.y,Math.max(.35,VISUAL_MOVE_SPEED*.55*dt));
+        p.key=null;p.phase=null;
+        if(a.state==='moving'&&finite(a.tx)&&finite(a.ty)){
+          if(moveToward(p,a.tx,a.ty,VISUAL_MOVE_SPEED*dt))displayState=visualArrivalState(a);
+        }else moveToward(p,a.x,a.y,VISUAL_MOVE_SPEED*dt);
       }
-
-      var off=ambientOffset(a,t);
-      a.x=clamp(p.x+off.x,0,480);
-      a.y=clamp(p.y+off.y,0,304);
-
-      // Idle villagers take small local strolls so a quiet macro state still reads as alive.
-      // This changes only the drawing state returned to this browser, never canonical behavior.
-      if(a.state==='idle'&&Math.abs(off.x)+Math.abs(off.y)>.2) displayState='moving';
+      var off=p.key?{x:0,y:0}:ambientOffset({id:a.id,state:displayState},t);
+      a.x=clamp(p.x+off.x,0,480);a.y=clamp(p.y+off.y,0,304);
       a.state=displayState;
       visualAgents.set(a.id,p);
     });

@@ -6,10 +6,10 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Preview fix ready for owner review. Production still has missing activity-script delivery and incomplete visual routines. |
-| Active work | beta/visible-work-routines; PR #7 https://github.com/Channy337/Little-World-/pull/7; candidate 0a1ad23276cedd01aae2663bf3891df74c7017ab; Beta checks run 30 and Vercel preview passed; hosted travel observed |
+| Status | Visible movement fix released with owner approval via PR #7; activity script now ships and work routines repeat. |
+| Active work | PR #7 merged as 7291ff4778d8115da86a48a85a24270813257039; production deployment 4afhSiLsdPuKj5BfdLywr9Ky4EHH succeeded; no implementation active |
 | Live site | https://www.thecivoria.com |
-| Production branch | `main`; two-clock fix merged via PR #6 as `36ca79f8f92910465d73948f6dd505042821066d` |
+| Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
 | Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged earlier as `1facd30a1176548c6188ce74347af02552f741f2` |
 | World storage | One canonical Upstash-backed world per environment |
@@ -20,7 +20,9 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 | Still pending | Observe and record at least one heartbeat run whose GitHub event is `schedule` if still unverified; server-side AI minds remain deferred to Civoria 0.3 |
 | AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
 
-## Visible routine follow-up — 2026-09-09
+## Visible routine follow-up — released 2026-09-09
+
+Owner confirmed “it's moving now” and explicitly approved publication. PR #7 merged as 7291ff4778d8115da86a48a85a24270813257039. Final branch head 1678bec1 passed Beta checks run 31. Vercel production deployment 4afhSiLsdPuKj5BfdLywr9Ky4EHH succeeded. Earlier preview-pending statements below describe pre-release checkpoints.
 
 Owner reported no actual travel, only animation. Codex found two problems: the previous viewer stops at a destination while waiting on the macro clock, and scripts/build.js omitted activity-clock.js entirely from public output. Earlier release/CI success did not establish browser delivery of the activity layer. PR #7 adds the missing build asset, an output-asset regression test, and repeating visual outbound/work/return/pause routines with a return-leg prop. No canonical resource, clock, API, or database changes. Seven targeted activity tests pass locally; full checks passed the first candidate, build-fix candidate 0a1ad232 passed full Beta checks run 30 and Vercel deployment. Hosted browser showed villagers dispersed to trees, farms and rocks after loading the exact preview. Repeated return cycles are verified by deterministic tests; no automated pixel-tracking assertion was used. Production is unchanged.
 
@@ -130,7 +132,7 @@ Upstash server variables remain managed in Vercel. Existing `ANTHROPIC_API_KEY` 
 
 ## Next exact action
 
-Review PR #7 preview: https://little-world-mancil1fq-small-villager.vercel.app/index.html#live-world . Production release is pending owner approval. The local routine-fix directory contains the presentation files and focused tests; build/test additions are saved on GitHub. Do not use the older local village checkouts to overwrite current main.
+Review PR #7 preview: https://little-world-mancil1fq-small-villager.vercel.app/index.html#live-world . Owner confirmed preview movement and approved release; PR #7 is now merged and production deployment succeeded. The local routine-fix directory contains the presentation files and focused tests; build/test additions are saved on GitHub. Do not use the older local village checkouts to overwrite current main.
 
 1. Observe the live site and confirm villagers visibly travel and take small local strolls while world-day progression remains unchanged.
 2. Separately, observe and record the first successful `Civoria heartbeat` run whose GitHub event is `schedule` if still pending.
@@ -150,3 +152,5 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-09 — Owner noticed villagers appeared frozen under the 1:1 real-time scale and approved a two-clock fix. ChatGPT created `beta/two-clock-activity`, implemented a browser-only activity layer plus tests, corrected one test expectation caught by CI, passed Beta checks run 28, merged PR #6 as `36ca79f8`, and confirmed Vercel production success without changing canonical simulation mechanics.
 
 - 2026-09-09 — Codex: PR #7 fixes missing deployment of activity-clock.js and adds repeated presentation work routines. Changed activity-clock.js, game.js, scripts/build.js, test/activity-clock.test.js; added test/build-assets.test.js. Exact candidate 0a1ad232 passed Beta checks run 30 and Vercel; hosted travel observed. No production or canonical data changes. Next: owner preview review, then authorized release.
+
+- 2026-09-09 — Codex: Owner approved PR #7 release after confirming preview movement. Merged exact tested head 1678bec1 as 7291ff47; Vercel production succeeded. Existing saved civilization and real-time progression preserved. Dashboard reads this release checkpoint automatically.

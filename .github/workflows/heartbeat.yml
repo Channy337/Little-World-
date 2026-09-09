@@ -1,0 +1,43 @@
+name: Civoria heartbeat
+
+on:
+  schedule:
+    - cron: '2,17,32,47 * * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/heartbeat.yml'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Advance the shared world
+        shell: bash
+        run: |
+          set -euo pipefail
+          oidc_response="$(curl --silent --show-error --fail --max-time 20 \
+            -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=civoria-heartbeat")"
+          oidc_token="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])' <<<"${oidc_response}")"
+          heartbeat_response="$(curl --silent --show-error --fail --max-time 30 \
+            --retry 2 --retry-delay 5 --retry-all-errors \
+            -H "Authorization: Bearer ${oidc_token}" \
+            -H 'User-Agent: civoria-heartbeat-github-actions' \
+            https://www.thecivoria.com/api/heartbeat)"
+          python3 - "${heartbeat_response}" <<'PY'
+          import json, sys
+          data=json.loads(sys.argv[1])
+          required=('revision','lastHeartbeatAt','lastTickAt','day','catchUpSeconds')
+          missing=[key for key in required if key not in data]
+          if missing:
+              raise SystemExit('Heartbeat response missing expected fields')
+          print(f"Heartbeat ok: revision={data['revision']} day={data['day']} catchUpSeconds={data['catchUpSeconds']}")
+          PY

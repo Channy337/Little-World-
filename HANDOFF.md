@@ -6,18 +6,37 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Civoria 0.2 released to production; first authenticated production heartbeat succeeded; first normal `schedule` delivery still awaiting observation |
+| Status | Civoria 0.2 remains released to production; first authenticated production heartbeat succeeded; first normal `schedule` delivery still awaiting observation |
 | Live site | https://www.thecivoria.com |
-| Production branch | `main` |
+| Production branch | `main` at `14449c3a22834dee69ad926181114da1f9c67156`; unchanged by the visual preview work |
+| Active visual work | `beta/living-world-visuals`, draft PR #3; presentation-only illustrated-world redesign |
+| Visual preview verification | Vercel preview Ready; GitHub `Beta checks` run 23 completed successfully (`npm test` and `npm run build`) |
 | Civoria 0.2 release | PR #2 merged as `1ffe7f42db1f148ba44cfe85020c9482ab6dcc97` |
 | World storage | One canonical Upstash-backed world per environment |
 | World pace | Approximately 1 Civoria day = 1 real day |
 | Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
-| Verification | Latest Beta Node tests pass, static build passes, Vercel preview passes, production Vercel deploy passes, release-triggered production heartbeat passes |
-| Still pending | Observe at least one heartbeat run whose GitHub event is `schedule`; server-side AI minds remain deferred to Civoria 0.3 |
+| Verification | Latest Beta Node tests pass, static build passes, Vercel visual preview is Ready, production Vercel deploy passes, release-triggered production heartbeat passes |
+| Still pending | Owner review/approval of the visual preview; observe at least one heartbeat run whose GitHub event is `schedule`; server-side AI minds remain deferred to Civoria 0.3 |
 | AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
+
+## Active visual preview — 2026-09-09
+
+The owner requested replacing the pixel-art presentation with a richer living-world look while keeping the actual simulation intact. ChatGPT created `beta/living-world-visuals` from the current production `main` and opened draft PR #3, **Preview: illustrated living-world visual overhaul**.
+
+The work changes only `game.js`, `styles.css`, `index.html` and this handoff note. It does not modify `lib/`, `/api`, Upstash configuration, heartbeat scheduling, canonical world state, or simulation mechanics.
+
+Implemented visual changes include:
+
+- 2x high-resolution Canvas rendering instead of block-pixel sprites.
+- Smooth illustrated villagers with role colors, movement, work animation, selection markers and status bubbles.
+- Richer meadow, organic water, paths, crops, bushes, rocks, trees, well, homes, market, smoke and atmospheric day/night lighting.
+- Removal of forced `image-rendering: pixelated` styling and the Press Start 2P visual treatment.
+- A larger responsive world stage and redesigned HUD/cards.
+- Public branding updated from the prototype-facing “A Little World” language to Clivoria while accurately describing Civoria 0.2 and explicitly not claiming persistent AI minds are live.
+
+Latest implementation head before this documentation commit: `8f900d41158ec9f9cc914d4586ec092c4cb1b60e`. Vercel reported the branch preview Ready at `little-world-git-beta-living-world-visuals-small-villager.vercel.app`. GitHub Beta checks run 23 completed successfully after draft PR #3 opened. Production has not been merged or changed. Do not merge PR #3 without fresh owner approval after preview review.
 
 ## Civoria 0.2 behavior now live
 
@@ -68,17 +87,22 @@ The world was already on Day 88 at the release heartbeat because the previous pr
 
 ## Services and secrets
 
-Existing services: GitHub, Vercel and Upstash. No new paid scheduler was created for Civoria 0.2.
+Existing services: GitHub, Vercel and Upstash. No new paid scheduler was created for Civoria 0.2 or for the visual preview.
 
 Upstash server variables remain managed in Vercel. Existing `ANTHROPIC_API_KEY` was not changed and is not used by the current canonical persistent engine. Never paste secret values into chats, commits or logs.
 
 ## Next exact action
 
-1. Watch GitHub Actions for the first `Civoria heartbeat` run with event `schedule`.
-2. Confirm its heartbeat job succeeds and the log reports `Heartbeat ok`.
-3. Record that recurring unattended operation is verified.
-4. Only after that checkpoint, discuss the next milestone. The likely Civoria 0.3 work is persistent AI minds with bounded server-side AI decisions, durable memories and spending controls. Do not start 0.3 without owner direction.
+1. Owner reviews the `beta/living-world-visuals` Vercel preview from draft PR #3.
+2. If changes are requested, keep iterating only on that preview branch.
+3. If the owner explicitly approves production release, re-check the PR head/status and merge PR #3; do not infer approval from earlier Civoria 0.2 release permission.
+4. Separately, observe and record the first successful `Civoria heartbeat` run whose GitHub event is `schedule`.
+5. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
 
 ## Coordination rule
 
 Only one assistant should edit/deploy at a time. Before starting, read this file and current GitHub state. Before handing off, record branch/commit/PR, tests, deployment state, blockers and the exact next action. The owner's prior release approvals are not blanket permission for unrelated future features.
+
+## Session history
+
+- 2026-09-09 — ChatGPT traced the Vercel `little-world` deployment to `Channy337/Little-World-`, created `beta/living-world-visuals`, replaced the pixel-art presentation with an illustrated Canvas/UI pass, opened draft PR #3, confirmed Vercel preview Ready and Beta checks run 23 successful, and left production `main` untouched pending owner review.

@@ -6,7 +6,8 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Two-clock viewer activity fix released to production successfully; villagers now move at a watchable visual pace while the canonical civilization remains on its 1:1 real-time schedule |
+| Status | Codex active: fixing incomplete visible work routines. Production animates but does not yet show repeated travel/work/return loops. |
+| Active work | beta/visible-work-routines; preview implementation and tests in progress; production unchanged |
 | Live site | https://www.thecivoria.com |
 | Production branch | `main`; two-clock fix merged via PR #6 as `36ca79f8f92910465d73948f6dd505042821066d` |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |

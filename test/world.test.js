@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {createWorldService,MAX_CATCH_UP_MS}=require('../lib/world');
+const {createWorldService,MAX_CATCH_UP_MS,SIMULATION_RATE}=require('../lib/world');
 const engine=require('../lib/engine');
 const {memoryStore}=require('./helpers');
 const {namespace,createStore,INIT,CAS,READ}=require('../lib/store');
@@ -12,6 +12,10 @@ function fixture(){
   const options={store,now:()=>time,seed:()=>42,logger:s=>logs.push(JSON.parse(s))};
   return {store,logs,service:createWorldService(options),options,advance:ms=>time+=ms};
 }
+function advanceControl(e,realMs){
+  let remaining=(realMs/1000)*SIMULATION_RATE;
+  while(remaining>1e-12){const dt=Math.min(.1,remaining);e.step(dt);remaining-=dt;}
+}
 test('concurrent first visitors receive exactly one initialized world',async()=>{
   const f=fixture();
   const records=await Promise.all(Array.from({length:20},()=>createWorldService({...f.options,seed:()=>Math.floor(Math.random()*10000)}).state()));
@@ -22,7 +26,7 @@ test('concurrent ticks advance one revision, not one per visitor',async()=>{
   const f=fixture(); const first=await f.service.state(); f.advance(10000);
   const records=await Promise.all(Array.from({length:20},()=>createWorldService(f.options).tick()));
   assert.ok(records.every(r=>r.revision===1));
-  const e=engine(first.state);for(let i=0;i<100;i++)e.step(.1);
+  const e=engine(first.state);advanceControl(e,10000);
   assert.deepEqual((await f.service.state()).state,JSON.parse(JSON.stringify(e.snapshot())));
 });
 test('repeated calls cannot accelerate the simulation',async()=>{
@@ -30,13 +34,21 @@ test('repeated calls cannot accelerate the simulation',async()=>{
   const first=await f.service.tick();
   for(let i=0;i<20;i++)assert.equal((await f.service.tick()).revision,first.revision);
 });
-test('long absence catches up at most two minutes and discards excess once',async()=>{
-  const f=fixture();const before=await f.service.state();f.advance(7*86400000);
+test('720 two-minute heartbeats equal one village day',async()=>{
+  const f=fixture();const before=await f.service.state();
+  for(let i=0;i<720;i++){f.advance(120000);await f.service.heartbeat();}
+  const after=await f.service.state();
+  assert.equal(after.state.day,before.state.day+1);
+  assert.ok(Math.abs(after.state.time-before.state.time)<1e-9);
+});
+test('long absence catches up at most seven days and discards excess once',async()=>{
+  const f=fixture();const before=await f.service.state();const absence=30*86400000;f.advance(absence);
   const after=await f.service.tick();
   assert.equal(after.catchUpSeconds,MAX_CATCH_UP_MS/1000);
-  assert.equal(after.lastTickAt-before.lastTickAt,7*86400000);
+  assert.equal(after.lastTickAt-before.lastTickAt,absence);
   assert.equal((await f.service.tick()).revision,1);
-  assert.ok(f.logs.find(x=>x.event==='world_tick').skippedMs>0);
+  const entry=f.logs.find(x=>x.event==='world_tick');
+  assert.equal(entry.skippedMs,absence-MAX_CATCH_UP_MS);
 });
 test('backwards clock never rewinds or ticks',async()=>{
   const f=fixture();const before=await f.service.state();f.advance(-10000);

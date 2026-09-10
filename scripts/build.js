@@ -9,6 +9,7 @@ for(const file of ['chronicle.html','game.js','activity-clock.js','globe-fallbac
 // requests in iPhone in-app browsers. Bundle Three.js + the globe + its Canvas
 // fallback into the HTML so the world starts from the single authenticated page.
 fs.copyFileSync('node_modules/three/build/three.module.js','three.module.js');
+fs.copyFileSync('node_modules/three/build/three.core.js','three.core.js');
 const fallback=fs.readFileSync('globe-fallback.js','utf8');
 let gpuSource=fs.readFileSync('globe-webgl.js','utf8');
 gpuSource=gpuSource.replace(
@@ -25,6 +26,7 @@ const bundled=esbuild.buildSync({
   minify:true
 }).outputFiles[0].text;
 fs.unlinkSync('three.module.js');
+fs.unlinkSync('three.core.js');
 
 const escapeScript=s=>s.replace(/<\/script/gi,'<\\/script');
 const activity=escapeScript(fs.readFileSync('activity-clock.js','utf8'));

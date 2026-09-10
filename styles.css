@@ -68,6 +68,22 @@ button:active{transform:translateY(1px);}
 .log-birth{color:#9bc583;}.log-death{color:var(--danger);}.log-build{color:var(--accent);}.log-market{color:var(--accent);font-weight:600;}.log-role{color:var(--muted);}.log-social{color:var(--social);}.log-info{color:var(--text);}
 .sectionLabel{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;color:#e3e7df;margin:0 0 7px;font-weight:600;}
 
+.mindPanel{background:linear-gradient(145deg,#1d2b23,#111b15);border:1px solid rgba(217,185,108,.22);border-radius:14px;padding:13px 14px;margin:0 0 15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);}
+.mindHeader{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:10px;}
+.mindHeader .sectionLabel{margin-bottom:3px;}
+.mindIntro{margin:0;color:var(--muted);font-size:11.5px;line-height:1.45;max-width:560px;}
+.mindStatus{flex-shrink:0;font-size:10.5px;line-height:1.3;color:#d6e7d2;background:rgba(91,133,82,.18);border:1px solid rgba(127,166,109,.25);border-radius:999px;padding:6px 8px;max-width:260px;text-align:center;}
+.mindFeed{display:grid;gap:7px;max-height:245px;overflow-y:auto;}
+.mind-event{background:rgba(10,18,13,.48);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 10px;}
+.mind-event-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:11px;margin-bottom:4px;}
+.mind-event-top strong{color:#f0ddb0;font-size:12px;}
+.mind-event-top span{color:var(--accent2);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;}
+.mind-event-thought{font-family:'Cormorant Garamond',Georgia,serif;color:#e5e9e1;font-size:16px;font-style:italic;line-height:1.35;}
+.mind-empty{color:var(--muted);font-size:11.5px;line-height:1.5;padding:7px 2px;}
+.mind-source{display:inline-flex;align-items:center;width:max-content;max-width:100%;border-radius:999px;padding:5px 8px;margin:0 0 8px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.mind-source-ai{color:#efe1b6;background:rgba(217,185,108,.13);border:1px solid rgba(217,185,108,.27);}
+.mind-source-instinct{color:#b8c7b8;background:rgba(127,166,109,.10);border:1px solid rgba(127,166,109,.18);}
+
 .about{max-width:780px;margin:0 auto;padding:52px 20px 20px;border-top:1px solid var(--line);}
 .about h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:36px;margin:0 0 14px;font-weight:600;}
 .about p{color:#c8d2c8;font-size:14px;line-height:1.7;margin:0 0 16px;}
@@ -85,5 +101,5 @@ footer p{color:var(--muted);font-size:12px;line-height:1.6;}
 .momentCard{background:var(--panel);border-radius:14px;padding:12px;max-width:520px;width:100%;border:1px solid var(--line);}
 .momentCard img{display:block;width:100%;border-radius:9px;image-rendering:auto;}
 .momentActions{display:flex;gap:8px;margin-top:12px;}.momentActions button{flex:1;}
-@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));}.stat:last-child{grid-column:span 2;}.howList{grid-template-columns:1fr;}}
-@media (max-width:480px){.hero{padding:46px 16px 30px;}.hero h1{font-size:48px;}.siteNav{padding:12px 14px;}.siteNav .brand{font-size:17px;}.siteNav nav a{margin-left:11px;font-size:12px;}.gameSection{padding-left:9px;padding-right:9px;}.stageWrap{padding:6px;border-radius:16px;}.stageLabel{left:14px;right:14px;top:14px;padding:7px 9px;}canvas{border-radius:11px;}}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));}.stat:last-child{grid-column:span 2;}.howList{grid-template-columns:1fr;}.mindHeader{display:block;}.mindStatus{display:inline-block;margin-top:8px;max-width:none;text-align:left;}}
+@media (max-width:480px){.hero{padding:46px 16px 30px;}.hero h1{font-size:48px;}.siteNav{padding:12px 14px;}.siteNav .brand{font-size:17px;}.siteNav nav a{margin-left:11px;font-size:12px;}.gameSection{padding-left:9px;padding-right:9px;}.stageWrap{padding:6px;border-radius:16px;}.stageLabel{left:14px;right:14px;top:14px;padding:7px 9px;}canvas{border-radius:11px;}.mind-event-top{display:block;}.mind-event-top span{display:block;margin-top:2px;}}

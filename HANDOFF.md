@@ -17,7 +17,8 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 | Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
-| Still pending | Observe and record at least one heartbeat run whose GitHub event is `schedule` if still unverified; server-side AI minds remain deferred to Civoria 0.3 |
+| Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
+| Still pending | Server-side AI minds remain deferred to Civoria 0.3. No open implementation work. |
 | AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
 
 ## Visible routine follow-up — released 2026-09-09
@@ -130,14 +131,29 @@ Existing services: GitHub, Vercel and Upstash. No new paid service was created f
 
 Upstash server variables remain managed in Vercel. Existing `ANTHROPIC_API_KEY` was not changed and is not used by the current canonical persistent engine. Never paste secret values into chats, commits or logs.
 
+## Production verification — 2026-09-09 (Claude)
+
+Read-only checks against production. No code, configuration, canonical state or deployment was changed by this pass.
+
+- `Civoria heartbeat` workflow: 62 total runs. The six most recent all report event `Scheduled`, branch `main`, completed successfully — 20:16:48, 19:48:36, 19:23:33, 18:55:48, 18:43:54 and 18:30:07 CDT. This closes the previously pending scheduled-event requirement.
+- Observed delivery gaps were 12-28 minutes, not the exact 15 implied by `2,17,32,47 * * * *`. Treat the cron as approximate; the 7-day catch-up fuse absorbs the drift.
+- `activity-clock.js` returns HTTP 200 from `https://www.thecivoria.com` and appears in the served page script tags ahead of `game.js`. This objectively confirms the PR #7 build-output fix reached production.
+- `/api/state`: day 89, revision 3912, 22 agents. `lastHeartbeatAt` was roughly six minutes before the check and matches the most recent scheduled run.
+- Canonical motion sampled twice 12.1 seconds apart: agent `Vesh` moved from (262.15, 210.36) to (262.51, 210.55), about 0.41 units, or roughly 0.034 world units per real second. A second agent changed state from `resting` to `idle` in the same window.
+- That canonical rate against the viewer's approximately 4.2 units per real second is a factor of about 124, which is the measured justification for the two-clock design.
+
+Not verified in this pass: on-screen rendering of villager travel was not observed directly. Delivery and loading of the activity layer were confirmed; visible motion remains attested by the owner's own pre-release review rather than by an independent observation.
+
 ## Next exact action
 
 Review PR #7 preview: https://little-world-mancil1fq-small-villager.vercel.app/index.html#live-world . Owner confirmed preview movement and approved release; PR #7 is now merged and production deployment succeeded. The local routine-fix directory contains the presentation files and focused tests; build/test additions are saved on GitHub. Do not use the older local village checkouts to overwrite current main.
 
-1. Observe the live site and confirm villagers visibly travel and take small local strolls while world-day progression remains unchanged.
-2. Separately, observe and record the first successful `Civoria heartbeat` run whose GitHub event is `schedule` if still pending.
-3. Owner may continue presentation tuning or choose the next milestone.
-4. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
+1. Done 2026-09-09 — the scheduled-event heartbeat requirement is verified. See "Production verification". No further action.
+2. Optional — confirm on-screen villager travel by direct visual observation, which has not been independently checked since PR #7 shipped.
+3. Before any Civoria 0.3 work, produce a cost model for server-side AI decisions. Required input from the owner: the intended decision cadence, whether per internal engine day, per state change, or per heartbeat. With 22 agents these differ by orders of magnitude, so do not assume one.
+4. Open design question: the Chronicle caps at 400 entries and the recent log at 40, so world history is silently discarded over time. Decide whether history is archival or disposable before the project is promoted as a persistent civilization.
+5. Owner may continue presentation tuning or choose the next milestone.
+6. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
 
 ## Coordination rule
 
@@ -154,3 +170,5 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-09 — Codex: PR #7 fixes missing deployment of activity-clock.js and adds repeated presentation work routines. Changed activity-clock.js, game.js, scripts/build.js, test/activity-clock.test.js; added test/build-assets.test.js. Exact candidate 0a1ad232 passed Beta checks run 30 and Vercel; hosted travel observed. No production or canonical data changes. Next: owner preview review, then authorized release.
 
 - 2026-09-09 — Codex: Owner approved PR #7 release after confirming preview movement. Merged exact tested head 1678bec1 as 7291ff47; Vercel production succeeded. Existing saved civilization and real-time progression preserved. Dashboard reads this release checkpoint automatically.
+
+- 2026-09-09 — Claude: read-only production verification. Confirmed recurring `Civoria heartbeat` runs with GitHub event `Scheduled` completing successfully, latest at 20:16:48 CDT, confirmed `activity-clock.js` is served and loaded in production, and sampled `/api/state` at day 89, revision 3912, 22 agents with measurable canonical villager motion of about 0.034 world units per real second. No branch, commit, deployment or canonical data change. Updated this file only.

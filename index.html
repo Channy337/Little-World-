@@ -11,16 +11,42 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%23101813%22/><path d=%22M16 24V12M16 14c-4-1-6-4-6-7 4 0 7 2 8 5M16 17c4-1 7-4 7-8-4 0-7 2-8 5%22 stroke=%22%23d9b96c%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>" />
 <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="globe-mode">
 
 <div class="siteNav">
   <div class="brand"><span class="ico">✦</span>CLIVORIA</div>
   <nav>
-    <a href="#live-world">World</a>
+    <a href="#world-map" id="worldNav">World</a>
     <a href="chronicle.html">Chronicle</a>
     <a href="#about">About</a>
   </nav>
 </div>
+
+<section class="globeSection" id="world-map" aria-labelledby="globeTitle">
+  <div class="globeStage">
+    <canvas id="globeCanvas" aria-label="Interactive globe of Civoria. Drag to rotate, scroll or pinch to zoom, and zoom into the Civoria settlement marker to enter it."></canvas>
+    <div class="globeShade" aria-hidden="true"></div>
+    <div class="globeHud">
+      <div class="globeIntro">
+        <p class="eyebrow">One world · One inhabited region</p>
+        <h1 id="globeTitle">Explore Civoria</h1>
+        <p>Drag the world to look around. Scroll or pinch to zoom. The glowing Civoria marker is the first inhabited settlement.</p>
+      </div>
+      <div class="globeDock">
+        <div class="globeLocation">
+          <span class="inhabitedPulse" aria-hidden="true"></span>
+          <div><strong>Civoria settlement</strong><span id="globeStatus">Inhabited · zoom to enter</span></div>
+        </div>
+        <button id="enterSettlementBtn" class="enterSettlementBtn">Enter settlement</button>
+      </div>
+    </div>
+    <div id="globeFallback" class="globeFallback" hidden>
+      <p>Your browser could not start the 3D globe, but the living settlement is still available.</p>
+      <button type="button" onclick="document.getElementById('enterSettlementBtn').click()">Enter settlement</button>
+    </div>
+  </div>
+  <p class="globeHint"><span>Drag to rotate</span><span>Scroll / pinch to zoom</span><span>Zoom the Civoria marker to enter</span></p>
+</section>
 
 <section class="hero">
   <p class="eyebrow">One world · One history · Always living</p>
@@ -45,6 +71,7 @@
 
   <div class="controls">
     <span id="syncStatus" role="status" aria-live="polite">Connecting to the shared world…</span>
+    <button id="worldViewBtn" type="button">Globe view</button>
   </div>
 
   <div id="agentCard" class="card hidden"></div>
@@ -94,7 +121,6 @@
 
 <div id="toast"></div>
 
-<script src="activity-clock.js"></script>
-<script src="game.js"></script>
+<script src="globe-view.js" type="module"></script>
 </body>
 </html>

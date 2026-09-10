@@ -57,6 +57,17 @@
     <div class="stat"><div class="k">Village mood</div><div class="v" id="moodVal">--</div></div>
   </div>
 
+  <div class="mindPanel" aria-live="polite">
+    <div class="mindHeader">
+      <div>
+        <p class="sectionLabel">Village Mind Feed</p>
+        <p class="mindIntro">Only real AI thoughts appear here. Built-in instincts still handle ordinary moments between AI decisions.</p>
+      </div>
+      <span class="mindStatus" id="mindStatus">AI minds connecting…</span>
+    </div>
+    <div id="mindFeed" class="mindFeed"><div class="mind-empty">Waiting for the shared world…</div></div>
+  </div>
+
   <p class="sectionLabel">What is happening</p>
   <div class="logPanel"><ul id="logList"></ul></div>
   <button id="momentBtn" style="margin-top:10px;width:100%;">Share this moment</button>
@@ -82,7 +93,7 @@
     <li><b>Life continues.</b> Relationships can lead to new villagers. People age, families change, and the settlement carries its history forward.</li>
     <li><b>The world is shared.</b> Upstash stores one canonical world per environment, while the server and heartbeat advance it even when no browser is open.</li>
   </ul>
-  <p>Current Civoria 0.2 villagers use deterministic built-in instincts. Persistent server-side AI minds are a later milestone, so the visual upgrade does not pretend that feature already exists.</p>
+  <p>Civoria 0.3 adds server-side AI cognition for selected villager thoughts and conversations while keeping deterministic instincts as the safe fallback. The Mind Feed above exposes genuine AI thoughts without changing the simulation itself.</p>
 </section>
 
 <footer>
@@ -95,6 +106,7 @@
 <div id="toast"></div>
 
 <script src="activity-clock.js"></script>
+<script src="mind-feed.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

@@ -1,15 +1,15 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
+Updated: 2026-09-10 21:28 UTC. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
 
 ## Current progress
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Visible movement fix released with owner approval via PR #7; activity script now ships and work routines repeat. |
-| Active work | PR #7 merged as 7291ff4778d8115da86a48a85a24270813257039; production deployment 4afhSiLsdPuKj5BfdLywr9Ky4EHH succeeded; no implementation active |
+| Status | Codex rebuilt the agreed one-shot AI intentions design on `beta/ai-intentions-heartbeat`; 58 tests and build passed; owner review required before any further action. |
+| Active work | Branch based on actual main `e03d7652a23b553ec57aa79ed61355fe76115234`. Implementation checkpoint is this branch commit; no PR, merge, production deployment or environment changes authorized in this session. |
 | Live site | https://www.thecivoria.com |
-| Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
+| Production branch | `main`; fetched head `e03d765` already includes the earlier AI cognition release. Live deployment was not checked this session. |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
 | Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged earlier as `1facd30a1176548c6188ce74347af02552f741f2` |
 | World storage | One canonical Upstash-backed world per environment |
@@ -18,8 +18,8 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Server-side AI minds remain deferred to Civoria 0.3. No open implementation work. |
-| AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
+| Still pending | Owner review of the new branch. History retention and market resource hoarding remain separate, untouched issues. |
+| AI status | New branch: Haiku 4.5 priority intentions only; requires `CIVORIA_AI=on`; cooldown unchanged; browser ticks make no API calls; chat remains a stub. This describes unmerged work, not production. |
 
 ## Visible routine follow-up — released 2026-09-09
 
@@ -150,16 +150,18 @@ Review PR #7 preview: https://little-world-mancil1fq-small-villager.vercel.app/i
 
 1. Done 2026-09-09 — the scheduled-event heartbeat requirement is verified. See "Production verification". No further action.
 2. Optional — confirm on-screen villager travel by direct visual observation, which has not been independently checked since PR #7 shipped.
-3. Before any Civoria 0.3 work, produce a cost model for server-side AI decisions. Required input from the owner: the intended decision cadence, whether per internal engine day, per state change, or per heartbeat. With 22 agents these differ by orders of magnitude, so do not assume one.
+3. Cost is answered in "AI decision cost model" below. Haiku 4.5, aiCooldown unchanged; cost is not a blocker. Do not repeat the cost analysis.
 4. Open design question: the Chronicle caps at 400 entries and the recent log at 40, so world history is silently discarded over time. Decide whether history is archival or disposable before the project is promoted as a persistent civilization.
 5. Owner may continue presentation tuning or choose the next milestone.
-6. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
+6. Owner authorized implementation, tests and push of `beta/ai-intentions-heartbeat` only. Next: owner reviews that branch. Stop after push; no PR, merge or production changes without further direction.
 
 ## Coordination rule
 
 Only one assistant should edit/deploy at a time. Before starting, read this file and current GitHub state. Before handing off, record branch/commit/PR, tests, deployment state, blockers and the exact next action.
 
 ## Session history
+
+- 2026-09-10 (Claude): documentation only. No code, branch, deployment or canonical state change.
 
 - 2026-09-09 — ChatGPT traced the Vercel `little-world` deployment to `Channy337/Little-World-`, created `beta/living-world-visuals`, replaced the pixel-art presentation with an illustrated Canvas/UI pass, and opened preview PR #3.
 - 2026-09-09 — At the owner's request, ChatGPT pushed the real renderer substantially further: perspective 2.5D camera, distant landscape layers, stronger buildings/citizen variation, depth sorting and atmospheric animation.
@@ -173,6 +175,10 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 
 - 2026-09-09 — Claude: read-only production verification. Confirmed recurring `Civoria heartbeat` runs with GitHub event `Scheduled` completing successfully, latest at 20:16:48 CDT, confirmed `activity-clock.js` is served and loaded in production, and sampled `/api/state` at day 89, revision 3912, 22 agents with measurable canonical villager motion of about 0.034 world units per real second. No branch, commit, deployment or canonical data change. Updated this file only.
 
+
+- 2026-09-10 21:28 UTC — Codex: read actual HANDOFF.md, lib/engine.js, lib/world.js, lib/store.js and test/world.test.js before implementation. Found main had advanced from the supplied `799e086` to `e03d765`, merging `122ebb7` (existing AI queue/chat wiring). Created `beta/ai-intentions-heartbeat` from actual main and replaced only its AI implementation with the owner's agreed design, preserving the `799e086` base simulation. No main writes. Open PR #9 is a separate globe preview and was left alone.
+- Verification: regenerated all three `799e086` baseline digests directly from its engine; all match the supplied values. New fixed-digest tests run 20,000 steps of 0.1 seconds for seeds 1, 42 and 20260910 with the flag both off and on, without AI answers. Full `node --test test/*.test.js`: 58 passed, 0 failed (20 new AI tests). `node scripts/build.js` and `git diff --check` passed. API tests use stubs; no live Anthropic calls.
+- Implementation: one-shot comfortable intentions after existing soft needs, before night/work; sanitized 90-character thoughts logged once as `thought`; heartbeat-only parallel resolution after snapshot; 4-second whole-response timeout; cap 8 across heartbeat CAS retries; id-based matching and all requester flags cleared. `requestChatLine` stays a stub. No cooldown, storage, history retention or market changes. Delivery: this checkpoint is published with the branch push. Exact next action after push: stop for owner approval. No PR or production changes.
 
 ## AI decision cost model — measured 2026-09-10
 
@@ -191,5 +197,3 @@ At 22 villagers that is 52 priority thoughts a day, 1,549 a month. At an estimat
 Corrections to earlier sessions. First, requestChatLine is NOT the cost risk: priority thoughts outnumber chat lines 9 to 1, because the social meter is a tighter brake than the cooldown. Second, do not feed the engine large dt: lib/world.js caps every step at ENGINE_STEP_SECONDS = 0.1 and the engine assumes it. Third, calling the AI on every decision rather than on the cooldown is 13x more calls, 690 a day at 22 villagers, roughly $8/month on Haiku, $17 on Sonnet 5 and $41 on Opus 5; population caps at 34.
 
 Decision: proceed with AI villagers on Haiku 4.5, aiCooldown unchanged. Cost is not a blocker.
-
-Session note, 2026-09-10 (Claude): documentation only. No code, branch, deployment or canonical state change.

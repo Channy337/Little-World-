@@ -55,8 +55,8 @@ test('non-tick fetches pass through untouched',async()=>{
 });
 
 test('activity clock loads before the renderer and contains no persistence hooks',()=>{
-  const html=fs.readFileSync('index.html','utf8');
-  assert.ok(html.indexOf('activity-clock.js')<html.indexOf('game.js'));
+  const globe=fs.readFileSync('globe-view.js','utf8');
+  assert.match(globe,/loadScript\('activity-clock\.js'\)\.then\(\(\) => loadScript\('game\.js'\)\)/);
   const script=fs.readFileSync('activity-clock.js','utf8');
   assert.doesNotMatch(script,/localStorage|sessionStorage|\/api\/decide/);
 });

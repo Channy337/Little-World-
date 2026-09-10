@@ -19,15 +19,15 @@
 </div>
 <section class="globeSection" id="world-map" aria-labelledby="globeTitle">
   <div class="globeStage">
-    <canvas id="globeCanvas" aria-label="Interactive globe of Civoria. Drag to rotate, scroll or pinch to zoom, and zoom into the Civoria settlement marker to enter it."></canvas>
+    <canvas id="globeCanvas" aria-label="Interactive tiny planet of Civoria. Drag to rotate, scroll or pinch to zoom, and zoom into the Civoria settlement to enter it."></canvas>
     <div class="globeShade" aria-hidden="true"></div>
     <div class="globeHud">
-      <div class="globeIntro"><p class="eyebrow">One world · One inhabited region</p><h1 id="globeTitle">Explore Civoria</h1><p>Drag the world to look around. Scroll or pinch to zoom. The glowing Civoria marker is the first inhabited settlement.</p></div>
-      <div class="globeDock"><div class="globeLocation"><span class="inhabitedPulse" aria-hidden="true"></span><div><strong>Civoria settlement</strong><span id="globeStatus">Inhabited · zoom to enter</span></div></div><button id="enterSettlementBtn" class="enterSettlementBtn">Enter settlement</button></div>
+      <div class="globeIntro"><p class="eyebrow">One tiny world · One living settlement</p><h1 id="globeTitle">The world of Civoria</h1><p>Turn the planet in your hands. Forests, mountains, farms and ruins cover its surface. Civoria is the first place where life has taken root.</p></div>
+      <div class="globeDock"><div class="globeLocation"><span class="inhabitedPulse" aria-hidden="true"></span><div><strong>Civoria settlement</strong><span id="globeStatus">Inhabited · drag the tiny planet to explore</span></div></div><button id="enterSettlementBtn" class="enterSettlementBtn">Descend to Civoria</button></div>
     </div>
-    <div id="globeFallback" class="globeFallback" hidden><p>The globe could not start, but the living settlement is still available.</p><button type="button" onclick="document.getElementById('enterSettlementBtn').click()">Enter settlement</button></div>
+    <div id="globeFallback" class="globeFallback" hidden><p>The world viewer could not start, but the living settlement is still available.</p><button type="button" onclick="document.getElementById('enterSettlementBtn').click()">Enter settlement</button></div>
   </div>
-  <p class="globeHint"><span>Drag to rotate</span><span>Scroll / pinch to zoom</span><span>Zoom the Civoria marker to enter</span></p>
+  <p class="globeHint"><span>Drag to turn the planet</span><span>Scroll / pinch to approach</span><span>Zoom into Civoria to descend</span></p>
 </section>
 <section class="hero"><p class="eyebrow">One world · One history · Always living</p><h1>Clivoria<span>A small civilization with a future.</span></h1><p class="tagline">One shared world where autonomous villagers gather, work, build homes, trade, form families, grow old, and keep living whether you are watching or not.</p><p class="subnote">Shared world is running now</p></section>
 <section class="gameSection" id="live-world">

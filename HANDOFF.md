@@ -1,13 +1,13 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-10 21:28 UTC. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
+Updated: 2026-09-10 21:32 UTC. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
 
 ## Current progress
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Codex rebuilt the agreed one-shot AI intentions design on `beta/ai-intentions-heartbeat`; 58 tests and build passed; owner review required before any further action. |
-| Active work | Branch based on actual main `e03d7652a23b553ec57aa79ed61355fe76115234`. Implementation checkpoint is this branch commit; no PR, merge, production deployment or environment changes authorized in this session. |
+| Status | Codex rebuilt the agreed one-shot AI intentions design on `beta/ai-intentions-heartbeat`; review complete; 60 tests and build passed; no blocking code findings. Review follow-up adds tests and documentation only. |
+| Active work | Branch based on actual main `e03d7652a23b553ec57aa79ed61355fe76115234`. Implementation checkpoint `6312743`; review follow-up is this branch commit; no PR, merge, production deployment or environment changes authorized in this session. |
 | Live site | https://www.thecivoria.com |
 | Production branch | `main`; fetched head `e03d765` already includes the earlier AI cognition release. Live deployment was not checked this session. |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
@@ -153,7 +153,7 @@ Review PR #7 preview: https://little-world-mancil1fq-small-villager.vercel.app/i
 3. Cost is answered in "AI decision cost model" below. Haiku 4.5, aiCooldown unchanged; cost is not a blocker. Do not repeat the cost analysis.
 4. Open design question: the Chronicle caps at 400 entries and the recent log at 40, so world history is silently discarded over time. Decide whether history is archival or disposable before the project is promoted as a persistent civilization.
 5. Owner may continue presentation tuning or choose the next milestone.
-6. Owner authorized implementation, tests and push of `beta/ai-intentions-heartbeat` only. Next: owner reviews that branch. Stop after push; no PR, merge or production changes without further direction.
+6. Owner authorized the follow-up code review. Review is complete on `beta/ai-intentions-heartbeat`, with 60 tests passing. Recommended next step: an isolated preview with AI enabled to verify real Anthropic responses. No PR, merge, production release or environment changes were authorized or performed.
 
 ## Coordination rule
 
@@ -179,6 +179,8 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-10 21:28 UTC — Codex: read actual HANDOFF.md, lib/engine.js, lib/world.js, lib/store.js and test/world.test.js before implementation. Found main had advanced from the supplied `799e086` to `e03d765`, merging `122ebb7` (existing AI queue/chat wiring). Created `beta/ai-intentions-heartbeat` from actual main and replaced only its AI implementation with the owner's agreed design, preserving the `799e086` base simulation. No main writes. Open PR #9 is a separate globe preview and was left alone.
 - Verification: regenerated all three `799e086` baseline digests directly from its engine; all match the supplied values. New fixed-digest tests run 20,000 steps of 0.1 seconds for seeds 1, 42 and 20260910 with the flag both off and on, without AI answers. Full `node --test test/*.test.js`: 58 passed, 0 failed (20 new AI tests). `node scripts/build.js` and `git diff --check` passed. API tests use stubs; no live Anthropic calls.
 - Implementation: one-shot comfortable intentions after existing soft needs, before night/work; sanitized 90-character thoughts logged once as `thought`; heartbeat-only parallel resolution after snapshot; 4-second whole-response timeout; cap 8 across heartbeat CAS retries; id-based matching and all requester flags cleared. `requestChatLine` stays a stub. No cooldown, storage, history retention or market changes. Delivery: this checkpoint is published with the branch push. Exact next action after push: stop for owner approval. No PR or production changes.
+
+- 2026-09-10 21:32 UTC — Codex follow-up review authorized by owner. Re-read the required repository files and traced intentions through the engine, world persistence, HTTP handlers and escaped UI log output. No blocking code issue found. Closed two test gaps: a real HTTP heartbeat/browser-tick sequence consumes an intention after ordinary movement/work with no forced idle reset; malformed Anthropic response bodies traverse the actual client parser and still allow one valid heartbeat write. Runtime code unchanged from `6312743`. Full suite: 60 passed, 0 failed. Build and diff whitespace checks passed. All provider responses were mocked; real API/hosted behavior remains unverified. This commit publishes the review checkpoint. Stop here; recommend isolated preview verification next, without production changes.
 
 ## AI decision cost model — measured 2026-09-10
 

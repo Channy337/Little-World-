@@ -213,3 +213,45 @@ test('Anthropic client sends Haiku with signal and parses the same response for 
   }});
   assert.equal(calls,1);assert.deepEqual(answer,{focus:'wander',thought:'A stroll.'});
 });
+
+test('HTTP heartbeat requests once; later browser ticks consume the intention through normal simulation',async()=>{
+  const {makeHandler}=require('../lib/http');
+  const s=fresh();s.agents=s.agents.slice(0,1);
+  Object.assign(s.agents[0],{aiCooldown:0,inv:{food:4,wood:0,stone:0}});
+  const store=memoryStore();store.corrupt(JSON.stringify(record(s)));
+  let now=1600000,calls=0;
+  const service=createWorldService({store,now:()=>now,logger:()=>{},env,
+    aiRequest:async()=>{calls++;return {focus:'visit:well',thought:'I want to see the well.'};}});
+  async function invoke(kind,req) {
+    const res={setHeader(){},status(code){this.code=code;return this;},json(body){this.body=body;return this;}};
+    await makeHandler(kind,{service,env:{CRON_SECRET:'test-only'},logger:()=>{}})(req,res);
+    assert.equal(res.code,200);return res.body;
+  }
+  await invoke('heartbeat',{method:'POST',headers:{authorization:'Bearer test-only'}});
+  let saved=decode(await store.read());
+  assert.equal(calls,1);assert.equal(saved.state.agents[0].aiFocus,'visit:well');
+  assert.equal(saved.state.chronicle.filter(e=>e.type==='thought').length,0);
+  const browser={method:'POST',headers:{origin:'https://civoria.test',host:'civoria.test'}};
+  for(let i=0;i<12;i++){now+=1800000;await invoke('tick',browser);}
+  saved=decode(await store.read());
+  assert.equal(calls,1);assert.equal(saved.state.agents[0].aiFocus,null);
+  assert.equal(saved.state.chronicle.filter(e=>e.type==='thought').length,1);
+  assert.equal(saved.state.chronicle.find(e=>e.type==='thought').msg,'I want to see the well.');
+});
+
+test('malformed Anthropic responses still persist the heartbeat through the real client parser',async()=>{
+  for(const response of [
+    {ok:false},
+    {ok:true,json:async()=>{throw new Error('invalid upstream JSON');}},
+    {ok:true,json:async()=>({content:[{type:'text',text:'not JSON'}]})},
+    {ok:true,json:async()=>({content:{bad:'shape'}})}
+  ]) {
+    const s=fresh();s.agents[0].aiPending=true;
+    const f=serviceFixture(s,(a,state,opts)=>requestThought(a,state,{...opts,
+      env:{...env,ANTHROPIC_API_KEY:'test-only'},fetchImpl:async()=>response}));
+    await f.service.heartbeat();
+    const saved=decode(await f.store.read());
+    assert.equal(saved.revision,1);assert.equal(f.writes(),1);
+    assert.equal(saved.state.agents[0].aiPending,false);assert.equal(saved.state.agents[0].aiFocus,null);
+  }
+});

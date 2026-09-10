@@ -172,3 +172,24 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-09 — Codex: Owner approved PR #7 release after confirming preview movement. Merged exact tested head 1678bec1 as 7291ff47; Vercel production succeeded. Existing saved civilization and real-time progression preserved. Dashboard reads this release checkpoint automatically.
 
 - 2026-09-09 — Claude: read-only production verification. Confirmed recurring `Civoria heartbeat` runs with GitHub event `Scheduled` completing successfully, latest at 20:16:48 CDT, confirmed `activity-clock.js` is served and loaded in production, and sampled `/api/state` at day 89, revision 3912, 22 agents with measurable canonical villager motion of about 0.034 world units per real second. No branch, commit, deployment or canonical data change. Updated this file only.
+
+
+## AI decision cost model — measured 2026-09-10
+
+Answered. Do not re-run this. lib/engine.js was extracted from main and run directly in a sandbox: 5 villages, 90 simulated days each, 8,027 villager-days total.
+
+Measured firing rates, per villager per day:
+
+| Stub | Rate |
+|---|---|
+| requestPriorityThought | 2.35 |
+| requestChatLine | 0.26 |
+| requestRoleThought | 0.007 |
+
+At 22 villagers that is 52 priority thoughts a day, 1,549 a month. At an estimated 200 input and 40 output tokens per call: about $0.60/month on Haiku 4.5, $1.25 on Sonnet 5, $3.10 on Opus 5. The token count is an estimate, not a measurement; the villager state JSON is 275 characters. Everything else is measured. Treat these figures as a ceiling.
+
+Corrections to earlier sessions. First, requestChatLine is NOT the cost risk: priority thoughts outnumber chat lines 9 to 1, because the social meter is a tighter brake than the cooldown. Second, do not feed the engine large dt: lib/world.js caps every step at ENGINE_STEP_SECONDS = 0.1 and the engine assumes it. Third, calling the AI on every decision rather than on the cooldown is 13x more calls, 690 a day at 22 villagers, roughly $8/month on Haiku, $17 on Sonnet 5 and $41 on Opus 5; population caps at 34.
+
+Decision: proceed with AI villagers on Haiku 4.5, aiCooldown unchanged. Cost is not a blocker.
+
+Session note, 2026-09-10 (Claude): documentation only. No code, branch, deployment or canonical state change.

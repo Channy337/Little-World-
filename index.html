@@ -12,100 +12,23 @@
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-<div class="siteNav">
-  <div class="brand"><span class="ico">✦</span>CLIVORIA</div>
-  <nav>
-    <a href="#live-world">World</a>
-    <a href="chronicle.html">Chronicle</a>
-    <a href="#about">About</a>
-  </nav>
-</div>
-
-<section class="hero">
-  <p class="eyebrow">One world · One history · Always living</p>
-  <h1>Clivoria<span>A small civilization with a future.</span></h1>
-  <p class="tagline">One shared world where autonomous villagers gather, work, build homes, trade, form families, grow old, and keep living whether you are watching or not.</p>
-  <p class="subnote">Shared world is running now</p>
-</section>
-
+<div class="siteNav"><div class="brand"><span class="ico">✦</span>CLIVORIA</div><nav><a href="#live-world">World</a><a href="chronicle.html">Chronicle</a><a href="#about">About</a></nav></div>
+<section class="hero"><p class="eyebrow">One world · One history · Always living</p><h1>Clivoria<span>A small civilization with a future.</span></h1><p class="tagline">One shared world where autonomous villagers gather, work, build homes, trade, form families, grow old, experiment, and keep living whether you are watching or not.</p><p class="subnote">Shared world is running now</p></section>
 <section class="gameSection" id="live-world">
-  <div class="stageWrap">
-    <div class="stageLabel"><span class="rec"><i></i><span id="liveLabel">connecting</span></span><span id="clockLabel">Shared village</span></div>
-    <canvas id="world" aria-label="Live illustrated view of the shared Clivoria settlement"></canvas>
-  </div>
-
-  <div class="legend" aria-label="Villager professions">
-    <span><i class="dot" style="background:#8aa58b"></i>newcomer</span>
-    <span><i class="dot" style="background:#6f9d60"></i>farmer</span>
-    <span><i class="dot" style="background:#c78650"></i>woodcutter</span>
-    <span><i class="dot" style="background:#7f8992"></i>miner</span>
-    <span><i class="dot" style="background:#c39b48"></i>trader</span>
-  </div>
-
-  <div class="controls">
-    <span id="syncStatus" role="status" aria-live="polite">Connecting to the shared world…</span>
-  </div>
-
+  <div class="stageWrap"><div class="stageLabel"><span class="rec"><i></i><span id="liveLabel">connecting</span></span><span id="clockLabel">Shared village</span></div><canvas id="world" aria-label="Live illustrated view of the shared Clivoria settlement"></canvas></div>
+  <div class="legend" aria-label="Villager professions"><span><i class="dot" style="background:#8aa58b"></i>newcomer</span><span><i class="dot" style="background:#6f9d60"></i>farmer</span><span><i class="dot" style="background:#c78650"></i>woodcutter</span><span><i class="dot" style="background:#7f8992"></i>miner</span><span><i class="dot" style="background:#c39b48"></i>trader</span></div>
+  <div class="controls"><span id="syncStatus" role="status" aria-live="polite">Connecting to the shared world…</span></div>
   <div id="agentCard" class="card hidden"></div>
-
-  <div class="stats">
-    <div class="stat"><div class="k">World day</div><div class="v" id="dayVal">1</div></div>
-    <div class="stat"><div class="k">Population</div><div class="v" id="popVal">0</div></div>
-    <div class="stat"><div class="k">Homes</div><div class="v" id="houseVal">0</div></div>
-    <div class="stat"><div class="k">Market</div><div class="v" id="marketVal">Not yet</div></div>
-    <div class="stat"><div class="k">Village mood</div><div class="v" id="moodVal">--</div></div>
-  </div>
-
-  <div class="mindPanel" aria-live="polite">
-    <div class="mindHeader">
-      <div>
-        <p class="sectionLabel">Village Mind Feed</p>
-        <p class="mindIntro">Only real AI thoughts appear here. Built-in instincts still handle ordinary moments between AI decisions.</p>
-      </div>
-      <span class="mindStatus" id="mindStatus">AI minds connecting…</span>
-    </div>
-    <div id="mindFeed" class="mindFeed"><div class="mind-empty">Waiting for the shared world…</div></div>
-  </div>
-
-  <p class="sectionLabel">What is happening</p>
-  <div class="logPanel"><ul id="logList"></ul></div>
-  <button id="momentBtn" style="margin-top:10px;width:100%;">Share this moment</button>
+  <div class="stats"><div class="stat"><div class="k">World day</div><div class="v" id="dayVal">1</div></div><div class="stat"><div class="k">Population</div><div class="v" id="popVal">0</div></div><div class="stat"><div class="k">Homes</div><div class="v" id="houseVal">0</div></div><div class="stat"><div class="k">Market</div><div class="v" id="marketVal">Not yet</div></div><div class="stat"><div class="k">Village mood</div><div class="v" id="moodVal">--</div></div></div>
+  <div class="mindPanel" aria-live="polite"><div class="mindHeader"><div><p class="sectionLabel">Village Mind Feed</p><p class="mindIntro">AI thoughts, personal learning, and experiments appear here as Civorians grow from experience.</p></div><span class="mindStatus" id="mindStatus">AI minds connecting…</span></div><div id="mindFeed" class="mindFeed"><div class="mind-empty">Waiting for the shared world…</div></div></div>
+  <p class="sectionLabel">What is happening</p><div class="logPanel"><ul id="logList"></ul></div><button id="momentBtn" style="margin-top:10px;width:100%;">Share this moment</button>
 </section>
-
-<div id="momentOverlay" class="momentOverlay">
-  <div class="momentCard">
-    <img id="momentImg" alt="Clivoria world moment" />
-    <div class="momentActions">
-      <button id="momentDownload">Download</button>
-      <button id="momentShareNow">Share</button>
-      <button id="momentClose">Close</button>
-    </div>
-  </div>
-</div>
-
-<section class="about" id="about">
-  <h2>About Clivoria</h2>
-  <p>Clivoria is one persistent shared civilization. The browser is only a window into it. The canonical world lives on the server, advances over real time, and every visitor sees the same villagers, buildings, resources, and history.</p>
-  <ul class="howList">
-    <li><b>Needs shape behavior.</b> Hunger, energy, and loneliness rise over time. Villagers react to what is most urgent instead of following a fixed story.</li>
-    <li><b>Work changes the settlement.</b> Villagers gather resources, farm, mine, trade, build homes, and eventually support a market.</li>
-    <li><b>Life continues.</b> Relationships can lead to new villagers. People age, families change, and the settlement carries its history forward.</li>
-    <li><b>The world is shared.</b> Upstash stores one canonical world per environment, while the server and heartbeat advance it even when no browser is open.</li>
-  </ul>
-  <p>Civoria 0.3 adds server-side AI cognition for selected villager thoughts and conversations while keeping deterministic instincts as the safe fallback. The Mind Feed above exposes genuine AI thoughts without changing the simulation itself.</p>
-</section>
-
-<footer>
-  <div class="shareRow">
-    <button id="shareBtn">Share Clivoria</button>
-  </div>
-  <p>A persistent civilization experiment. One shared world, watched through your browser.</p>
-</footer>
-
+<div id="momentOverlay" class="momentOverlay"><div class="momentCard"><img id="momentImg" alt="Clivoria world moment" /><div class="momentActions"><button id="momentDownload">Download</button><button id="momentShareNow">Share</button><button id="momentClose">Close</button></div></div></div>
+<section class="about" id="about"><h2>About Clivoria</h2><p>Clivoria is one persistent shared civilization. The browser is only a window into it. The canonical world lives on the server, advances over real time, and every visitor sees the same villagers, buildings, resources, and history.</p><ul class="howList"><li><b>Needs shape behavior.</b> Hunger, energy, and loneliness rise over time. Villagers react to what is most urgent instead of following a fixed story.</li><li><b>Work changes the settlement.</b> Villagers gather resources, farm, mine, trade, build homes, and support a market.</li><li><b>Ideas can grow.</b> Civorians can form hypotheses, try grounded experiments, remember failure, and keep investigating promising ideas.</li><li><b>The settlement visibly grows.</b> Construction sites, work activity, completed structures, and expanding settlement edges now track the shared world.</li><li><b>Life continues.</b> Relationships can lead to new villagers. People age, families change, and the settlement carries its history forward.</li></ul><p>Civoria 0.3 adds server-side AI cognition while deterministic simulation remains authoritative over physical outcomes.</p></section>
+<footer><div class="shareRow"><button id="shareBtn">Share Clivoria</button></div><p>A persistent civilization experiment. One shared world, watched through your browser.</p></footer>
 <div id="toast"></div>
-
 <script src="activity-clock.js"></script>
+<script src="growth-visuals.js"></script>
 <script src="mind-feed.js"></script>
 <script src="game.js"></script>
 </body>

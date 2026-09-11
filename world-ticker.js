@@ -30,32 +30,27 @@
     return out;
   }
 
-  function selectHeadlines(state){
+  function selectLatestHeadline(state){
     var items=[];
     (state.chronicle||[]).forEach(function(evt){
       var h=headlineFromChronicle(evt); if(h) items.push(h);
     });
     items=items.concat(experimentHeadlines(state));
     items.sort(function(a,b){ return b.day-a.day; });
-    var used=new Set();
-    return items.filter(function(item){
-      var key=item.day+'|'+item.text;
-      if(used.has(key)) return false;
-      used.add(key); return true;
-    }).slice(0,6);
+    return items.length?items[0]:null;
   }
 
   function render(state){
     var track=document.getElementById('worldTickerTrack');
     if(!track||!state) return;
-    var headlines=selectHeadlines(state);
-    if(!headlines.length){
-      headlines=[{day:Number(state.day)||0,text:'Civilization watch: no major new milestone recorded yet.'}];
+    var headline=selectLatestHeadline(state);
+    if(!headline){
+      headline={day:Number(state.day)||0,text:'Civilization watch: no major new milestone recorded yet.'};
     }
-    var key=headlines.map(function(h){return h.day+'|'+h.text;}).join('||');
+    var key=headline.day+'|'+headline.text;
     if(key===seenKey) return;
     seenKey=key;
-    var text=headlines.map(function(h){ return 'DAY '+h.day+'  •  '+h.text; }).join('     ◆     ');
+    var text='DAY '+headline.day+'  •  '+headline.text;
     track.textContent=text+'     ◆     '+text;
   }
 

@@ -1,0 +1,9 @@
+.siteNav{gap:14px;}
+.worldTicker{flex:1;min-width:0;overflow:hidden;border:1px solid rgba(215,70,70,.28);background:rgba(90,18,18,.42);border-radius:999px;height:30px;display:flex;align-items:center;}
+.worldTickerLabel{flex:0 0 auto;height:100%;display:flex;align-items:center;padding:0 10px;background:rgba(185,43,43,.32);color:#ffb2b2;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.09);}
+.worldTickerViewport{min-width:0;overflow:hidden;flex:1;white-space:nowrap;}
+.worldTickerTrack{display:inline-block;padding-left:100%;color:#ffb0b0;font-size:10.5px;font-weight:700;letter-spacing:.02em;animation:civoriaTicker 34s linear infinite;will-change:transform;}
+@keyframes civoriaTicker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.versionBadge{position:fixed;right:10px;bottom:10px;z-index:44;padding:6px 9px;border:1px solid rgba(217,185,108,.35);border-radius:999px;color:#f0ddb0;background:rgba(11,18,14,.88);font-size:9px;font-weight:800;letter-spacing:.06em;backdrop-filter:blur(10px);box-shadow:0 6px 20px rgba(0,0,0,.28);pointer-events:none;}
+@media (max-width:760px){.siteNav nav{display:none;}.worldTicker{height:28px;}.worldTickerLabel{padding:0 8px;font-size:8px;}.worldTickerTrack{font-size:9.5px;animation-duration:30s;}.versionBadge{right:8px;bottom:8px;}}
+@media (prefers-reduced-motion:reduce){.worldTickerTrack{animation:none;padding-left:12px;}}

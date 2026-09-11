@@ -4,6 +4,8 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 
 ## Current progress
 
+> 2026-09-11: Owner selected the V0.6 preview as the base for real shelter construction. Codex is working in `beta/v06-shelter`, based on `beta/primitive-invention-runtime` (PR #22). Scope: persistent material delivery, coordinated workers, visible construction and move-in. Production unchanged. Main's older release notes below are historical; see PR #22 for current V0.6 architecture.
+
 | Field | Latest checkpoint |
 |---|---|
 | Status | Visible movement fix released with owner approval via PR #7; activity script now ships and work routines repeat. |

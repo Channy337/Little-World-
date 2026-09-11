@@ -4,6 +4,8 @@ Updated: 2026-09-11. This is the shared project checkpoint for the owner, ChatGP
 
 ## Current progress
 
+> 2026-09-11 22:18 UTC — Codex shelter milestone implemented on `beta/v06-shelter`, stacked on V0.6 PR #22. Draft PR: https://github.com/Channy337/Little-World-/pull/23. Last implementation: `df244c9711bf1273aea402d68ee924fc27a63537`. Preview: https://little-world-git-beta-v06-shelter-small-villager.vercel.app/index.html#live-world. Vercel reports success; hosted browser connected and showed the missing-shaping prerequisite. 102 local tests and build pass. Browser checked scaffold/progress and completion/move-in using local engine-generated fixtures; this does not prove an online village has completed construction. GitHub Actions returned no PR run for this stacked branch, so do not claim CI passed. No new services/accounts/environment variables; production code and world data unchanged. Next: owner preview review, then broader V0.6 integration/release review. Other activity loops remain cosmetic; shelter uses canonical motion. Local checkout `Little-World-shelter` contains the published implementation; root `shelter-visual-check.cjs` is a local-only, memory-only artwork fixture, not deployed.
+
 > 2026-09-11 checkpoint: Codex expanded draft PR #22 on `beta/primitive-invention-runtime` into the owner-approved Civoria 0.6 weather and human-biology foundation. Production remains untouched and this branch must stay preview-only until owner review. The earlier primitive-origin, hidden-matter, physical experimentation, personal knowledge, 1-real-day/1-Civoria-month, visible fire and Discovery Map work remains. Added deterministic seasonal weather with temperature, humidity, wind, rain, storms, extremes, pond/soil moisture, fire suppression and resource-growth effects; body water, glycogen, fat, muscle, core temperature and organ condition; physiology-based dehydration/starvation instead of fixed death timers; symptom-only AI access; non-invasive physical discovery of pulse and breathing; visitor weather and body-condition rendering; and removal of real-world holiday/weekday knowledge from primitive AI prompts. Direct physiology tests place ordinary no-water survival in a several-day range and no-food survival across weeks with individual fat reserves. Whole-world runs show the primitive population can persist for months but can lose people to starvation if it never develops a better food system. The existing v1 world remains recoverable and v2 is not live. Draft PR: https://github.com/Channy337/Little-World-/pull/22. Do not merge before owner preview review.
 
 | Field | Latest checkpoint |
@@ -197,3 +199,7 @@ Corrections to earlier sessions. First, requestChatLine is NOT the cost risk: pr
 Decision: proceed with AI villagers on Haiku 4.5, aiCooldown unchanged. Cost is not a blocker.
 
 Session note, 2026-09-10 (Claude): documentation only. No code, branch, deployment or canonical state change.
+
+## Session history — 2026-09-11 shelter
+
+Codex implemented the owner-selected V0.6 shelter milestone. See Current progress for PR #23, exact implementation commit, checks and next action. No production release or persistent-world reset performed.

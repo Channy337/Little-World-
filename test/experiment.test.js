@@ -58,9 +58,9 @@ test('a learned recipe is executable and shaped timber is recorded in visible co
   const id=s.agents[0].id,a=s.agents[0];
   a.mind.capabilities.push({id:'shape:wood',kind:'recipe',evidence:2,discoveredDay:s.day});
   a.inv.wood=1;a.inv.timber=0;a.hunger=0;a.energy=100;a.social=100;
-  let e=engine(s);for(let i=0;i<40;i++)e.step(.1);s=e.snapshot();
+  let e=engine(s);for(let i=0;i<100;i++)e.step(.1);s=e.snapshot();
   let person=s.agents.find(x=>x.id===id);
-  assert.equal(person.inv.wood,0);assert.equal(person.inv.timber,1);
+  assert.equal(person.inv.wood,0);assert.ok(s.constructionSites[0].timber>=1);
   person.inv.timber=6;person.state='idle';person.action=null;person.hunger=0;person.energy=100;
   e=engine(s);for(let i=0;i<120;i++)e.step(.1);s=e.snapshot();person=s.agents.find(x=>x.id===id);
   const shelter=s.buildings.find(x=>x.ownerId===id);

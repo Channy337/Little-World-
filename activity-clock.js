@@ -28,6 +28,12 @@
     if(!data||!data.state||!Array.isArray(data.state.agents)) return data;
     var now=nowMs(),dt=clamp((now-lastUpdate)/1000,0,MAX_FRAME_SECONDS);lastUpdate=now;var t=now/1000,alive=new Set(),world=boundsFor(data.state);
     data.state.agents.forEach(function(a){
+      // Physical shelter jobs must be drawn at their server positions, never as decorative loops.
+      if(a.shelterJob){
+        alive.add(a.id);visualAgents.delete(a.id);
+        a.visualCarry=a.shelterJob.phase==='deliver'&&((a.inv.wood||0)+(a.inv.timber||0)>0)?'tree':null;
+        return;
+      }
       alive.add(a.id);var p=visualAgents.get(a.id);if(!p)p={x:a.x,y:a.y};
       if(p.canonicalX!==undefined&&distance(p.canonicalX,p.canonicalY,a.x,a.y)>Math.max(120,world.w*.3))p={x:a.x,y:a.y};p.canonicalX=a.x;p.canonicalY=a.y;
       var target=workTarget(a,data.state),displayState=a.state;

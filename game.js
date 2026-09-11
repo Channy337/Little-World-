@@ -343,6 +343,19 @@
     return {wall1:'#d3a982',wall2:'#aa7059',roof1:'#6d3f3f',roof2:'#493039',trim:'#f0dbb6'};
   }
 
+  function drawConstruction(site){
+    withWorldTransform(site.x,site.y,function(){
+      ctx.fillStyle='#796343';ctx.fillRect(-21,-8,42,21);
+      ctx.strokeStyle='#dab77c';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.strokeRect(-21,-8,42,21);ctx.setLineDash([]);
+      for(var i=0;i<site.timber;i++){ctx.fillStyle='#b18650';ctx.fillRect(-20+i*3,13,2,5);}
+      if(site.work>0){ctx.strokeStyle='#b5a58b';ctx.lineWidth=3;ctx.strokeRect(-16,-5,32,15);}
+      if(site.work>=1){ctx.strokeStyle='#c09763';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-15,8);ctx.lineTo(-15,-16);ctx.moveTo(15,8);ctx.lineTo(15,-16);ctx.moveTo(-15,-15);ctx.lineTo(15,-15);ctx.stroke();}
+      if(site.work>=2){ctx.fillStyle='#8b6047';ctx.beginPath();ctx.moveTo(-20,-15);ctx.lineTo(0,-31);ctx.lineTo(20,-15);ctx.closePath();ctx.fill();}
+      ctx.fillStyle='#15251c';ctx.fillRect(-23,23,46,5);ctx.fillStyle='#d8b965';ctx.fillRect(-22,24,44*(site.work/3),3);
+      ctx.fillStyle='#fff4d2';ctx.font='6px sans-serif';ctx.textAlign='center';ctx.fillText(site.work>0?Math.floor(site.work/3*100)+'% built':site.timber+'/6 timber',0,36);
+    });
+  }
+
   function drawHouse(b,tNow){
     withWorldTransform(b.x,b.y,function(){
       var pal=housePalette(b),night=Math.max(0,.64-Math.max(0,Math.sin(S.time*Math.PI))*.72);
@@ -599,6 +612,7 @@
     for(i=0;i<S.trees.length;i++) queue.push({y:S.trees[i].y,kind:'tree',v:S.trees[i]});
     for(i=0;i<(S.fires||[]).length;i++) queue.push({y:S.fires[i].y,kind:'fire',v:S.fires[i]});
     for(i=0;i<S.buildings.length;i++) queue.push({y:S.buildings[i].y,kind:S.buildings[i].type,v:S.buildings[i]});
+    for(i=0;i<(S.constructionSites||[]).length;i++) queue.push({y:S.constructionSites[i].y,kind:'construction',v:S.constructionSites[i]});
     for(i=0;i<S.agents.length;i++) queue.push({y:S.agents[i].y,kind:'agent',v:S.agents[i]});
     queue.sort(function(a,b){ return a.y-b.y; });
     for(i=0;i<queue.length;i++){
@@ -609,6 +623,7 @@
       else if(q.kind==='tree') drawTree(q.v,tNow);
       else if(q.kind==='fire') drawFire(q.v,tNow);
       else if(q.kind==='house') drawHouse(q.v,tNow);
+      else if(q.kind==='construction') drawConstruction(q.v);
       else if(q.kind==='market') drawMarket(q.v,tNow);
       else drawAgent(q.v,tNow);
     }
@@ -633,6 +648,17 @@
     return 'Year '+(Math.floor(d/360)+1)+' · Month '+(Math.floor((d%360)/30)+1)+' · Day '+(d%30+1);
   }
   function updateHUD(){
+    var panel=document.getElementById('shelterProgress');
+    if(panel){
+      var site=(S.constructionSites||[])[0],resident=site?findById(S.agents,site.ownerId):null;
+      if(site){
+        var crew=site.workerIds.map(function(id){var worker=findById(S.agents,id);return worker?worker.name:'';}).filter(Boolean).join(', ');
+        panel.textContent='Shelter for '+(resident?resident.name:'a future resident')+' · '+site.wood+' wood at site · '+site.timber+'/6 shaped timbers · '+Math.floor(site.work/3*100)+'% built · '+(site.blocked||('Crew: '+(crew||'waiting for rested workers')));
+      }else{
+        var pending=S.agents.find(function(a){return a.pendingHome;});
+        panel.textContent=pending?pending.name+' is ready to move into the completed shelter.':S.agents.every(function(a){return a.home;})?'Everyone has shelter.':S.agents.some(function(a){return a.mind&&a.mind.capabilities&&a.mind.capabilities.some(function(c){return c.id==='shape:wood';});})?'Shelter planning is waiting for a rested worker and a clear site.':'Shelter needs a discovered timber-shaping method. Villagers must learn it through experiments or teaching.';
+      }
+    }
     clockLabel.textContent=calendarLabel(S.day)+' · '+timeOfDayLabel(S.time);
     dayVal.textContent=S.day; popVal.textContent=S.agents.length;
     var houses=0,i; for(i=0;i<S.buildings.length;i++) if(S.buildings[i].type==='house') houses++;
@@ -652,7 +678,8 @@
           '<div class="ac-bars">'+bar('Health',a.health==null?100:a.health)+bar('Thirst',100-(a.thirst||0))+bar('Hunger',100-a.hunger)+bar('Energy',a.energy)+bar('Social',a.social)+'</div>'+
           (a.body&&a.body.lastSymptoms&&a.body.lastSymptoms.length?'<div class="ac-thought">“'+escapeHtml(a.body.lastSymptoms[a.body.lastSymptoms.length-1])+'”</div>':'')+
           '<div class="ac-inv">Wood '+a.inv.wood+' · Timber '+(a.inv.timber||0)+' · Stone '+a.inv.stone+' · Food '+a.inv.food+' · Coins '+a.coins+'</div>'+
-          '<div class="ac-home">'+(a.home?'Has a home':'No home yet')+'</div>';
+          '<div class="ac-home">'+(a.home?'Has a home':'No home yet')+'</div>'+
+          (a.workReason?'<div class="ac-thought">'+escapeHtml(a.workReason)+'</div>':'');
       } else { S.selectedId=null; agentCard.classList.add('hidden'); }
     } else agentCard.classList.add('hidden');
   }

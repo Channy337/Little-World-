@@ -23,7 +23,7 @@
     var bounds=boundsFor(state),sx=WORLD_W/bounds.w,sy=WORLD_H/bounds.h;
     state.renderTerritory={w:bounds.w,h:bounds.h,level:bounds.level||0};
     if(Math.abs(sx-1)<1e-9&&Math.abs(sy-1)<1e-9) return state;
-    ['trees','rocks','bushes','farms','buildings','agents'].forEach(function(k){(state[k]||[]).forEach(function(v){projectPoint(v,sx,sy);if(k==='agents'){if(Number.isFinite(v.tx))v.tx*=sx;if(Number.isFinite(v.ty))v.ty*=sy;}});});
+    ['trees','rocks','bushes','farms','buildings','constructionSites','agents'].forEach(function(k){(state[k]||[]).forEach(function(v){projectPoint(v,sx,sy);if(k==='agents'){if(Number.isFinite(v.tx))v.tx*=sx;if(Number.isFinite(v.ty))v.ty*=sy;}});});
     if(state.well)projectPoint(state.well,sx,sy);
     if(state.pond){projectPoint(state.pond,sx,sy);if(Number.isFinite(state.pond.w))state.pond.w*=sx;if(Number.isFinite(state.pond.h))state.pond.h*=sy;}
     return state;

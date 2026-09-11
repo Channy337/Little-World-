@@ -4,11 +4,11 @@ Updated: 2026-09-11. This is the shared project checkpoint for the owner, ChatGP
 
 ## Current progress
 
-> 2026-09-11 checkpoint: Codex expanded draft PR #22 on `beta/primitive-invention-runtime` into the owner-approved Civoria 0.5 physical-learning foundation. Production remains untouched and this branch must stay preview-only until owner review. The primitive-origin and 1-real-day/1-Civoria-month rules remain. Added hidden matter truth with all 118 elements, representative molecular substances, phase behavior and tool-resolution observation gates; canonical thirst, health, pain, body temperature, lightning fire, burn injury, dehydration and death; sensory fire/water learning; person-to-person unverified instructions; physical learner revalidation; knowledge loss on the final holder's death; writing/durable-record/literacy gates; causal discovery graph state; visible fires; survival HUD; and a separate read-only visitor Discovery Map. This is an extensible physical rules foundation, not an exhaustive chemistry simulator or scripted technology tree. The existing v1 world remains recoverable and v2 is not live. Draft PR: https://github.com/Channy337/Little-World-/pull/22. Do not merge before owner preview review.
+> 2026-09-11 checkpoint: Codex expanded draft PR #22 on `beta/primitive-invention-runtime` into the owner-approved Civoria 0.6 weather and human-biology foundation. Production remains untouched and this branch must stay preview-only until owner review. The earlier primitive-origin, hidden-matter, physical experimentation, personal knowledge, 1-real-day/1-Civoria-month, visible fire and Discovery Map work remains. Added deterministic seasonal weather with temperature, humidity, wind, rain, storms, extremes, pond/soil moisture, fire suppression and resource-growth effects; body water, glycogen, fat, muscle, core temperature and organ condition; physiology-based dehydration/starvation instead of fixed death timers; symptom-only AI access; non-invasive physical discovery of pulse and breathing; visitor weather and body-condition rendering; and removal of real-world holiday/weekday knowledge from primitive AI prompts. Direct physiology tests place ordinary no-water survival in a several-day range and no-food survival across weeks with individual fat reserves. Whole-world runs show the primitive population can persist for months but can lose people to starvation if it never develops a better food system. The existing v1 world remains recoverable and v2 is not live. Draft PR: https://github.com/Channy337/Little-World-/pull/22. Do not merge before owner preview review.
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Civoria 0.5 matter, survival, knowledge-transfer and discovery-map work is implemented on draft PR #22; preview verification pending. |
+| Status | Civoria 0.6 weather, human biology, matter, knowledge-transfer and discovery-map work is implemented on draft PR #22; preview verification pending. |
 | Active work | `beta/primitive-invention-runtime`; draft PR #22; do not merge or deploy production before owner preview approval. |
 | Live site | https://www.thecivoria.com |
 | Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
@@ -20,7 +20,7 @@ Updated: 2026-09-11. This is the shared project checkpoint for the owner, ChatGP
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Hosted visual review of fire, survival HUD and Discovery Map; owner review; release authorization. |
+| Still pending | Hosted visual review of weather, fire, body-condition UI and Discovery Map; owner review; release authorization. |
 | AI status | Persistent personal minds may hypothesize; deterministic physical rules alone create facts, resources and executable capabilities. |
 
 ## Visible routine follow-up — released 2026-09-09

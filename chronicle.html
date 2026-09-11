@@ -21,6 +21,7 @@
   .entry.log-market{border-left-color:var(--accent);}
   .entry.log-social{border-left-color:var(--social);}
   .entry.log-role{border-left-color:var(--muted);}
+  .entry.log-weather{border-left-color:#9fc4d5;}
   .emptyState{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:32px 24px;text-align:center;}
   .emptyState p{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 18px;}
 </style>
@@ -77,7 +78,8 @@
       '<div class="stat"><div class="k">Day</div><div class="v pixel">'+S.day+'</div></div>'+
       '<div class="stat"><div class="k">Population</div><div class="v pixel">'+(S.agents?S.agents.length:0)+'</div></div>'+
       '<div class="stat"><div class="k">Homes built</div><div class="v pixel">'+houses+'</div></div>'+
-      '<div class="stat"><div class="k">Market</div><div class="v pixel">'+(S.market?'Open':'Not yet')+'</div></div>';
+      '<div class="stat"><div class="k">Market</div><div class="v pixel">'+(S.market?'Open':'Not yet')+'</div></div>'+
+      '<div class="stat"><div class="k">Weather</div><div class="v pixel">'+(S.weather?Math.round(S.weather.temperatureC)+'°C '+escapeHtml(S.weather.condition):'Unknown')+'</div></div>';
 
     var byDay = {};
     var order = [];

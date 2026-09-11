@@ -71,3 +71,16 @@ test('a learned recipe is executable and shaped timber is recorded in visible co
 test('invalid operation is rejected rather than becoming a hidden technology tree',()=>{
   assert.equal(normalizeProposal({hypothesis:'Make a reactor',operation:'nuclear',materials:['stone'],hopedResult:'power'}),null);
 });
+
+test('Civorians can establish body patterns without receiving hidden anatomy names',()=>{
+  let s=engine(null,39).snapshot();ensureMinds(s);const id=s.agents[0].id;
+  const proposal=hypothesis=>({experiment:{hypothesis,operation:'observe',materials:['body'],hopedResult:'A repeating rhythm'}});
+  for(let attempt=0;attempt<2;attempt++){
+    const a=s.agents.find(x=>x.id===id);a.hunger=0;a.energy=100;a.social=100;a.state='idle';a.action=null;
+    applyExperimentProposals(s,[{type:'priority',agentId:id}],[proposal(attempt?'My breath and pulse may repeat again':'My chest and wrist may repeat a rhythm')]);
+    const e=engine(s);for(let i=0;i<35;i++)e.step(.1);s=e.snapshot();resolveExperiments(s);
+  }
+  const a=s.agents.find(x=>x.id===id);assert.ok(a.mind.capabilities.some(x=>x.id==='observe:body'));
+  assert.ok(a.mind.knowledge.some(x=>/pulse and breathing/.test(x)));
+  const node=s.discoveryGraph.nodes.find(x=>x.id==='observe:body');assert.ok(node);assert.equal(node.kind,'body-observation');
+});

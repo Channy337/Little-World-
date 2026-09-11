@@ -25,3 +25,11 @@ PASS: preview deployment 6xUaD2DybiRYgSW8yv8ugS2TxVe2 for commit b45efe4 was Rea
 Vercel runtime logs for this deployment showed HTTP 200 for GET /api/state and POST /api/tick. A world_tick entry recorded revision 118, simulatedMs 111300, skippedMs 0, population 17, day 30. The displayed log window showed zero Warning, Error and Fatal entries. This is a bounded observation, not a guarantee of no errors outside that window.
 
 Two hosted views were compared in the same signed-in browser, not independent authenticated users. Hosted destructive fault injection was not performed; simulated outage and concurrency coverage remains local. Signed-in browser access now permits dashboard/log inspection even though the connector still returns 403. Production remains unchanged.
+
+## Civoria 0.6 candidate verification — September 11, 2026
+
+Draft PR #22 adds deterministic weather and physiology to the isolated primitive-origin preview. Unit coverage verifies seasonal deterministic weather, heat/humidity/activity water-loss pressure, soil-moisture growth effects, hidden anatomy access levels, multi-day dehydration, multi-week fasting across glycogen/fat/muscle reserves, food and water recovery, visible weather, symptom display, and repeated physical discovery of pulse and breathing. The browser remains read-only for canonical outcomes.
+
+Four deterministic 60-day whole-world samples retained all nine settlers while consuming different fat reserves under shared weather and food competition. Three deterministic 120-day samples retained five to seven settlers, with deaths caused by starvation and organ failure when the population did not develop a stronger food system. These are balance observations, not scripted population targets or guarantees.
+
+Production remains unchanged. Hosted preview visual review is required before any release.

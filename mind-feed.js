@@ -187,6 +187,13 @@
       '<div><span>Known lessons</span><strong>'+((mind.knowledge&&mind.knowledge.length)||0)+'</strong></div></div>'+
       (memories.length?'<div class="vp-memories"><h4>Recent life memories</h4>'+memories.map(function(m){ return '<p><span>Day '+escapeHtml(m.day)+'</span>'+escapeHtml(m.text)+'</p>'; }).join('')+'</div>':'');
 
+    var body=agent.body||{},bodyView='<div class="vp-life-grid">'+
+      '<div><span>Hydration reserve</span><strong>'+Math.round(body.waterReserve==null?100:body.waterReserve)+'%</strong></div>'+
+      '<div><span>Core temperature</span><strong>'+Number(body.coreTemperature==null?37:body.coreTemperature).toFixed(1)+'°C</strong></div>'+
+      '<div><span>Short-term fuel</span><strong>'+Math.round(body.glycogenReserve==null?100:body.glycogenReserve)+'%</strong></div>'+
+      '<div><span>Long-term fuel</span><strong>'+Number(body.fatReserveDays==null?0:body.fatReserveDays).toFixed(1)+' day equivalents</strong></div></div>'+
+      ((body.lastSymptoms||[]).length?'<div class="vp-memories"><h4>Personally felt symptoms</h4>'+(body.lastSymptoms||[]).map(function(x){return '<p>'+escapeHtml(x)+'</p>';}).join('')+'</div>':empty('No urgent body symptom is being felt.'));
+
     card.classList.remove('hidden');
     card.classList.add('villagerDrawer');
     card.setAttribute('data-villager-panel-id',String(agent.id));
@@ -199,6 +206,7 @@
       section('Decisions',decision)+
       section('Work & resources',work)+
       section('Relationships',relationshipBody)+
+      section('Body condition · visitor view',bodyView)+
       section('Life progress',life)+
       '<p class="vp-footnote">This panel separates what the AI is thinking from what the simulation actually does. Thoughts can influence priorities, but the shared world remains authoritative over physical outcomes.</p>'+
       '</div>';

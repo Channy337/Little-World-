@@ -7,7 +7,7 @@
   var S=null, canvas, ctx;
   var visualPositions=new Map(), receivedAt=0;
   var revision=-1, stopped=false;
-  var dayVal, popVal, houseVal, marketVal, moodVal, logList, agentCard, clockLabel;
+  var dayVal, popVal, houseVal, marketVal, moodVal, weatherVal, logList, agentCard, clockLabel;
 
   function findById(list,id){ return list.find(function(a){return a.id===id;}); }
   function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
@@ -552,6 +552,17 @@
     var vg=ctx.createRadialGradient(CFG.W*.5,CFG.H*.47,CFG.H*.18,CFG.W*.5,CFG.H*.48,CFG.W*.66); vg.addColorStop(.62,'rgba(12,23,16,0)'); vg.addColorStop(1,'rgba(10,20,15,.31)'); ctx.fillStyle=vg; ctx.fillRect(0,0,CFG.W,CFG.H);
   }
 
+  function drawWeather(tNow){
+    var w=S.weather||{},rain=Number(w.precipitationMm)||0,cloud=Number(w.cloudCover)||0;
+    if(cloud>55){ctx.fillStyle='rgba(57,68,68,'+Math.min(.2,cloud/500).toFixed(3)+')';ctx.fillRect(0,0,CFG.W,CFG.H);}
+    if(rain>0){
+      var count=Math.min(90,24+Math.round(rain));ctx.strokeStyle='rgba(184,213,224,'+(w.storm?.5:.32)+')';ctx.lineWidth=w.storm?1.1:.75;
+      for(var i=0;i<count;i++){var x=(hash2(i,211)*CFG.W+tNow*(w.windKph||8)*2.2)%CFG.W,y=(hash2(i,212)*CFG.H+tNow*(80+rain))%CFG.H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-2-(w.windKph||0)*.08,y+7+(w.storm?5:0));ctx.stroke();}
+      ctx.fillStyle='rgba(93,128,139,'+Math.min(.13,rain/300).toFixed(3)+')';ctx.fillRect(0,CFG.horizon,CFG.W,CFG.H-CFG.horizon);
+    }
+    if(w.storm&&Math.sin(tNow*.73+Number(w.day||0)*2.1)>.997){ctx.fillStyle='rgba(235,244,255,.38)';ctx.fillRect(0,0,CFG.W,CFG.H);}
+  }
+
   function drawForeground(tNow){
     ctx.save();
     var bottom=CFG.H;
@@ -603,6 +614,7 @@
     }
     drawAmbientLife(tNow);
     drawAtmosphere(tNow);
+    drawWeather(tNow);
     drawForeground(tNow);
     ctx.restore();
   }
@@ -625,6 +637,7 @@
     dayVal.textContent=S.day; popVal.textContent=S.agents.length;
     var houses=0,i; for(i=0;i<S.buildings.length;i++) if(S.buildings[i].type==='house') houses++;
     houseVal.textContent=houses; marketVal.textContent=S.market?'Open':'Not yet';
+    if(weatherVal){var w=S.weather||{};weatherVal.textContent=w.condition?Math.round(w.temperatureC)+'°C · '+w.condition:'--';}
     var avgH=0,avgE=0,avgS=0,n=Math.max(1,S.agents.length);
     for(i=0;i<S.agents.length;i++){ avgH+=S.agents[i].hunger; avgE+=S.agents[i].energy; avgS+=S.agents[i].social; }
     var mood=Math.round(((100-avgH/n)+(avgE/n)+(avgS/n))/3); moodVal.textContent=S.agents.length?mood+'%':'--';
@@ -637,6 +650,7 @@
           '<div class="ac-role">'+(a.role?roleTitle(a.role):'Unassigned')+' · '+escapeHtml(a.trait)+' · age '+Math.floor(a.age)+'</div>'+
           (a.aiThought?'<div class="ac-thought">“'+escapeHtml(a.aiThought)+'”</div>':'')+
           '<div class="ac-bars">'+bar('Health',a.health==null?100:a.health)+bar('Thirst',100-(a.thirst||0))+bar('Hunger',100-a.hunger)+bar('Energy',a.energy)+bar('Social',a.social)+'</div>'+
+          (a.body&&a.body.lastSymptoms&&a.body.lastSymptoms.length?'<div class="ac-thought">“'+escapeHtml(a.body.lastSymptoms[a.body.lastSymptoms.length-1])+'”</div>':'')+
           '<div class="ac-inv">Wood '+a.inv.wood+' · Timber '+(a.inv.timber||0)+' · Stone '+a.inv.stone+' · Food '+a.inv.food+' · Coins '+a.coins+'</div>'+
           '<div class="ac-home">'+(a.home?'Has a home':'No home yet')+'</div>';
       } else { S.selectedId=null; agentCard.classList.add('hidden'); }
@@ -652,7 +666,7 @@
     return screenToWorld(sx,sy);
   }
   function wireUI(){
-    dayVal=document.getElementById('dayVal'); popVal=document.getElementById('popVal'); houseVal=document.getElementById('houseVal'); marketVal=document.getElementById('marketVal'); moodVal=document.getElementById('moodVal'); logList=document.getElementById('logList'); agentCard=document.getElementById('agentCard'); clockLabel=document.getElementById('clockLabel');
+    dayVal=document.getElementById('dayVal'); popVal=document.getElementById('popVal'); houseVal=document.getElementById('houseVal'); marketVal=document.getElementById('marketVal'); moodVal=document.getElementById('moodVal'); weatherVal=document.getElementById('weatherVal'); logList=document.getElementById('logList'); agentCard=document.getElementById('agentCard'); clockLabel=document.getElementById('clockLabel');
     canvas.addEventListener('click',function(e){
       if(!S) return;
       var p=getWorldPos(e),best=null,bd=18;

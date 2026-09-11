@@ -103,3 +103,44 @@ footer p{color:var(--muted);font-size:12px;line-height:1.6;}
 .momentActions{display:flex;gap:8px;margin-top:12px;}.momentActions button{flex:1;}
 @media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));}.stat:last-child{grid-column:span 2;}.howList{grid-template-columns:1fr;}.mindHeader{display:block;}.mindStatus{display:inline-block;margin-top:8px;max-width:none;text-align:left;}}
 @media (max-width:480px){.hero{padding:46px 16px 30px;}.hero h1{font-size:48px;}.siteNav{padding:12px 14px;}.siteNav .brand{font-size:17px;}.siteNav nav a{margin-left:11px;font-size:12px;}.gameSection{padding-left:9px;padding-right:9px;}.stageWrap{padding:6px;border-radius:16px;}.stageLabel{left:14px;right:14px;top:14px;padding:7px 9px;}canvas{border-radius:11px;}.mind-event-top{display:block;}.mind-event-top span{display:block;margin-top:2px;}}
+
+/* Live villager life drawer */
+#agentCard.villagerDrawer{position:fixed;z-index:45;right:18px;top:68px;width:min(430px,calc(100vw - 36px));max-height:calc(100vh - 86px);margin:0;padding:0;overflow:hidden;border-color:rgba(217,185,108,.28);background:rgba(13,22,16,.96);box-shadow:0 28px 80px rgba(0,0,0,.56);backdrop-filter:blur(20px);}
+.vp-shell{max-height:calc(100vh - 86px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;}
+.vp-header{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:18px 18px 15px;background:linear-gradient(180deg,rgba(25,39,30,.99),rgba(19,31,23,.96));border-bottom:1px solid var(--line);backdrop-filter:blur(18px);}
+.vp-header h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:34px;line-height:1;margin:2px 0 5px;color:#f3dfad;font-weight:700;}
+.vp-header p{margin:0;color:var(--muted);font-size:11.5px;line-height:1.45;}
+.vp-kicker{text-transform:uppercase;letter-spacing:.13em!important;color:var(--accent2)!important;font-size:9px!important;font-weight:700;}
+.vp-close{flex:0 0 34px;width:34px;height:34px;padding:0;border-radius:50%;font-size:24px;line-height:1;background:rgba(255,255,255,.05);}
+.vp-current-thought{margin:14px 14px 0;padding:12px 13px;border-radius:12px;border:1px solid rgba(217,185,108,.22);background:linear-gradient(145deg,rgba(217,185,108,.10),rgba(16,27,20,.8));}
+.vp-current-thought>span,.vp-now-grid span,.vp-decision span,.vp-life-grid span{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;}
+.vp-current-thought blockquote{margin:0;font-family:'Cormorant Garamond',Georgia,serif;font-size:21px;line-height:1.3;font-style:italic;color:#f1eee5;}
+.vp-current-thought-muted p{margin:0;color:var(--muted);font-size:12px;line-height:1.5;}
+.vp-section{padding:14px 16px;border-bottom:1px solid var(--line);}
+.vp-section h3{margin:0 0 10px;font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;color:#ece8de;}
+.vp-now-grid,.vp-life-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.vp-now-grid>div,.vp-life-grid>div{padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);}
+.vp-now-grid strong,.vp-life-grid strong{display:block;font-size:12px;line-height:1.35;color:#e7ebe3;font-weight:600;}
+.vp-timeline{position:relative;padding-left:14px;display:grid;gap:10px;}
+.vp-timeline:before{content:'';position:absolute;left:3px;top:5px;bottom:5px;width:1px;background:rgba(217,185,108,.24);}
+.vp-timeline article{position:relative;}
+.vp-timeline article:before{content:'';position:absolute;left:-14px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(217,185,108,.10);}
+.vp-time{font-size:9px;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.vp-timeline p{margin:0;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;line-height:1.35;color:#dfe5dc;}
+.vp-empty{margin:0;color:var(--muted);font-size:11.5px;line-height:1.5;}
+.vp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px;}
+.vp-chips span{font-size:10.5px;padding:5px 8px;border-radius:999px;background:rgba(127,166,109,.12);border:1px solid rgba(127,166,109,.20);color:#d4dfcf;}
+.vp-meters{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;}
+.vp-meter-top{display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted);margin-bottom:4px;}.vp-meter-top b{color:#d8e1d5;}
+.vp-track{height:6px;border-radius:999px;overflow:hidden;background:#0c1510;}.vp-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#658f61,#b49d5e);}
+.vp-decision{display:grid;gap:8px;}
+.vp-decision>div{padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.035);border-left:2px solid rgba(217,185,108,.45);}
+.vp-decision strong{font-size:12px;line-height:1.4;font-weight:500;color:#e4e8df;}
+.vp-work-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px;}.vp-work-title strong{font-size:15px;color:#f0ddb0;}.vp-work-title span{font-size:10px;color:var(--muted);}
+.vp-skills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}.vp-skills span{font-size:10px;padding:5px 7px;border-radius:7px;background:rgba(255,255,255,.04);color:var(--muted);}.vp-skills b{color:#e6e9e1;}
+.vp-small{font-size:10.5px;color:var(--muted);line-height:1.5;margin:7px 0 0;}
+.vp-rel-list{display:grid;gap:6px;}.vp-rel-list>div{display:flex;justify-content:space-between;gap:12px;padding:8px 9px;border-radius:8px;background:rgba(140,168,199,.055);}.vp-rel-list strong{font-size:11.5px;color:#dce4e8;}.vp-rel-list span{font-size:9.5px;color:var(--muted);text-align:right;}
+.vp-memories{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);}.vp-memories h4{margin:0 0 7px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}.vp-memories p{margin:0;padding:5px 0;font-size:11px;line-height:1.45;color:#d6ddd3;}.vp-memories p span{display:inline-block;min-width:47px;color:var(--accent2);font-size:9px;}
+.vp-footnote{margin:0;padding:13px 16px 17px;color:#87968a;font-size:9.5px;line-height:1.5;background:rgba(0,0,0,.12);}
+@media (max-width:760px){#agentCard.villagerDrawer{left:8px;right:8px;top:auto;bottom:8px;width:auto;max-height:min(78vh,720px);border-radius:18px;margin:0}.vp-shell{max-height:min(78vh,720px)}.vp-header{padding-top:14px}.vp-current-thought blockquote{font-size:19px}}
+@media (max-width:420px){.vp-now-grid,.vp-life-grid,.vp-meters{grid-template-columns:1fr}.vp-header h2{font-size:30px}.vp-section{padding-left:14px;padding-right:14px}}

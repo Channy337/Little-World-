@@ -2,6 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const {createWorldService,MAX_CATCH_UP_MS,SIMULATION_RATE}=require('../lib/world');
 const engine=require('../lib/engine');
+const {ensureMinds,observeExperience}=require('../lib/mind');
 const {memoryStore}=require('./helpers');
 const {namespace,createStore,INIT,CAS,READ}=require('../lib/store');
 const {makeHandler}=require('../lib/http');
@@ -27,7 +28,8 @@ test('concurrent ticks advance one revision, not one per visitor',async()=>{
   const records=await Promise.all(Array.from({length:20},()=>createWorldService(f.options).tick()));
   assert.ok(records.every(r=>r.revision===1));
   const e=engine(first.state);advanceControl(e,10000);
-  assert.deepEqual((await f.service.state()).state,JSON.parse(JSON.stringify(e.snapshot())));
+  const expected=e.snapshot();ensureMinds(expected);observeExperience(first.state,expected);
+  assert.deepEqual((await f.service.state()).state,JSON.parse(JSON.stringify(expected)));
 });
 test('repeated calls cannot accelerate the simulation',async()=>{
   const f=fixture();await f.service.state();f.advance(5000);

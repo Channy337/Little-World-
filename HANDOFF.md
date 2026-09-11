@@ -1,15 +1,15 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
+Updated: 2026-09-11. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
 
 ## Current progress
 
-> 2026-09-11: Owner selected the V0.6 preview as the base for real shelter construction. Codex is working in `beta/v06-shelter`, based on `beta/primitive-invention-runtime` (PR #22). Scope: persistent material delivery, coordinated workers, visible construction and move-in. Production unchanged. Main's older release notes below are historical; see PR #22 for current V0.6 architecture.
+> 2026-09-11 22:18 UTC — Codex shelter milestone implemented on `beta/v06-shelter`, stacked on V0.6 PR #22. Draft PR: https://github.com/Channy337/Little-World-/pull/23. Last implementation: `df244c9711bf1273aea402d68ee924fc27a63537`. Preview: https://little-world-git-beta-v06-shelter-small-villager.vercel.app/index.html#live-world. Vercel reports success; hosted browser connected and showed the missing-shaping prerequisite. 102 local tests and build pass. Browser checked scaffold/progress and completion/move-in using local engine-generated fixtures; this does not prove an online village has completed construction. GitHub Actions returned no PR run for this stacked branch, so do not claim CI passed. No new services/accounts/environment variables; production code and world data unchanged. Next: owner preview review, then broader V0.6 integration/release review. Other activity loops remain cosmetic; shelter uses canonical motion. Local checkout `Little-World-shelter` contains the published implementation; root `shelter-visual-check.cjs` is a local-only, memory-only artwork fixture, not deployed.
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Visible movement fix released with owner approval via PR #7; activity script now ships and work routines repeat. |
-| Active work | PR #7 merged as 7291ff4778d8115da86a48a85a24270813257039; production deployment 4afhSiLsdPuKj5BfdLywr9Ky4EHH succeeded; no implementation active |
+| Status | Shelter milestone on draft PR #23, based on V0.6 PR #22; preview review pending. |
+| Active work | Codex checkpoint df244c9 on beta/v06-shelter; ready for review, not production. |
 | Live site | https://www.thecivoria.com |
 | Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
@@ -20,7 +20,7 @@ Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGP
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Server-side AI minds remain deferred to Civoria 0.3. No open implementation work. |
+| Still pending | Owner preview review; parent V0.6 integration and release approval. |
 | AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
 
 ## Visible routine follow-up — released 2026-09-09

@@ -54,6 +54,17 @@ test('non-tick fetches pass through untouched',async()=>{
   assert.equal(response,h.response);
 });
 
+test('physical shelter jobs retain canonical coordinates and only show carried real materials',async()=>{
+  const h=harness(),a=h.canonical.state.agents[0];
+  a.shelterJob={siteId:3,phase:'deliver',timer:0};a.inv={wood:1,timber:0};
+  h.setTime(60000);
+  let data=await (await h.sandbox.window.fetch('/api/tick')).json();
+  assert.equal(data.state.agents[0].x,10);assert.equal(data.state.agents[0].visualCarry,'tree');
+  a.inv.wood=0;h.setTime(120000);
+  data=await (await h.sandbox.window.fetch('/api/tick')).json();
+  assert.equal(data.state.agents[0].x,10);assert.equal(data.state.agents[0].visualCarry,null);
+});
+
 test('activity clock loads before the renderer and contains no persistence hooks',()=>{
   const html=fs.readFileSync('index.html','utf8');
   assert.ok(html.indexOf('activity-clock.js')<html.indexOf('game.js'));

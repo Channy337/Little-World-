@@ -59,7 +59,8 @@ test('AI request receives only the selected villager mind summary',()=>{
   const prompt=buildPrompt(enriched[0]);
   assert.match(prompt,/I learned a private fact/);
   assert.doesNotMatch(prompt,/Another person knows a different fact/);
-  assert.match(prompt,/must not magically know/);
+  assert.match(prompt,/allowed to wonder about new uses/);
+  assert.match(prompt,/hypothesis, not instant knowledge/);
 });
 
 test('AI reflection can update goals and beliefs without changing engine facts',()=>{

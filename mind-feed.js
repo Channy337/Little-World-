@@ -6,6 +6,7 @@
   var events=[];
   var initialized=false;
   var maxEvents=8;
+  var polling=false;
 
   function escapeHtml(value){
     return String(value).replace(/[&<>"']/g,function(c){
@@ -84,12 +85,31 @@
     });
   };
 
+  function refreshMindState(){
+    if(polling||document.hidden) return;
+    polling=true;
+    originalFetch('/api/state',{cache:'no-store'})
+      .then(function(response){
+        if(!response.ok) throw new Error('unavailable');
+        return response.json();
+      })
+      .then(function(data){ processState(data&&data.state); })
+      .catch(function(){
+        var status=document.getElementById('mindStatus');
+        if(status&&!initialized) status.textContent='AI minds reconnecting…';
+      })
+      .finally(function(){ polling=false; });
+  }
+
   function boot(){
     var card=document.getElementById('agentCard');
     if(card){
       new MutationObserver(enhanceAgentCard).observe(card,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
     }
     enhanceAgentCard();
+    refreshMindState();
+    setInterval(refreshMindState,15000);
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden) refreshMindState(); });
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();

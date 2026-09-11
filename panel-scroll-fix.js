@@ -11,6 +11,14 @@
     return el ? el.getAttribute('data-villager-panel-id') : null;
   }
 
+  function cleanEmptyThoughtText(el){
+    if(!el) return;
+    var text=el.querySelector('.vp-current-thought-muted p');
+    if(text && text.textContent!=='No fresh AI thought stored right now.'){
+      text.textContent='No fresh AI thought stored right now.';
+    }
+  }
+
   function remember(el){
     if(!el || restoring || el.classList.contains('hidden')) return;
     var id=currentId(el);
@@ -37,9 +45,11 @@
     var el=card();
     if(!el) return;
 
+    cleanEmptyThoughtText(el);
     el.addEventListener('scroll',function(){ remember(el); },{passive:true});
 
     new MutationObserver(function(){
+      cleanEmptyThoughtText(el);
       var id=currentId(el);
       if(id && savedId===id) restore(el);
       else if(id){ savedId=id; savedTop=0; }
@@ -48,6 +58,7 @@
     var canvas=document.getElementById('world');
     if(canvas) canvas.addEventListener('click',function(){
       setTimeout(function(){
+        cleanEmptyThoughtText(el);
         var next=currentId(el);
         if(next!==savedId){ savedId=next; savedTop=0; }
       },0);

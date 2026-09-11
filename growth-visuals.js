@@ -5,18 +5,31 @@
   var latestState=null, seenBuildings=new Set(), initialized=false;
   var overlay=null, backdrop=null, stage=null, baseCanvas=null;
   var bornAt=new Map();
-  var DISPLAY_W=480, DISPLAY_H=356, SCALE=2;
+  var DISPLAY_W=480, DISPLAY_H=356, WORLD_W=480, WORLD_H=304, SCALE=2;
 
   function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
   function now(){return performance.now();}
   function hash(n){var x=Math.sin((Number(n)||1)*12.9898)*43758.5453;return x-Math.floor(x);}
+  function boundsFor(state){var b=state&&state.worldBounds;return b&&Number.isFinite(b.w)&&Number.isFinite(b.h)?b:{w:WORLD_W,h:WORLD_H,level:0};}
   function growthAmount(state){
+    var bounds=boundsFor(state);
+    if(bounds.level>0) return 0;
     var buildings=(state&&state.buildings||[]).length;
     var pop=(state&&state.agents||[]).length;
     return clamp(((buildings-6)*.055)+((pop-10)*.009),0,.22);
   }
+  function projectPoint(v,sx,sy){if(v&&Number.isFinite(v.x)&&Number.isFinite(v.y)){v.x*=sx;v.y*=sy;}}
+  function projectState(state){
+    var bounds=boundsFor(state),sx=WORLD_W/bounds.w,sy=WORLD_H/bounds.h;
+    state.renderTerritory={w:bounds.w,h:bounds.h,level:bounds.level||0};
+    if(Math.abs(sx-1)<1e-9&&Math.abs(sy-1)<1e-9) return state;
+    ['trees','rocks','bushes','farms','buildings','agents'].forEach(function(k){(state[k]||[]).forEach(function(v){projectPoint(v,sx,sy);if(k==='agents'){if(Number.isFinite(v.tx))v.tx*=sx;if(Number.isFinite(v.ty))v.ty*=sy;}});});
+    if(state.well)projectPoint(state.well,sx,sy);
+    if(state.pond){projectPoint(state.pond,sx,sy);if(Number.isFinite(state.pond.w))state.pond.w*=sx;if(Number.isFinite(state.pond.h))state.pond.h*=sy;}
+    return state;
+  }
   function screenPoint(x,y,growth){
-    var d=clamp(y/304,0,1),spread=.76+.24*d;
+    var d=clamp(y/WORLD_H,0,1),spread=.76+.24*d;
     var sx=240+(x-240)*spread,sy=78+y*.78;
     var k=1-growth;
     return {x:240+(sx-240)*k,y:356-(356-sy)*k,scale:(.76+.36*d)*k};
@@ -46,9 +59,10 @@
   }
   function capture(data){
     if(data&&data.state&&Array.isArray(data.state.agents)){
+      rememberBuildings(data.state);
+      projectState(data.state);
       latestState=data.state;
       ensureLayers();
-      rememberBuildings(latestState);
     }
     return data;
   }
@@ -66,7 +80,8 @@
     ctx.clearRect(0,0,DISPLAY_W,DISPLAY_H);
     var sky=ctx.createLinearGradient(0,0,0,120); sky.addColorStop(0,'#26394a'); sky.addColorStop(1,'#809d8d'); ctx.fillStyle=sky; ctx.fillRect(0,0,DISPLAY_W,DISPLAY_H);
     var ground=ctx.createLinearGradient(0,70,0,DISPLAY_H); ground.addColorStop(0,'#789667'); ground.addColorStop(1,'#4d6a48'); ctx.fillStyle=ground; ctx.fillRect(0,70,DISPLAY_W,DISPLAY_H-70);
-    var band=18+growth*120;
+    var territory=latestState&&latestState.renderTerritory,level=territory?territory.level:0;
+    var band=18+Math.max(growth,level*.055)*120;
     ctx.fillStyle='rgba(45,75,48,.36)';
     ctx.fillRect(0,70,band,DISPLAY_H-70); ctx.fillRect(DISPLAY_W-band,70,band,DISPLAY_H-70);
     for(var i=0;i<70;i++){
@@ -75,8 +90,8 @@
       var r=2+hash(i+22)*5;
       ctx.fillStyle='rgba(42,81,45,.35)'; ctx.beginPath();ctx.arc(edge,y,r,0,Math.PI*2);ctx.fill();
     }
-    if(growth>.02){
-      ctx.strokeStyle='rgba(231,213,164,'+(0.18+growth).toFixed(2)+')';ctx.setLineDash([5,8]);ctx.lineWidth=1;
+    if(level>0||growth>.02){
+      ctx.strokeStyle='rgba(231,213,164,'+(0.18+Math.max(growth,level*.05)).toFixed(2)+')';ctx.setLineDash([5,8]);ctx.lineWidth=1;
       ctx.strokeRect(band*.35,86,DISPLAY_W-band*.7,DISPLAY_H-102);ctx.setLineDash([]);
     }
   }
@@ -137,7 +152,11 @@
     drawBackdrop(bctx,growth,t);octx.clearRect(0,0,DISPLAY_W,DISPLAY_H);
     (latestState.agents||[]).forEach(function(a){var site=constructionSiteFor(a);if(site)drawSite(octx,site,growth,t);drawWorkEffect(octx,a,growth,t);});
     (latestState.buildings||[]).forEach(function(b){drawNewBuilding(octx,b,growth,t);});
-    if(growth>.03){
+    var territory=latestState.renderTerritory;
+    if(territory&&territory.level>0){
+      octx.fillStyle='rgba(28,47,33,.78)';octx.font='600 8px Arial';octx.textAlign='right';
+      octx.fillText('TERRITORY '+territory.w+' × '+territory.h+' · FRONTIER '+territory.level,DISPLAY_W-12,DISPLAY_H-12);
+    }else if(growth>.03){
       octx.fillStyle='rgba(28,47,33,.72)';octx.font='600 8px Arial';octx.textAlign='right';
       octx.fillText('SETTLEMENT EXPANDING',DISPLAY_W-12,DISPLAY_H-12);
     }

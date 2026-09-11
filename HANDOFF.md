@@ -4,24 +4,24 @@ Updated: 2026-09-11. This is the shared project checkpoint for the owner, ChatGP
 
 ## Current progress
 
-> 2026-09-11 checkpoint: Codex implemented the owner-approved primitive-origin and executable-invention foundation on `beta/primitive-invention-runtime`, based on `main` `ecdbcc5`. Draft PR #22 is open at https://github.com/Channy337/Little-World-/pull/22 with candidate `ebb74908`; Beta checks run #77 passed and Vercel deployment `dpl_5uP27zg2sE8YSMmkTpCPKmH9TBzW` is READY. The preview is Vercel-auth protected, so independent visual/browser inspection is still pending. Production data is untouched. New worlds begin without farms, homes, markets, trades, or recipes; one real day equals 30 Civoria days with biological aging decoupled; physical shape-wood trials consume materials and produce timber; two matching results create only the discoverer's executable recipe; known production repeats it; timber is recorded and rendered in shelters. Storage moves to a recoverable `v2` namespace on release instead of deleting `v1`. Local `node --test`: 68 passed. `node scripts/build.js` and `git diff --check`: passed. Do not merge before owner preview review.
+> 2026-09-11 checkpoint: Codex expanded draft PR #22 on `beta/primitive-invention-runtime` into the owner-approved Civoria 0.5 physical-learning foundation. Production remains untouched and this branch must stay preview-only until owner review. The primitive-origin and 1-real-day/1-Civoria-month rules remain. Added hidden matter truth with all 118 elements, representative molecular substances, phase behavior and tool-resolution observation gates; canonical thirst, health, pain, body temperature, lightning fire, burn injury, dehydration and death; sensory fire/water learning; person-to-person unverified instructions; physical learner revalidation; knowledge loss on the final holder's death; writing/durable-record/literacy gates; causal discovery graph state; visible fires; survival HUD; and a separate read-only visitor Discovery Map. This is an extensible physical rules foundation, not an exhaustive chemistry simulator or scripted technology tree. The existing v1 world remains recoverable and v2 is not live. Draft PR: https://github.com/Channy337/Little-World-/pull/22. Do not merge before owner preview review.
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Visible movement fix released with owner approval via PR #7; activity script now ships and work routines repeat. |
-| Active work | PR #7 merged as 7291ff4778d8115da86a48a85a24270813257039; production deployment 4afhSiLsdPuKj5BfdLywr9Ky4EHH succeeded; no implementation active |
+| Status | Civoria 0.5 matter, survival, knowledge-transfer and discovery-map work is implemented on draft PR #22; preview verification pending. |
+| Active work | `beta/primitive-invention-runtime`; draft PR #22; do not merge or deploy production before owner preview approval. |
 | Live site | https://www.thecivoria.com |
 | Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
 | Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged earlier as `1facd30a1176548c6188ce74347af02552f741f2` |
 | World storage | One canonical Upstash-backed world per environment |
-| World pace | Approximately 1 Civoria day = 1 real day; unchanged by the viewer activity fix |
+| World pace | Candidate: 1 real day = 30 Civoria days; biological aging remains 360 Civoria days per year. Production remains unchanged. |
 | Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Server-side AI minds remain deferred to Civoria 0.3. No open implementation work. |
-| AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
+| Still pending | Hosted visual review of fire, survival HUD and Discovery Map; owner review; release authorization. |
+| AI status | Persistent personal minds may hypothesize; deterministic physical rules alone create facts, resources and executable capabilities. |
 
 ## Visible routine follow-up — released 2026-09-09
 

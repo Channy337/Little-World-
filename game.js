@@ -311,6 +311,17 @@
     });
   }
 
+  function drawFire(f,tNow){
+    var pulse=.82+Math.sin(tNow*8+f.id)*.14,intensity=Math.max(.25,Math.min(1.4,f.intensity||1));
+    ctx.save();ctx.translate(f.x,f.y);
+    ctx.fillStyle='rgba(255,151,45,.16)';ctx.beginPath();ctx.ellipse(0,1,18*intensity,8*intensity,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#6b3b26';ctx.rotate(.18);ctx.fillRect(-9,-1,18,3);ctx.rotate(-.36);ctx.fillRect(-9,-1,18,3);ctx.rotate(.18);
+    ctx.fillStyle='#e64d2e';ctx.beginPath();ctx.moveTo(-7,0);ctx.quadraticCurveTo(-5,-15*pulse,0,-24*pulse);ctx.quadraticCurveTo(8,-12*pulse,7,0);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#ffc857';ctx.beginPath();ctx.moveTo(-4,0);ctx.quadraticCurveTo(-2,-10*pulse,1,-16*pulse);ctx.quadraticCurveTo(5,-7*pulse,4,0);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(55,54,48,.24)';for(var i=0;i<3;i++){var sy=-25-i*8-(tNow*7+i*5)%12;ctx.beginPath();ctx.arc(Math.sin(tNow+i)*4,sy,3+i*1.5,0,Math.PI*2);ctx.fill();}
+    ctx.restore();
+  }
+
   function drawWell(){
     var w=S.well;
     withWorldTransform(w.x,w.y,function(){
@@ -575,6 +586,7 @@
     for(i=0;i<S.bushes.length;i++) queue.push({y:S.bushes[i].y,kind:'bush',v:S.bushes[i]});
     for(i=0;i<S.rocks.length;i++) queue.push({y:S.rocks[i].y,kind:'rock',v:S.rocks[i]});
     for(i=0;i<S.trees.length;i++) queue.push({y:S.trees[i].y,kind:'tree',v:S.trees[i]});
+    for(i=0;i<(S.fires||[]).length;i++) queue.push({y:S.fires[i].y,kind:'fire',v:S.fires[i]});
     for(i=0;i<S.buildings.length;i++) queue.push({y:S.buildings[i].y,kind:S.buildings[i].type,v:S.buildings[i]});
     for(i=0;i<S.agents.length;i++) queue.push({y:S.agents[i].y,kind:'agent',v:S.agents[i]});
     queue.sort(function(a,b){ return a.y-b.y; });
@@ -584,6 +596,7 @@
       else if(q.kind==='bush') drawBush(q.v);
       else if(q.kind==='rock') drawRock(q.v);
       else if(q.kind==='tree') drawTree(q.v,tNow);
+      else if(q.kind==='fire') drawFire(q.v,tNow);
       else if(q.kind==='house') drawHouse(q.v,tNow);
       else if(q.kind==='market') drawMarket(q.v,tNow);
       else drawAgent(q.v,tNow);
@@ -623,7 +636,7 @@
         agentCard.innerHTML='<div class="ac-name">'+escapeHtml(a.name)+'</div>'+
           '<div class="ac-role">'+(a.role?roleTitle(a.role):'Unassigned')+' · '+escapeHtml(a.trait)+' · age '+Math.floor(a.age)+'</div>'+
           (a.aiThought?'<div class="ac-thought">“'+escapeHtml(a.aiThought)+'”</div>':'')+
-          '<div class="ac-bars">'+bar('Hunger',100-a.hunger)+bar('Energy',a.energy)+bar('Social',a.social)+'</div>'+
+          '<div class="ac-bars">'+bar('Health',a.health==null?100:a.health)+bar('Thirst',100-(a.thirst||0))+bar('Hunger',100-a.hunger)+bar('Energy',a.energy)+bar('Social',a.social)+'</div>'+
           '<div class="ac-inv">Wood '+a.inv.wood+' · Timber '+(a.inv.timber||0)+' · Stone '+a.inv.stone+' · Food '+a.inv.food+' · Coins '+a.coins+'</div>'+
           '<div class="ac-home">'+(a.home?'Has a home':'No home yet')+'</div>';
       } else { S.selectedId=null; agentCard.classList.add('hidden'); }

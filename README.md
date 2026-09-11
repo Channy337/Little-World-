@@ -2,9 +2,9 @@
 
 Civoria is a pixel-art civilization experiment backed by one canonical server-side world. Every visitor to the same environment sees the same villagers, buildings, resources and Chronicle. The browser is a viewer, not the owner of the simulation.
 
-## Current milestone: Civoria 0.4 primitive origin
+## Current milestone: Civoria 0.5 physical learning foundation
 
-Civoria 0.4 begins a new primitive-origin world and adds the first executable personal discovery:
+Civoria 0.5 begins a new primitive-origin world and adds the first end-to-end physical learning loop:
 
 - **1 real day = 30 Civoria days = 1 Civoria month**
 - no inherited homes, farms, market, trades or recipes
@@ -17,6 +17,13 @@ Civoria 0.4 begins a new primitive-origin world and adds the first executable pe
 - short-lived GitHub OIDC authentication, with no required static heartbeat password
 - up to seven real days of bounded catch-up after an outage
 - persistent AI minds propose hypotheses while the deterministic engine owns physical results
+- all 118 chemical elements exist as hidden engine truth; sensory access never reveals formulas or molecules
+- measurement, magnification and molecular analysis are gated by the capabilities and resolution of physically available tools
+- thirst, health, pain, body temperature, fire injury, dehydration and death are canonical survival state
+- water relieves thirst and natural lightning fires appear in and are rendered by the shared world
+- conversation passes an unverified instruction; the learner must reproduce it twice before gaining the capability
+- a discovery is lost with its final living holder unless Civorians have independently developed writing, durable records and literacy
+- `discoveries.html` shows a read-only causal map of active, recorded and lost discoveries
 
 The release uses a new `v2` storage namespace to begin the primitive world. The earlier `v1` production key is left intact for recovery rather than deleted.
 
@@ -24,6 +31,8 @@ The release uses a new `v2` storage namespace to begin the primitive world. The 
 
 - `lib/engine.js`: deterministic simulation owning movement, needs, primitive work, executable processes, construction, births, deaths and the saved random sequence.
 - `lib/affordances.js`: physical operation/material signatures. These are environmental laws, not knowledge granted to Civorians.
+- `lib/matter.js`: hidden elemental and molecular truth plus tool-gated observation and atom-conservation checks.
+- `lib/knowledge.js`: personal teaching, knowledge loss, literacy-gated records and causal discovery graph state.
 - `lib/store.js`: authenticated Upstash REST persistence with atomic initialization and compare-and-swap.
 - `lib/world.js`: versioned canonical state, validation, real-time scaling, catch-up limits, heartbeat metadata and structured logs.
 - `lib/http.js`: request guards, same-origin browser tick rules and scheduler authentication.
@@ -33,6 +42,7 @@ The release uses a new `v2` storage namespace to begin the primitive world. The 
 - `GET` or `POST /api/heartbeat`: authenticated unattended advancement endpoint. It returns timing/revision/day metadata, not the full village.
 - `game.js`: polls the server while visible and renders/interpolates the shared state without simulating canonical outcomes locally.
 - `chronicle.html`: reads the shared Chronicle from the server.
+- `discoveries.html`: reads the shared discovery graph without advancing or changing the world.
 - `.github/workflows/heartbeat.yml`: production unattended scheduler.
 - `.github/workflows/test.yml`: automated Beta tests and build checks.
 
@@ -83,7 +93,7 @@ The release-triggered production heartbeat was verified successfully. A normal r
 
 ## AI scope
 
-Persistent minds can form personal hypotheses. The AI cannot create resources, facts, recipes or structures. The canonical engine requires real materials and work, evaluates a physical affordance, and grants an executable capability only after repeated evidence.
+Persistent minds can form personal hypotheses. The AI cannot create resources, facts, recipes or structures. Molecular truth is not included in an AI prompt until a capable instrument has produced that observation. The canonical engine requires real materials and work, evaluates a physical affordance, and grants an executable capability only after repeated evidence. Hearing a method creates an instruction, not competence; the learner must reproduce the result.
 
 ## Public UI and history
 

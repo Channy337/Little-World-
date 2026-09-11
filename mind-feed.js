@@ -21,7 +21,7 @@
     return String(value||'').replace(/([A-Z])/g,' $1').replace(/^./,function(c){ return c.toUpperCase(); });
   }
   function roleTitle(role){
-    return role ? title(role) : 'Newcomer';
+    return role ? title(role) : 'No inherited trade';
   }
   function timeLabel(t){
     if(!Number.isFinite(t)) return '';
@@ -165,7 +165,8 @@
 
     var work='<div class="vp-work-title"><strong>'+escapeHtml(roleTitle(agent.role))+'</strong><span>'+escapeHtml(stateLabel(agent.state))+'</span></div>'+
       (skills.length?'<div class="vp-skills">'+skills.map(function(s){ return '<span>'+escapeHtml(title(s[0]))+' <b>'+Math.round(s[1])+'</b></span>'; }).join('')+'</div>':empty('Still building work experience.'))+
-      '<p class="vp-small">Inventory: '+Math.round(agent.inv&&agent.inv.wood||0)+' wood · '+Math.round(agent.inv&&agent.inv.stone||0)+' stone · '+Math.round(agent.inv&&agent.inv.food||0)+' food · '+Math.round(agent.coins||0)+' coins</p>';
+      '<p class="vp-small">Inventory: '+Math.round(agent.inv&&agent.inv.wood||0)+' wood · '+Math.round(agent.inv&&agent.inv.timber||0)+' timber · '+Math.round(agent.inv&&agent.inv.stone||0)+' stone · '+Math.round(agent.inv&&agent.inv.food||0)+' food</p>'+
+      '<p class="vp-small">Proven capabilities: '+((mind.capabilities||[]).length?(mind.capabilities||[]).map(function(x){return escapeHtml(title(x.id));}).join(', '):'none yet')+'</p>';
 
     var relationshipBody=rels.length?'<div class="vp-rel-list">'+rels.map(function(r){
       var closeness=Math.round(((r.data.trust||50)+(r.data.affection||50)+(r.data.familiarity||0))/3);
@@ -180,7 +181,7 @@
       '</div>';
 
     var life='<div class="vp-life-grid">'+
-      '<div><span>Life age</span><strong>'+Math.floor(agent.age||0)+' days</strong></div>'+
+      '<div><span>Life age</span><strong>'+Math.floor(agent.age||0)+' years</strong></div>'+
       '<div><span>Experience</span><strong>'+Math.floor(mind.experience||0)+' lived events</strong></div>'+
       '<div><span>Goal</span><strong>'+escapeHtml(mind.goal||'No long-term goal formed yet')+'</strong></div>'+
       '<div><span>Known lessons</span><strong>'+((mind.knowledge&&mind.knowledge.length)||0)+'</strong></div></div>'+
@@ -190,7 +191,7 @@
     card.classList.add('villagerDrawer');
     card.setAttribute('data-villager-panel-id',String(agent.id));
     card.innerHTML='<div class="vp-shell">'+
-      '<header class="vp-header"><div><p class="vp-kicker">Civorian profile · live</p><h2>'+escapeHtml(agent.name)+'</h2><p>'+escapeHtml(roleTitle(agent.role))+' · '+escapeHtml(agent.trait)+' · Day '+Math.floor(agent.age||0)+' of life</p></div><button type="button" class="vp-close" aria-label="Close villager profile">×</button></header>'+
+      '<header class="vp-header"><div><p class="vp-kicker">Civorian profile · live</p><h2>'+escapeHtml(agent.name)+'</h2><p>'+escapeHtml(roleTitle(agent.role))+' · '+escapeHtml(agent.trait)+' · Age '+Math.floor(agent.age||0)+'</p></div><button type="button" class="vp-close" aria-label="Close villager profile">×</button></header>'+
       currentThought+
       section('Right now',now,'vp-first')+
       section('Recent thoughts',thoughtBody)+

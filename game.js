@@ -325,6 +325,7 @@
   }
 
   function housePalette(b){
+    if(b.materials&&b.materials.timber>0) return {wall1:'#c49458',wall2:'#795033',roof1:'#59402e',roof2:'#34271f',trim:'#f0d49b'};
     var n=hash2(b.x,b.y);
     if(n<.33) return {wall1:'#d8bc88',wall2:'#b27f55',roof1:'#784b38',roof2:'#4f3128',trim:'#ede0bd'};
     if(n<.66) return {wall1:'#cbb38f',wall2:'#98765f',roof1:'#56604d',roof2:'#384136',trim:'#e6ddc6'};
@@ -345,6 +346,10 @@
       var wall=ctx.createLinearGradient(-15,-8,15,11); wall.addColorStop(0,pal.wall1); wall.addColorStop(1,pal.wall2);
       ctx.fillStyle=wall; roundedRect(-15,-9,30,21,3); ctx.fill();
       ctx.fillStyle='rgba(86,60,43,.13)'; for(var i=0;i<4;i++) ctx.fillRect(-14,-4+i*4.5,28,.75);
+      if(b.materials&&b.materials.timber>0){
+        ctx.strokeStyle='rgba(73,43,26,.58)';ctx.lineWidth=1.35;ctx.beginPath();
+        ctx.moveTo(-10,-8);ctx.lineTo(-10,11);ctx.moveTo(10,-8);ctx.lineTo(10,11);ctx.moveTo(-15,5);ctx.lineTo(15,5);ctx.stroke();
+      }
 
       var roof=ctx.createLinearGradient(0,-26,0,-6); roof.addColorStop(0,pal.roof1); roof.addColorStop(1,pal.roof2);
       ctx.fillStyle=roof; ctx.beginPath(); ctx.moveTo(-19,-8); ctx.lineTo(0,-27); ctx.lineTo(20,-8); ctx.quadraticCurveTo(0,-12,-19,-8); ctx.closePath(); ctx.fill();
@@ -598,8 +603,12 @@
   function timeOfDayLabel(t){
     if(t<.16) return 'Night'; if(t<.30) return 'Dawn'; if(t<.47) return 'Morning'; if(t<.56) return 'Noon'; if(t<.75) return 'Afternoon'; if(t<.88) return 'Dusk'; return 'Night';
   }
+  function calendarLabel(day){
+    var d=Math.max(1,Math.floor(day||1))-1;
+    return 'Year '+(Math.floor(d/360)+1)+' · Month '+(Math.floor((d%360)/30)+1)+' · Day '+(d%30+1);
+  }
   function updateHUD(){
-    clockLabel.textContent='Day '+S.day+' · '+timeOfDayLabel(S.time);
+    clockLabel.textContent=calendarLabel(S.day)+' · '+timeOfDayLabel(S.time);
     dayVal.textContent=S.day; popVal.textContent=S.agents.length;
     var houses=0,i; for(i=0;i<S.buildings.length;i++) if(S.buildings[i].type==='house') houses++;
     houseVal.textContent=houses; marketVal.textContent=S.market?'Open':'Not yet';
@@ -612,10 +621,10 @@
       if(a){
         agentCard.classList.remove('hidden');
         agentCard.innerHTML='<div class="ac-name">'+escapeHtml(a.name)+'</div>'+
-          '<div class="ac-role">'+(a.role?roleTitle(a.role):'Newcomer')+' · '+escapeHtml(a.trait)+' · day '+Math.floor(a.age)+' of life</div>'+
+          '<div class="ac-role">'+(a.role?roleTitle(a.role):'Unassigned')+' · '+escapeHtml(a.trait)+' · age '+Math.floor(a.age)+'</div>'+
           (a.aiThought?'<div class="ac-thought">“'+escapeHtml(a.aiThought)+'”</div>':'')+
           '<div class="ac-bars">'+bar('Hunger',100-a.hunger)+bar('Energy',a.energy)+bar('Social',a.social)+'</div>'+
-          '<div class="ac-inv">Wood '+a.inv.wood+' · Stone '+a.inv.stone+' · Food '+a.inv.food+' · Coins '+a.coins+'</div>'+
+          '<div class="ac-inv">Wood '+a.inv.wood+' · Timber '+(a.inv.timber||0)+' · Stone '+a.inv.stone+' · Food '+a.inv.food+' · Coins '+a.coins+'</div>'+
           '<div class="ac-home">'+(a.home?'Has a home':'No home yet')+'</div>';
       } else { S.selectedId=null; agentCard.classList.add('hidden'); }
     } else agentCard.classList.add('hidden');

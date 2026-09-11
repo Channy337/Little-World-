@@ -22,18 +22,50 @@ test('a villager cannot test with materials they do not possess',()=>{
   assert.ok(a.mind.memories.some(x=>/do not have what I need/.test(x.text)));
 });
 
-test('proposals do not become facts immediately and resolve only after time passes',()=>{
+test('proposals become evidence only after a canonical physical work action',()=>{
   const s=engine(null,33).snapshot();ensureMinds(s);
-  const a=s.agents[0];a.inv.wood=2;a.mind.emotions.curiosity=100;a.mind.emotions.stress=0;a.mind.skills.woodcutting=100;a.mind.experience=30;
+  const a=s.agents[0];a.inv.wood=2;a.hunger=0;a.energy=100;a.social=100;
   applyExperimentProposals(s,[{type:'priority',agentId:a.id}],[{experiment:{hypothesis:'Shaped wood might fit together more tightly',operation:'shape',materials:['wood'],hopedResult:'Two pieces sit with less wobble'}}]);
   assert.equal(a.mind.knowledge.some(x=>/Shaped wood/.test(x)),false);
   resolveExperiments(s);
   assert.equal(a.mind.experiments[0].status,'proposed');
-  s.day++;
-  resolveExperiments(s);
-  assert.equal(a.mind.experiments[0].status,'promising');
-  assert.ok(a.mind.beliefs.some(x=>/Shaped wood/.test(x)));
-  assert.equal(a.mind.knowledge.some(x=>/Shaped wood/.test(x)),false);
+  const e=engine(s);for(let i=0;i<45;i++)e.step(.1);
+  const after=e.snapshot();resolveExperiments(after);
+  const person=after.agents.find(x=>x.id===a.id);
+  assert.equal(person.mind.experiments[0].status,'promising');
+  assert.equal(person.inv.wood,1);assert.equal(person.inv.timber,1);
+  assert.ok(person.mind.beliefs.some(x=>/Shaped wood/.test(x)));
+  assert.equal(person.mind.capabilities.length,0);
+});
+
+test('two physical results create only the discoverer personal executable recipe',()=>{
+  let s=engine(null,34).snapshot();ensureMinds(s);
+  let id=s.agents[0].id,a=s.agents[0];a.inv.wood=3;a.hunger=0;a.energy=100;a.social=100;
+  const proposal=hypothesis=>({experiment:{hypothesis,operation:'shape',materials:['wood'],hopedResult:'A useful fitted piece'}});
+  applyExperimentProposals(s,[{type:'priority',agentId:id}],[proposal('Flattened wood may make a useful piece')]);
+  let e=engine(s);for(let i=0;i<45;i++)e.step(.1);s=e.snapshot();resolveExperiments(s);
+  a=s.agents.find(x=>x.id===id);a.state='idle';a.action=null;
+  applyExperimentProposals(s,[{type:'priority',agentId:id}],[proposal('Shaped wood may repeat the useful result')]);
+  e=engine(s);for(let i=0;i<45;i++)e.step(.1);s=e.snapshot();resolveExperiments(s);
+  a=s.agents.find(x=>x.id===id);
+  assert.ok(a.mind.capabilities.some(x=>x.id==='shape:wood'));
+  assert.ok(a.mind.knowledge.includes('Shaping wood repeatedly produces useful timber.'));
+  assert.equal(s.agents[1].mind.capabilities.length,0);
+});
+
+test('a learned recipe is executable and shaped timber is recorded in visible construction',()=>{
+  let s=engine(null,35).snapshot();ensureMinds(s);
+  const id=s.agents[0].id,a=s.agents[0];
+  a.mind.capabilities.push({id:'shape:wood',kind:'recipe',evidence:2,discoveredDay:s.day});
+  a.inv.wood=1;a.inv.timber=0;a.hunger=0;a.energy=100;a.social=100;
+  let e=engine(s);for(let i=0;i<40;i++)e.step(.1);s=e.snapshot();
+  let person=s.agents.find(x=>x.id===id);
+  assert.equal(person.inv.wood,0);assert.equal(person.inv.timber,1);
+  person.inv.timber=6;person.state='idle';person.action=null;person.hunger=0;person.energy=100;
+  e=engine(s);for(let i=0;i<120;i++)e.step(.1);s=e.snapshot();person=s.agents.find(x=>x.id===id);
+  const shelter=s.buildings.find(x=>x.ownerId===id);
+  assert.ok(shelter);assert.ok(shelter.materials.timber>0);assert.deepEqual(shelter.methods,['shape:wood']);
+  assert.equal(person.home,shelter.id);
 });
 
 test('invalid operation is rejected rather than becoming a hidden technology tree',()=>{

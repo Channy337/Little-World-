@@ -1,8 +1,10 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-09. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
+Updated: 2026-09-11. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
 
 ## Current progress
+
+> 2026-09-11 checkpoint: Codex implemented the owner-approved primitive-origin and executable-invention foundation on `beta/primitive-invention-runtime`, based on `main` `ecdbcc5`. Work is not merged or released. Production data is untouched. New worlds begin without farms, homes, markets, trades, or recipes; one real day equals 30 Civoria days with biological aging decoupled; physical shape-wood trials consume materials and produce timber; two matching results create only the discoverer's executable recipe; known production repeats it; timber is recorded and rendered in shelters. Storage moves to a recoverable `v2` namespace on release instead of deleting `v1`. `node --test`: 68 passed. `node scripts/build.js` and `git diff --check`: passed. Preview and owner review are pending.
 
 | Field | Latest checkpoint |
 |---|---|
@@ -172,6 +174,8 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-09 — Codex: Owner approved PR #7 release after confirming preview movement. Merged exact tested head 1678bec1 as 7291ff47; Vercel production succeeded. Existing saved civilization and real-time progression preserved. Dashboard reads this release checkpoint automatically.
 
 - 2026-09-09 — Claude: read-only production verification. Confirmed recurring `Civoria heartbeat` runs with GitHub event `Scheduled` completing successfully, latest at 20:16:48 CDT, confirmed `activity-clock.js` is served and loaded in production, and sampled `/api/state` at day 89, revision 3912, 22 agents with measurable canonical villager motion of about 0.034 world units per real second. No branch, commit, deployment or canonical data change. Updated this file only.
+
+- 2026-09-11 — Codex: owner approved starting civilization over. Implemented a local V0.4 primitive-origin candidate with a recoverable v2 namespace, 30 Civoria days per real day, age/calendar separation, physical experiment actions, personal repeated-evidence recipes, executable timber production, timber-backed shelters, and corresponding UI/visual changes. All 68 tests and static build pass. Branch is not yet pushed, previewed, merged, or deployed; production and v1 data are unchanged.
 
 
 ## AI decision cost model — measured 2026-09-10

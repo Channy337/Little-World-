@@ -36,12 +36,21 @@ test('repeated calls cannot accelerate the simulation',async()=>{
   const first=await f.service.tick();
   for(let i=0;i<20;i++)assert.equal((await f.service.tick()).revision,first.revision);
 });
-test('720 two-minute heartbeats equal one village day',async()=>{
+test('720 two-minute heartbeats equal one thirty-day Civoria month',async()=>{
   const f=fixture();const before=await f.service.state();
   for(let i=0;i<720;i++){f.advance(120000);await f.service.heartbeat();}
   const after=await f.service.state();
-  assert.equal(after.state.day,before.state.day+1);
+  assert.equal(after.state.day,before.state.day+30);
   assert.ok(Math.abs(after.state.time-before.state.time)<1e-9);
+});
+test('a fresh world begins primitive and biological age is decoupled from calendar days',()=>{
+  const e=engine(null,77),before=e.snapshot();
+  assert.equal(before.farms.length,0);assert.equal(before.buildings.length,0);assert.equal(before.market,null);
+  assert.ok(before.agents.every(a=>a.role===null&&a.home===null&&a.inv.timber===0));
+  const original=before.agents[0],age=original.age;for(let i=0;i<550;i++)e.step(.1);
+  const after=e.snapshot(),survivor=after.agents.find(a=>a.id===original.id);
+  assert.equal(after.day,before.day+1);
+  assert.ok(survivor&&Math.abs((survivor.age-age)-1/360)<1e-6);
 });
 test('long absence catches up at most seven days and discards excess once',async()=>{
   const f=fixture();const before=await f.service.state();const absence=30*86400000;f.advance(absence);
@@ -81,6 +90,7 @@ test('failed writes leave last known world intact',async()=>{
 test('preview, production, development and separate branches have distinct keys',()=>{
   const p=namespace({VERCEL_ENV:'production'}),a=namespace({VERCEL_ENV:'preview',VERCEL_GIT_COMMIT_REF:'beta/a'}),b=namespace({VERCEL_ENV:'preview',VERCEL_GIT_COMMIT_REF:'beta/b'}),d=namespace({});
   assert.equal(new Set([p,a,b,d]).size,4);
+  assert.match(p,/\{production\}:v2$/);
   assert.throws(()=>namespace({VERCEL_ENV:'preview'}));
   assert.throws(()=>namespace({VERCEL:'1'}));
 });

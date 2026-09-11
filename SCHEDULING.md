@@ -4,9 +4,9 @@
 
 ## World pace
 
-The owner selected a real-time calendar: approximately **one Civoria day equals one real day**.
+The owner selected a compressed calendar: **one real day equals thirty Civoria days, or one Civoria month**.
 
-The original village engine was tuned around a 55-second internal day. The world service therefore scales elapsed real time before handing it to the engine. This keeps hunger, energy, movement, work, farming, aging, births, deaths and resource regeneration in the same proportions while mapping one internal day to 24 real hours.
+The original village engine was tuned around a 55-second internal day. The world service now maps one internal day to about 48 real minutes. Biological age is separately divided across a 360-day Civoria year, preventing the faster calendar from aging people one year per day.
 
 ## Scheduler selected for Beta 0.2
 
@@ -27,7 +27,7 @@ A legacy `CRON_SECRET` remains supported as a fallback, but Beta 0.2 does not re
 
 ## Catch-up behavior
 
-The previous two-minute catch-up cap was appropriate for the old fast simulation but would lose time with a 15-minute scheduler. Beta 0.2 allows up to **seven real days** of elapsed time to be replayed in one invocation. Because the real-time scale compresses 24 real hours into only 55 internal simulation seconds, seven real days require only about 385 internal simulation seconds of work.
+The service allows up to **seven real days** of elapsed time to be replayed in one invocation. At the current scale that is 210 Civoria days. The limit remains the safety fuse against unbounded catch-up.
 
 If the world has been unattended for more than seven real days without any browser tick or scheduler heartbeat, the excess is deliberately discarded once and logged as `skippedMs`. This is the safety fuse against unbounded catch-up.
 

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Civoria Pixel Continent Preview</title>
+<style>
+:root{color-scheme:dark;--ink:#f6ecd1;--panel:#10151cdd;--line:#ffffff1f}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#09131c;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink)}
+#wrap{position:fixed;inset:0;background:#09131c}canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}
+.hud{position:fixed;left:12px;top:12px;z-index:3;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 30px #0008;padding:10px 12px;max-width:min(360px,calc(100vw - 24px));backdrop-filter:blur(8px)}
+.title{font-size:14px;font-weight:800;letter-spacing:.08em}.sub{font-size:11px;opacity:.72;line-height:1.45;margin-top:5px}.pill{display:inline-block;margin-top:8px;border:1px solid #fff3;padding:4px 7px;font-size:10px;background:#0004}.version{position:fixed;right:12px;bottom:12px;z-index:3;background:#0d1218d9;border:1px solid #ffffff24;padding:6px 8px;font-size:10px;letter-spacing:.08em}.controls{position:fixed;right:12px;top:12px;z-index:3;display:grid;gap:6px}.controls button{width:40px;height:40px;border:1px solid #ffffff2a;background:#10151cdd;color:#fff;font-size:20px;border-radius:0;backdrop-filter:blur(8px)}
+@media(max-width:640px){.hud{max-width:270px}.sub{font-size:10px}.controls button{width:38px;height:38px}}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="world"></canvas></div>
+<div class="hud"><div class="title">CIVORIA • CONTINENT PROTOTYPE</div><div class="sub">A larger North-America-inspired pixel world. Drag to travel. Pinch or scroll to zoom. Terrain becomes more detailed as you move closer.</div><div class="pill" id="status">REGIONAL VIEW</div></div>
+<div class="controls"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button></div>
+<div class="version">PREVIEW v0.4</div>
+<script>
+(function(){
+'use strict';
+const c=document.getElementById('world'),ctx=c.getContext('2d',{alpha:false});
+const status=document.getElementById('status');
+const WORLD={w:2048,h:1280};
+let dpr=1,w=0,h=0,cam={x:1030,y:650,z:.52},drag=null,pinch=null;
+const settlements=[
+ {x:965,y:530,n:'Pinewatch'},{x:1130,y:610,n:'Stoneford'},{x:870,y:690,n:'Riverbend'},
+ {x:1260,y:745,n:'Sunfield'},{x:780,y:480,n:'Northmere'},{x:1040,y:820,n:'Red Mesa'},
+ {x:650,y:620,n:'Westhaven'},{x:1390,y:560,n:'Eastgrove'}
+];
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function hash(x,y,s=0){let n=Math.sin(x*127.1+y*311.7+s*74.7)*43758.5453;return n-Math.floor(n)}
+function noise(x,y){let ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;fx=fx*fx*(3-2*fx);fy=fy*fy*(3-2*fy);let a=hash(ix,iy),b=hash(ix+1,iy),d=hash(ix,iy+1),e=hash(ix+1,iy+1);return (a+(b-a)*fx)+(d+(e-d)*fx)*fy}
+function fbm(x,y){let v=0,a=.55,f=1;for(let i=0;i<4;i++){v+=noise(x*f,y*f)*a;f*=2.03;a*=.5}return v}
+function continentMask(x,y){
+ const nx=x/WORLD.w,ny=y/WORLD.h;
+ const blobs=[
+  [.43,.29,.28,.25,1.0],[.51,.48,.34,.28,1.0],[.48,.68,.24,.29,1.0],[.34,.53,.16,.22,.75],[.63,.45,.18,.20,.7],
+  [.22,.25,.13,.13,.7],[.69,.25,.11,.14,.55],[.55,.88,.08,.16,.45]
+ ];
+ let v=-1.05;
+ for(const b of blobs){let dx=(nx-b[0])/b[2],dy=(ny-b[1])/b[3];v=Math.max(v,b[4]-(dx*dx+dy*dy));}
+ v+= (fbm(nx*4.6,ny*4.6)-.48)*.72;
+ v-= Math.max(0,(nx-.77))*1.5;
+ v-= Math.max(0,.11-nx)*2.5;
+ return v;
+}
+function biome(x,y){
+ const m=continentMask(x,y); if(m<0)return 'water';
+ const nx=x/WORLD.w,ny=y/WORLD.h;
+ const elev=fbm(nx*7+2,ny*7+7)+(fbm(nx*17,ny*17)-.5)*.28;
+ const moist=fbm(nx*5+18,ny*5+3);
+ if(ny<.21||elev>.91)return 'snow';
+ if(elev>.78)return 'mountain';
+ if(ny>.66&&moist<.53)return 'desert';
+ if(moist>.61)return 'forest';
+ if(moist<.38)return 'prairie';
+ return 'grass';
+}
+const pal={water:['#173c52','#1d4960','#24566b'],grass:['#6f984f','#79a857','#5f8b47'],forest:['#355f3d','#2b5337','#406c43'],prairie:['#9a9d59','#aaa768','#878d50'],desert:['#b99158','#c39d63','#a77c49'],mountain:['#66685e','#77786d','#565950'],snow:['#c8d0c6','#e1e4dc','#aebbb7']};
+function resize(){dpr=Math.min(2,window.devicePixelRatio||1);w=innerWidth;h=innerHeight;c.width=Math.floor(w*dpr);c.height=Math.floor(h*dpr);c.style.width=w+'px';c.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);render()}
+function viewToWorld(sx,sy){return {x:cam.x+(sx-w/2)/cam.z,y:cam.y+(sy-h/2)/cam.z}}
+function worldToView(x,y){return {x:(x-cam.x)*cam.z+w/2,y:(y-cam.y)*cam.z+h/2}}
+function zoomAt(f,sx,sy){let before=viewToWorld(sx,sy);cam.z=clamp(cam.z*f,.22,4.5);let after=viewToWorld(sx,sy);cam.x+=before.x-after.x;cam.y+=before.y-after.y;limitCam();render()}
+function limitCam(){cam.x=clamp(cam.x,-250,WORLD.w+250);cam.y=clamp(cam.y,-200,WORLD.h+200)}
+function riverPath(points,widthPx){ctx.beginPath();points.forEach((p,i)=>{let v=worldToView(p[0],p[1]);if(i===0)ctx.moveTo(v.x,v.y);else ctx.lineTo(v.x,v.y)});ctx.strokeStyle='#4a8292';ctx.lineWidth=Math.max(1,widthPx*cam.z);ctx.lineCap='square';ctx.stroke();ctx.strokeStyle='#79a9ac';ctx.lineWidth=Math.max(1,.65*widthPx*cam.z);ctx.stroke()}
+function drawWater(){ctx.fillStyle='#153646';ctx.fillRect(0,0,w,h);let step=Math.max(18,Math.round(48*cam.z));ctx.fillStyle='#1c4558';for(let y=0;y<h;y+=step){for(let x=((y/step)%2)*step*.5;x<w;x+=step){if(hash(x/step,y/step)>.55)ctx.fillRect(Math.round(x),Math.round(y),Math.max(1,step*.28),Math.max(1,cam.z*2))}}}
+function render(){
+ ctx.imageSmoothingEnabled=false;drawWater();
+ const tile=cam.z<.45?24:cam.z<1.1?16:cam.z<2.1?10:6;
+ const tl=viewToWorld(0,0),br=viewToWorld(w,h);let x0=Math.floor(tl.x/tile)*tile,y0=Math.floor(tl.y/tile)*tile;
+ for(let y=y0;y<br.y+tile;y+=tile){for(let x=x0;x<br.x+tile;x+=tile){let b=biome(x+tile/2,y+tile/2);if(b==='water')continue;let p=worldToView(x,y);let arr=pal[b],idx=Math.floor(hash(x/tile,y/tile,3)*arr.length);ctx.fillStyle=arr[idx];let sz=Math.ceil(tile*cam.z)+1;ctx.fillRect(Math.floor(p.x),Math.floor(p.y),sz,sz);
+   if(cam.z>1.25&&b==='forest'&&hash(x,y,8)>.52){ctx.fillStyle='#1d3f2b';let px=p.x+sz*.5,py=p.y+sz*.45;ctx.fillRect(Math.round(px-1),Math.round(py+2),2,4);ctx.fillRect(Math.round(px-3),Math.round(py-2),6,5)}
+   if(cam.z>1.8&&b==='mountain'&&hash(x,y,2)>.44){ctx.fillStyle='#4f514a';ctx.fillRect(Math.round(p.x+sz*.25),Math.round(p.y+sz*.2),Math.max(2,sz*.5),Math.max(2,sz*.5));ctx.fillStyle='#aeb6ad';ctx.fillRect(Math.round(p.x+sz*.42),Math.round(p.y+sz*.2),Math.max(1,sz*.18),Math.max(1,sz*.16))}
+ }}
+ riverPath([[770,330],[835,410],[890,485],[930,565],[900,660],[850,745],[820,850]],7);
+ riverPath([[1180,360],[1145,450],[1185,530],[1240,610],[1290,705],[1320,800]],5);
+ if(cam.z>.48)drawSettlements();
+ drawCoastShadow();
+ status.textContent=cam.z<.45?'CONTINENT VIEW':cam.z<1.1?'REGIONAL VIEW':cam.z<2.2?'LOCAL VIEW':'VILLAGE DETAIL';
+}
+function drawCoastShadow(){if(cam.z<.35)return;ctx.globalAlpha=.12;ctx.fillStyle='#000';let spacing=64;for(let y=0;y<WORLD.h;y+=spacing){for(let x=0;x<WORLD.w;x+=spacing){if(continentMask(x,y)>0&&[continentMask(x+spacing,y),continentMask(x-spacing,y),continentMask(x,y+spacing),continentMask(x,y-spacing)].some(v=>v<0)){let p=worldToView(x,y);ctx.fillRect(p.x,p.y,Math.max(1,3*cam.z),Math.max(1,3*cam.z))}}}ctx.globalAlpha=1}
+function drawSettlements(){
+ for(let i=0;i<settlements.length;i++){let s=settlements[i];if(continentMask(s.x,s.y)<0)continue;let p=worldToView(s.x,s.y),scale=clamp(cam.z, .65,2.4);ctx.fillStyle='#2b2118';ctx.fillRect(Math.round(p.x-5*scale),Math.round(p.y-3*scale),Math.round(10*scale),Math.round(6*scale));ctx.fillStyle='#d6b56d';ctx.fillRect(Math.round(p.x-3*scale),Math.round(p.y-1*scale),Math.round(6*scale),Math.round(4*scale));ctx.fillStyle='#7a3e31';ctx.fillRect(Math.round(p.x-5*scale),Math.round(p.y-4*scale),Math.round(10*scale),Math.round(3*scale));
+  if(cam.z>.72){ctx.font=Math.max(9,Math.min(13,10*cam.z))+'px ui-monospace,monospace';ctx.textBaseline='top';ctx.fillStyle='#081019cc';let tw=ctx.measureText(s.n).width;ctx.fillRect(Math.round(p.x-tw/2-3),Math.round(p.y+7*scale),Math.round(tw+6),Math.round(14));ctx.fillStyle='#f1e6c7';ctx.fillText(s.n,Math.round(p.x-tw/2),Math.round(p.y+9*scale));}
+  if(cam.z>1.65){for(let v=0;v<4;v++){let ox=(hash(i,v,1)-.5)*34*cam.z,oy=(hash(i,v,2)-.5)*26*cam.z;ctx.fillStyle=['#d8a16f','#6b8a55','#bf7c52','#8088a1'][v];ctx.fillRect(Math.round(p.x+ox),Math.round(p.y+oy),Math.max(2,Math.round(2*cam.z)),Math.max(3,Math.round(3*cam.z)));}}
+ }
+}
+c.addEventListener('pointerdown',e=>{c.setPointerCapture(e.pointerId);drag={id:e.pointerId,x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y}});
+c.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;cam.x=drag.cx-(e.clientX-drag.x)/cam.z;cam.y=drag.cy-(e.clientY-drag.y)/cam.z;limitCam();render()});
+c.addEventListener('pointerup',e=>{if(drag&&e.pointerId===drag.id)drag=null});
+c.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.deltaY<0?1.18:.85,e.clientX,e.clientY)},{passive:false});
+let touches=new Map();c.addEventListener('touchstart',e=>{for(const t of e.changedTouches)touches.set(t.identifier,{x:t.clientX,y:t.clientY});if(touches.size===2){let a=[...touches.values()];pinch={d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),z:cam.z}}},{passive:false});
+c.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches)touches.set(t.identifier,{x:t.clientX,y:t.clientY});if(touches.size===2&&pinch){let a=[...touches.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),mx=(a[0].x+a[1].x)/2,my=(a[0].y+a[1].y)/2,ratio=d/pinch.d;if(Math.abs(ratio-1)>.02){let target=pinch.z*ratio;let f=target/cam.z;zoomAt(f,mx,my)}}},{passive:false});
+c.addEventListener('touchend',e=>{for(const t of e.changedTouches)touches.delete(t.identifier);if(touches.size<2)pinch=null},{passive:false});
+document.getElementById('zin').onclick=()=>zoomAt(1.35,w/2,h/2);document.getElementById('zout').onclick=()=>zoomAt(.74,w/2,h/2);
+addEventListener('resize',resize);resize();
+})();
+</script>
+</body>
+</html>

@@ -28,18 +28,48 @@ test('AI thoughts are stored as bounded persistent villager history',()=>{
   assert.equal(agent.mind.thoughts[11].text,'Thought 19');
 });
 
-test('villager click card is enhanced into the life drawer without changing the renderer',()=>{
+test('villager click card is enhanced into the Jarvis life profile without changing the renderer',()=>{
   const js=fs.readFileSync('mind-feed.js','utf8');
   const css=fs.readFileSync('styles.css','utf8');
-  assert.match(js,/Recent thoughts/);
-  assert.match(js,/Personality & mood/);
-  assert.match(js,/Decisions/);
-  assert.match(js,/Work & resources/);
-  assert.match(js,/Relationships/);
-  assert.match(js,/Life progress/);
-  assert.match(js,/AI priority/);
-  assert.match(js,/Action taken/);
+  assert.match(js,/Civorian life profile/);
+  assert.match(js,/jarvis-profile/);
+  assert.match(js,/data-tab/);
+  assert.match(js,/Observer boundary/);
+  assert.match(js,/Personally felt/);
+  assert.match(js,/Observer analytics/);
+  assert.match(js,/Personal observations/);
+  assert.match(js,/Reproducible methods/);
   assert.match(js,/mind\.thoughts/);
   assert.match(css,/#agentCard\.villagerDrawer/);
+  assert.match(css,/jarvis-profile/);
+  assert.match(css,/--jarvis-cyan/);
   assert.match(css,/@media \(max-width:760px\)/);
+  assert.match(css,/prefers-reduced-motion/);
+  assert.doesNotMatch(js,/localStorage\.setItem/);
+  assert.doesNotMatch(js,/fetch\(.*method:\s*['\"]POST['\"]/);
+});
+
+test('profile separates observer truth from personal knowledge labels',()=>{
+  const js=fs.readFileSync('mind-feed.js','utf8');
+  assert.match(js,/vp-badge observer/);
+  assert.match(js,/vp-badge personal/);
+  assert.match(js,/Visitor only/);
+  assert.match(js,/never added to the Civorian/);
+  assert.match(js,/never injected into AI prompts/);
+});
+
+test('profile handles missing legacy fields safely',()=>{
+  const js=fs.readFileSync('mind-feed.js','utf8');
+  assert.match(js,/agent\.body\|\|\{\}/);
+  assert.match(js,/agent\.healthState\|\|\{\}/);
+  assert.match(js,/agent\.life\|\|\{\}/);
+  assert.match(js,/agent\.mind\|\|\{\}/);
+  assert.match(js,/Array\.isArray\(mind\.observations\)/);
+  assert.match(js,/Array\.isArray\(mind\.capabilities\)/);
+});
+
+test('build includes mind-feed and styles for profile assets',()=>{
+  const build=fs.readFileSync('scripts/build.js','utf8');
+  assert.match(build,/mind-feed\.js/);
+  assert.match(build,/styles\.css/);
 });

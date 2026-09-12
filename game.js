@@ -664,6 +664,10 @@
     var total=Math.floor((((Number(t)||0)%1)+1)%1*24*60),h=Math.floor(total/60),m=total%60;
     return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
   }
+  function profileOwnsCard(agentId){
+    return !!(agentCard&&agentCard.querySelector('.vp-shell')&&
+      String(agentCard.getAttribute('data-villager-panel-id'))===String(agentId));
+  }
   function calendarLabel(day){
     var d=Math.max(1,Math.floor(day||1))-1;
     return 'Year '+(Math.floor(d/360)+1)+' · Month '+(Math.floor((d%360)/30)+1)+' · Day '+(d%30+1);
@@ -682,13 +686,16 @@
       var a=findById(S.agents,S.selectedId);
       if(a){
         agentCard.classList.remove('hidden');
-        agentCard.innerHTML='<div class="ac-name">'+escapeHtml(a.name)+'</div>'+
-          '<div class="ac-role">'+(a.role?roleTitle(a.role):'Unassigned')+' · '+escapeHtml(a.trait)+' · age '+Math.floor(a.age)+'</div>'+
-          (a.aiThought?'<div class="ac-thought">“'+escapeHtml(a.aiThought)+'”</div>':'')+
-          '<div class="ac-bars">'+bar('Health',a.health==null?100:a.health)+bar('Thirst',100-(a.thirst||0))+bar('Hunger',100-a.hunger)+bar('Energy',a.energy)+bar('Alertness',(a.body&&a.body.alertness!=null)?a.body.alertness:75)+bar('Social',a.social)+'</div>'+
-          (a.body&&a.body.lastSymptoms&&a.body.lastSymptoms.length?'<div class="ac-thought">“'+escapeHtml(a.body.lastSymptoms[a.body.lastSymptoms.length-1])+'”</div>':'')+
-          '<div class="ac-inv">Wood '+a.inv.wood+' · Timber '+(a.inv.timber||0)+' · Stone '+a.inv.stone+' · Fiber '+(a.inv.fiber||0)+' · Clay '+(a.inv.clay||0)+' · Ore '+(a.inv.ore||0)+' · Food '+a.inv.food+' · Artifacts '+((a.artifacts||[]).length)+' · Coins '+a.coins+'</div>'+
-          '<div class="ac-home">'+(a.home?'Has a home':'No home yet')+'</div>';
+        if(!profileOwnsCard(a.id)){
+          agentCard.removeAttribute('data-villager-panel-id');
+          agentCard.innerHTML='<div class="ac-name">'+escapeHtml(a.name)+'</div>'+
+            '<div class="ac-role">'+(a.role?roleTitle(a.role):'Unassigned')+' · '+escapeHtml(a.trait)+' · age '+Math.floor(a.age)+'</div>'+
+            (a.aiThought?'<div class="ac-thought">“'+escapeHtml(a.aiThought)+'”</div>':'')+
+            '<div class="ac-bars">'+bar('Health',a.health==null?100:a.health)+bar('Thirst',100-(a.thirst||0))+bar('Hunger',100-a.hunger)+bar('Energy',a.energy)+bar('Alertness',(a.body&&a.body.alertness!=null)?a.body.alertness:75)+bar('Social',a.social)+'</div>'+
+            (a.body&&a.body.lastSymptoms&&a.body.lastSymptoms.length?'<div class="ac-thought">“'+escapeHtml(a.body.lastSymptoms[a.body.lastSymptoms.length-1])+'”</div>':'')+
+            '<div class="ac-inv">Wood '+a.inv.wood+' · Timber '+(a.inv.timber||0)+' · Stone '+a.inv.stone+' · Fiber '+(a.inv.fiber||0)+' · Clay '+(a.inv.clay||0)+' · Ore '+(a.inv.ore||0)+' · Food '+a.inv.food+' · Artifacts '+((a.artifacts||[]).length)+' · Coins '+a.coins+'</div>'+
+            '<div class="ac-home">'+(a.home?'Has a home':'No home yet')+'</div>';
+        }
       } else { S.selectedId=null; agentCard.classList.add('hidden'); }
     } else agentCard.classList.add('hidden');
   }

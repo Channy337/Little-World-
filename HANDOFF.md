@@ -1,27 +1,82 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-11. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
+Updated: 2026-09-12. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
 
 ## Current progress
 
-> 2026-09-11 22:18 UTC — Codex shelter milestone implemented on `beta/v06-shelter`, stacked on V0.6 PR #22. Draft PR: https://github.com/Channy337/Little-World-/pull/23. Last implementation: `df244c9711bf1273aea402d68ee924fc27a63537`. Preview: https://little-world-git-beta-v06-shelter-small-villager.vercel.app/index.html#live-world. Vercel reports success; hosted browser connected and showed the missing-shaping prerequisite. 102 local tests and build pass. Browser checked scaffold/progress and completion/move-in using local engine-generated fixtures; this does not prove an online village has completed construction. GitHub Actions returned no PR run for this stacked branch, so do not claim CI passed. No new services/accounts/environment variables; production code and world data unchanged. Next: owner preview review, then broader V0.6 integration/release review. Other activity loops remain cosmetic; shelter uses canonical motion. Local checkout `Little-World-shelter` contains the published implementation; root `shelter-visual-check.cjs` is a local-only, memory-only artwork fixture, not deployed.
+> 2026-09-12 preview-publish checkpoint: The owner explicitly approved “push through.” V0.8 is published on draft PR #22 and synchronized with current `main` through merge commit `446b218fa777f17c3f6b9f9ce0e2406beaa9ac75`. GitHub Beta checks run #81 passed, Vercel reports the preview READY, and the complete local suite passes (115 tests plus build). The original local chain is retained at `backup/primitive-invention-runtime-before-push-20260912`. Production and v1 are untouched. Do not merge or promote without separate owner approval.
+
+> Parallel shelter checkpoint: draft PR #23 remains stacked on the earlier V0.6 PR #22 history at `df244c9711bf1273aea402d68ee924fc27a63537`. Its Vercel preview reports success and 102 local tests plus build passed. It should be reconciled with the newer V0.8 branch before any integration; do not merge it independently.
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Shelter milestone on draft PR #23, based on V0.6 PR #22; preview review pending. |
-| Active work | Codex checkpoint df244c9 on beta/v06-shelter; ready for review, not production. |
+| Status | Civoria 0.8 is published to draft PR #22; Beta checks #81 passed; Vercel preview READY; owner visual review pending. |
+| Active work | `beta/primitive-invention-runtime`; functional merge checkpoint `446b218`; keep the PR draft until separately approved. |
 | Live site | https://www.thecivoria.com |
 | Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
 | Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged earlier as `1facd30a1176548c6188ce74347af02552f741f2` |
 | World storage | One canonical Upstash-backed world per environment |
-| World pace | Approximately 1 Civoria day = 1 real day; unchanged by the viewer activity fix |
+| World pace | Candidate: 1 real day = 30 Civoria days; biological aging remains 360 Civoria days per year. Production remains unchanged. |
 | Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Owner preview review; parent V0.6 integration and release approval. |
-| AI status | Persistent villagers currently use deterministic built-in instincts. Anthropic decision calls are intentionally disabled in the canonical engine. |
+| Still pending | Perform hosted visual review, reconcile stacked shelter PR #23 with V0.8, and request separate release authorization before any merge or production change. |
+| AI status | Persistent personal minds may hypothesize; deterministic physical rules alone create facts, resources and executable capabilities. |
+
+### Owner-approved next milestone: Earth-like planet, biology, and discoverable subsistence
+
+The owner chose to hand this next milestone to Claude. No terrain/climate/ecosystem implementation for this milestone has begun. Start from the latest PR #22 head on `beta/primitive-invention-runtime`. Do not merge, production-deploy, or touch production without a new explicit owner instruction.
+
+The governing rule is that discovery changes a Civorian's knowledge, never the world's prior physical truth. Terrain, climate, organisms, seeds, minerals, and physical possibilities must already be determined by canonical state or the fixed planet seed before anyone encounters them. Loading or exploring a region may reveal that truth but must not author resources in response to a discovery.
+
+Required causality:
+
+1. A physical object or process already exists.
+2. A Civorian personally senses only what their location, weather, light, body, and tools permit.
+3. They may form a correct or incorrect hypothesis using their own vocabulary.
+4. A real action consumes time, energy, materials, and may cause harm or failure.
+5. The deterministic world evaluates the outcome.
+6. The individual retains evidence, not omniscient explanation.
+7. Repeated success may create only that individual's reproducible capability.
+8. Capability spreads only through demonstration, teaching, independent reproduction, or literacy-gated durable records; it can be lost when holders die.
+
+Natural-world requirements:
+
+- Use Earth-like gravity, atmosphere, 24-hour rotation, axial seasonality, water cycle, geology, soils, erosion, elevation, drainage, rivers, groundwater, and climate behavior.
+- Support physically caused terrain and ecosystems such as oceans, mountains, valleys, rivers, wetlands, deserts, grasslands, temperate forests, tropical rainforests, and tundra. Biomes must derive from latitude, elevation, heat, precipitation, soil, and water—not arbitrary visitor labels.
+- Weather such as rain, snow, drought, floods, storms, hurricanes, heat, cold, humidity, and wind must have local ecosystem and survival consequences.
+- Natural organisms use one shared DNA-based inheritance framework with mutation, genotype-to-phenotype expression, reproduction, life cycles, environmental tolerances, nutrition, toxins, disease, and competition. Individual acclimation is not genetic evolution; population traits change only across reproduction and selection.
+- Plants and animals should correspond to real Earth biology and visible morphology. A real leaf should have the appropriate shape, venation, texture, growth habit, and seasonal behavior. Internal species identity may exist as hidden engine truth, but Civorians initially see only sensory features and may invent entirely different names.
+- Do not store billions of literal base pairs. Model biologically meaningful loci and inherited traits deeply enough to preserve real causal behavior. DNA, cells, molecules, taxonomy, biome names, and modern anatomy remain inaccessible until adequate tools and evidence exist.
+- The current `lib/heritage.js` and `lib/ecology.js` are simplified scaffolding, not claims of complete human or ecosystem genetics. Unify their inheritance principles rather than creating unrelated magic systems.
+
+First concrete delivery should be one vertical slice, not a hardcoded technology tree:
+
+- Generate and persist a deterministic planet/climate/terrain truth before exploration, with a habitable river-valley starting region and other Earth-like climate regions elsewhere.
+- Add a small set of real plant organisms suited to the starting region, each with hidden biological identity, inherited functional loci, real visible leaf/seed morphology, germination needs, growth, reproduction, nutrition, and toxicity.
+- Seeds must physically exist and be collected. Civorians do not know that seeds grow.
+- Permit grounded actions such as placing, burying, watering, drying, heating, eating, and combining. Germination follows soil, moisture, temperature, depth, sunlight, dormancy, and seed viability whether or not anyone understands it.
+- Require personally observed, repeated success before cultivation becomes a reproducible personal method. Do not grant a named `farming` unlock, spawn a farm, or change yield because the concept was discovered.
+- Let unfamiliar but physically successful methods work, so Civorian subsistence may differ from human history.
+- Render local terrain, weather effects, real plant forms, seeds, growth attempts, failures, and successful cultivation for visitors without leaking hidden scientific names to Civorian prompts.
+
+Verification must include fixed-seed world determinism, save upgrades, biome causality, organism inheritance, species-appropriate phenotype, failed germination under wrong conditions, successful germination without prior knowledge, material/time consumption, two-result personal capability, knowledge loss/transfer, no resource creation on discovery, browser read-only behavior, full tests/build, and long-world balance samples. Real extinction remains allowed. Record limitations honestly; this first slice will not be a full molecular Earth simulator.
+
+### Foundational realism audit after Civoria 0.7 — first layer implemented locally in 0.8
+
+Ranked by how directly each gap violates the owner's experiment:
+
+1. **Local perception and spatial memory.** Built-in behavior still reads the full canonical map to find the nearest pond, bush, tree or rock. Replace this with sensory range, line of sight and remembered locations so a Civorian can act only on what they have personally perceived or been told.
+2. **General artifacts and mechanisms.** The open-ended prompt currently accepts eight broad operations and four material labels, but canonical success contains only `shape:wood` and `observe:body`. A plane or genuinely different technology cannot yet emerge. Add property-bearing parts, joints, containers, edges, fibers, heat/work inputs, assemblies and measured forces; capabilities should be generated from validated constructions rather than a named recipe whitelist.
+3. **Ecology and a real food system.** Primitive food is effectively generic bush food. Add varied plants, seeds, soils, nutrients, seasons, animals/fish, calories, spoilage, toxins, cooking and water contamination without labeling safe choices in advance.
+4. **Injury, disease and sanitation.** Fire, temperature, thirst and starvation exist, but bleeding, wounds, fractures, infection, pathogens, immunity, smoke, drowning, waste and healing do not.
+5. **Human lifecycle.** Birth is still an abstract social chance; newborns can behave like adults. Add sex/reproduction, pregnancy, infancy, dependency, childhood learning, puberty, fertility, aging effects and age-dependent sleep/metabolism.
+6. **Emergent communication and institutions.** Civorians can speak immediately in a shared language. Writing gates exist but there is no invention path for symbols, media, teaching institutions, specialization, law or durable public archives; visitor Chronicle history also remains capped.
+7. **Deeper environmental physics.** The 118 elements exist as hidden catalog truth, but geology, air chemistry, pressure, fluid flow, electricity, optics and general energy/mass transformations are not yet simulated deeply enough to support arbitrary machines.
+
+The 0.8 candidate addresses each item at a first functional depth. The next engineering step is not another hidden unlock list; it is deeper validation within these same layers, especially tool-mediated measurement, farming experiments, thermodynamics, geology, fluid flow, aerodynamics, electricity and optics.
 
 ## Visible routine follow-up — released 2026-09-09
 
@@ -174,6 +229,8 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-09 — Codex: Owner approved PR #7 release after confirming preview movement. Merged exact tested head 1678bec1 as 7291ff47; Vercel production succeeded. Existing saved civilization and real-time progression preserved. Dashboard reads this release checkpoint automatically.
 
 - 2026-09-09 — Claude: read-only production verification. Confirmed recurring `Civoria heartbeat` runs with GitHub event `Scheduled` completing successfully, latest at 20:16:48 CDT, confirmed `activity-clock.js` is served and loaded in production, and sampled `/api/state` at day 89, revision 3912, 22 agents with measurable canonical villager motion of about 0.034 world units per real second. No branch, commit, deployment or canonical data change. Updated this file only.
+
+- 2026-09-11 — Codex: owner approved starting civilization over. Implemented V0.4 primitive-origin candidate with a recoverable v2 namespace, 30 Civoria days per real day, age/calendar separation, physical experiment actions, personal repeated-evidence recipes, executable timber production, timber-backed shelters, and corresponding UI/visual changes. Published draft PR #22; Beta checks run #77 passed and Vercel preview deployment is READY but authentication-protected. Production and v1 data are unchanged.
 
 
 ## AI decision cost model — measured 2026-09-10

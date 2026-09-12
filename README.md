@@ -2,23 +2,67 @@
 
 Civoria is a pixel-art civilization experiment backed by one canonical server-side world. Every visitor to the same environment sees the same villagers, buildings, resources and Chronicle. The browser is a viewer, not the owner of the simulation.
 
-## Current milestone: Civoria 0.2
+## Current milestone: Civoria 0.8 foundational realism
 
-Civoria 0.2 adds unattended world advancement and the owner-selected real-time calendar:
+Civoria 0.8 begins a new primitive-origin world and adds the first end-to-end physical learning, survival and invention loop:
 
-- approximately **1 Civoria day = 1 real day**
+- **1 real day = 30 Civoria days = 1 Civoria month**
+- no inherited homes, farms, market, trades or recipes
+- physical experiments spend canonical time and materials
+- two matching shaped-wood results give only the discoverer a repeatable timber recipe
+- timber is a real resource recorded and rendered in construction
 - one canonical world stored in Upstash
 - browser-independent `/api/heartbeat`
 - GitHub Actions heartbeat roughly every 15 minutes
 - short-lived GitHub OIDC authentication, with no required static heartbeat password
 - up to seven real days of bounded catch-up after an outage
-- deterministic built-in villager instincts; persistent AI minds are deferred to Civoria 0.3
+- persistent AI minds propose hypotheses while the deterministic engine owns physical results
+- all 118 chemical elements exist as hidden engine truth; sensory access never reveals formulas or molecules
+- measurement, magnification and molecular analysis are gated by the capabilities and resolution of physically available tools
+- thirst, health, pain, body temperature, fire injury, dehydration and death are canonical survival state
+- water relieves thirst and natural lightning fires appear in and are rendered by the shared world
+- conversation passes an unverified instruction; the learner must reproduce it twice before gaining the capability
+- a discovery is lost with its final living holder unless Civorians have independently developed writing, durable records and literacy
+- `discoveries.html` shows a read-only causal map of active, recorded and lost discoveries
+- deterministic seasonal weather includes temperature, humidity, wind, clouds, rain, storms, drought pressure, heatwaves and cold snaps
+- weather changes water loss, body temperature, pond level, fire duration and biological resource regeneration
+- human-like bodies use water, glycogen, fat and muscle reserves; starvation and dehydration emerge from those reserves rather than fixed death timers
+- hidden anatomy includes organs and systems, but AI minds receive only personally felt symptoms and physically obtained observations
+- repeated non-invasive self-observation can establish pulse and breathing as a personal body discovery without revealing modern anatomical vocabulary
+- every Civoria day is 24 in-world hours; at the selected pace a full day passes in about 48 real minutes
+- individual circadian phase and accumulated sleep pressure make Civorians sleep without giving them medical knowledge
+- missed sleep creates persistent sleep debt, low alertness, slower movement and work, felt symptoms, and eventually health damage
+- rain, wind, temperature, thirst, hunger and shelter change sleep quality; homeless Civorians can sleep on the ground
+- sleeping is a canonical action rendered as a lying posture, and visitors can inspect alertness, time awake and sleep debt
+- Civorians navigate from personal sight and remembered or communicated places, not an invisible global resource map
+- varied plants have hidden calories, water, toxins, spoilage and fiber yields; individuals learn only from bodily outcomes
+- property-bearing material parts can be shaped, bound, stacked, heated, soaked, dried, balanced, spun or channeled
+- repeated successful prototypes become personal reproducible artifact methods instead of named technology unlocks
+- artifact behavior comes from form, material properties, assembly and shared world constants such as gravity and fluid density
+- blood loss, wounds, infection, smoke exposure, oxygen state, healing, sanitation and contaminated water have physical consequences
+- pregnancy takes 270 Civoria days; infants and children are dependent and cannot perform adult work
+- repeated interaction improves communication, can establish shared signs and can turn widely held practices into institutions
+- plants, animals, soil, waste, deposits and physical artifacts are visible without exposing hidden species, chemistry or safety labels
+- neutral polygenic appearance traits create varied skin, hair, eye and facial characteristics; children inherit one allele per locus from each parent
+- appearance never changes intelligence, personality, motivation, culture, knowledge, health or work capacity, and the engine contains no fixed race categories
 
-The existing civilization was not reset when 0.2 shipped. Earlier days created under the legacy accelerated clock remain part of the saved history.
+The release uses a new `v2` storage namespace to begin the primitive world. The earlier `v1` production key is left intact for recovery rather than deleted.
 
 ## Architecture
 
-- `lib/engine.js`: deterministic village simulation extracted from the original browser game. It owns movement, needs, jobs, resources, homes, market, farming, births, deaths and the saved random sequence.
+- `lib/engine.js`: deterministic simulation owning movement, needs, primitive work, executable processes, construction, births, deaths and the saved random sequence.
+- `lib/affordances.js`: physical operation/material signatures. These are environmental laws, not knowledge granted to Civorians.
+- `lib/matter.js`: hidden elemental and molecular truth plus tool-gated observation and atom-conservation checks.
+- `lib/weather.js`: deterministic daily weather, seasonal climate, water-loss pressure and resource-growth effects.
+- `lib/biology.js`: hidden anatomy, metabolism, hydration, thermoregulation, circadian sleep, organ condition and sensory symptoms.
+- `lib/perception.js`: local sight, weather/light-limited sensory range, personal spatial memory and communicated places.
+- `lib/mechanics.js`: material properties, forms, assemblies and physically evaluated prototype behavior.
+- `lib/ecology.js`: hidden plant effects, food items, spoilage, soil, animals, waste and water contamination.
+- `lib/health.js`: wounds, bleeding, infection, smoke, oxygen state, immunity and healing.
+- `lib/lifecycle.js`: sex, life stages, pregnancy, dependency and age-dependent needs.
+- `lib/heritage.js`: inherited polygenic appearance, stable save upgrades and family resemblance without behavioral race rules.
+- `lib/communication.js`: learned communication clarity, shared conventions and practice-based institutions.
+- `lib/knowledge.js`: personal teaching, knowledge loss, literacy-gated records and causal discovery graph state.
 - `lib/store.js`: authenticated Upstash REST persistence with atomic initialization and compare-and-swap.
 - `lib/world.js`: versioned canonical state, validation, real-time scaling, catch-up limits, heartbeat metadata and structured logs.
 - `lib/http.js`: request guards, same-origin browser tick rules and scheduler authentication.
@@ -28,6 +72,7 @@ The existing civilization was not reset when 0.2 shipped. Earlier days created u
 - `GET` or `POST /api/heartbeat`: authenticated unattended advancement endpoint. It returns timing/revision/day metadata, not the full village.
 - `game.js`: polls the server while visible and renders/interpolates the shared state without simulating canonical outcomes locally.
 - `chronicle.html`: reads the shared Chronicle from the server.
+- `discoveries.html`: reads the shared discovery graph without advancing or changing the world.
 - `.github/workflows/heartbeat.yml`: production unattended scheduler.
 - `.github/workflows/test.yml`: automated Beta tests and build checks.
 
@@ -42,21 +87,22 @@ The server uses the existing Vercel Upstash integration variables:
 
 Do not use the read-only token for writes. Database credentials never belong in browser code, logs or Git.
 
-Production uses `little-world:{production}:v1`. Preview branches use isolated namespaces derived from Vercel branch metadata. Development is separate. Preview without required branch metadata fails closed.
+Production uses `little-world:{production}:v2`. Preview branches use isolated `v2` namespaces derived from Vercel branch metadata. The recoverable pre-origin civilization remains under `v1`. Development is separate. Preview without required branch metadata fails closed.
 
 World and initialization-marker keys have no application TTL. If established state disappears while its marker remains, initialization refuses to silently replace the civilization. Restore from a trusted backup rather than deleting safety markers.
 
 ## Time, ticking and catch-up
 
-The original engine was tuned around a 55-second internal day. Civoria 0.2 does **not** change every engine rule individually. Instead, `lib/world.js` scales real elapsed time before handing it to the engine:
+The original engine is tuned around a 55-second internal day. `lib/world.js` scales real elapsed time before handing it to the engine:
 
-- 86,400 real seconds map to 55 internal engine seconds
-- hunger, energy, movement, work, farming, regeneration, aging, births and deaths therefore retain their original proportions
-- one internal day now takes approximately one real day
+- 86,400 real seconds map to 1,650 internal engine seconds
+- one internal day takes approximately 48 real minutes
+- each internal day contains 24 in-world hours, so one in-world hour takes approximately two real minutes
+- biological aging is decoupled: 360 internal days equal one year of age
 
 The minimum normal tick interval is five real seconds. Competing requests can calculate the same interval, but compare-and-swap allows only one result to commit. Duplicate deliveries and wall-clock rollback do not double-run or rewind the world.
 
-Civoria can replay at most seven real days of elapsed time in one invocation. Longer gaps consume the excess once and record it as `skippedMs`. At the real-time scale, seven real days equal only about 385 internal simulation seconds, so this gives ordinary scheduler outages plenty of recovery room without allowing an unbounded backlog.
+Civoria can replay at most seven real days of elapsed time in one invocation. Longer gaps consume the excess once and record it as `skippedMs`, preventing an unbounded backlog.
 
 ## Unattended heartbeat
 
@@ -78,9 +124,7 @@ The release-triggered production heartbeat was verified successfully. A normal r
 
 ## AI scope
 
-Current persistent villagers use the original deterministic instincts. The old browser AI route is disabled for canonical decisions. The existing Anthropic environment variable is unchanged.
-
-Civoria 0.3 is expected to restore AI as bounded server-side cognition with validated decisions, persistent memories, atomic writes and explicit spending controls. It should not restore per-visitor paid AI requests.
+Persistent minds can form personal hypotheses. The AI cannot create resources, facts, recipes or structures. Molecular and anatomical truth is not included in an AI prompt until a capable observation or instrument has produced evidence. Minds receive only sensed weather, personally felt symptoms and remembered evidence. The canonical engine requires real materials and work, evaluates a physical affordance, and grants an executable capability only after repeated evidence. Hearing a method creates an instruction, not competence; the learner must reproduce the result. Real-world weekday, holiday and cultural labels are deliberately excluded from primitive minds.
 
 ## Public UI and history
 

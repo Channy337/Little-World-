@@ -127,6 +127,10 @@
       ctx.fillStyle='rgba(166,132,82,.35)';ctx.beginPath();ctx.arc(7,-2,4+Math.sin(t*4)*1.5,0,Math.PI*2);ctx.fill();
     }else if(kind==='market'){
       ctx.fillStyle='rgba(221,185,98,.7)';ctx.fillRect(7,-9,6,5);ctx.strokeStyle='rgba(92,65,39,.7)';ctx.strokeRect(7,-9,6,5);
+    }else if(kind==='experiment'||kind==='process'){
+      ctx.strokeStyle='rgba(242,205,112,.9)';ctx.lineWidth=1.2;
+      for(i=0;i<3;i++){var spin=t*2+i*2.09;ctx.beginPath();ctx.arc(Math.cos(spin)*7,-8+Math.sin(spin)*4,1.4,0,Math.PI*2);ctx.stroke();}
+      ctx.fillStyle='rgba(126,78,42,.9)';ctx.fillRect(-7,-3,14,2.5);
     }
     ctx.restore();
   }

@@ -20,6 +20,11 @@ test('construction visuals respond to canonical buildsite activity and new build
   assert.match(growth,/state\.buildings/);
 });
 
+test('physical experiments and known production processes are visible',()=>{
+  assert.match(growth,/kind==='experiment'\|\|kind==='process'/);
+  assert.match(fs.readFileSync('game.js','utf8'),/b\.materials&&b\.materials\.timber/);
+});
+
 test('settlement expansion stays presentation only',()=>{
   assert.match(growth,/growthAmount/);
   assert.match(growth,/baseCanvas\.style\.transform/);

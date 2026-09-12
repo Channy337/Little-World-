@@ -57,15 +57,16 @@ button:active{transform:translateY(1px);}
 .ac-bar-fill{height:100%;background:linear-gradient(90deg,#658f61,#9cb76c);}
 .ac-inv{font-size:12px;color:var(--muted);margin-top:8px;}
 .ac-home{font-size:12px;color:var(--muted);margin-top:2px;}
-.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-bottom:14px;}
+.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin-bottom:14px;}
 .stat{background:linear-gradient(145deg,#1c2a21,#17221b);border:1px solid var(--line);border-radius:12px;padding:10px 11px;}
 .stat .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
 .stat .v{font-family:'Cormorant Garamond',Georgia,serif;font-size:23px;margin-top:5px;color:var(--text);font-weight:700;}
+.stat .v.weatherValue{font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.25;text-transform:capitalize;}
 .logPanel{background:linear-gradient(145deg,#1b2820,#152019);border:1px solid var(--line);border-radius:13px;padding:4px 11px;max-height:205px;overflow-y:auto;}
 .logPanel ul{list-style:none;margin:0;padding:0;}
 .logPanel li{padding:7px 2px;border-bottom:1px solid var(--line);font-size:12.5px;line-height:1.4;}
 .logPanel li:last-child{border-bottom:none;}
-.log-birth{color:#9bc583;}.log-death{color:var(--danger);}.log-build{color:var(--accent);}.log-market{color:var(--accent);font-weight:600;}.log-role{color:var(--muted);}.log-social{color:var(--social);}.log-info{color:var(--text);}
+.log-birth{color:#9bc583;}.log-death{color:var(--danger);}.log-build{color:var(--accent);}.log-market{color:var(--accent);font-weight:600;}.log-role{color:var(--muted);}.log-social{color:var(--social);}.log-weather{color:#9fc4d5}.log-info{color:var(--text);}
 .sectionLabel{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;color:#e3e7df;margin:0 0 7px;font-weight:600;}
 
 .mindPanel{background:linear-gradient(145deg,#1d2b23,#111b15);border:1px solid rgba(217,185,108,.22);border-radius:14px;padding:13px 14px;margin:0 0 15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);}

@@ -21,7 +21,7 @@
     return String(value||'').replace(/([A-Z])/g,' $1').replace(/^./,function(c){ return c.toUpperCase(); });
   }
   function roleTitle(role){
-    return role ? title(role) : 'Newcomer';
+    return role ? title(role) : 'No inherited trade';
   }
   function timeLabel(t){
     if(!Number.isFinite(t)) return '';
@@ -29,11 +29,12 @@
     if(t<.56) return 'Noon'; if(t<.75) return 'Afternoon'; if(t<.88) return 'Dusk'; return 'Night';
   }
   function stateLabel(state){
-    var labels={idle:'Taking a moment',moving:'On the move',working:'Working',resting:'Resting',socializing:'Spending time with someone'};
+    var labels={idle:'Taking a moment',moving:'On the move',working:'Working',resting:'Sleeping',socializing:'Spending time with someone'};
     return labels[state]||title(state||'Living');
   }
   function actionLabel(a,state){
     if(!a) return stateLabel(state);
+    if(a.sleep) return a.forced?'Collapsed into sleep':'Sleeping';
     if(a.sub==='harvest') return 'Harvesting food';
     if(a.sub==='buy') return 'Buying food';
     if(a.kind) return title(a.kind);
@@ -145,11 +146,16 @@
     if(dismissedSignature===sig){ card.classList.add('hidden'); return; }
 
     var mind=agent.mind||{}, emotions=mind.emotions||{}, thoughts=thoughtHistory(agent), rels=relationships(agent), memories=notableMemories(agent), skills=strongestSkills(agent);
+    var appearance=agent.heritage&&agent.heritage.phenotype||{},skin=appearance.melanin<.2?'very light':appearance.melanin<.4?'light':appearance.melanin<.6?'medium':appearance.melanin<.8?'deep':'very deep';
+    var hairTexture=appearance.hairCurl<.22?'straight':appearance.hairCurl<.48?'wavy':appearance.hairCurl<.74?'curly':'tightly curled';
     var now='<div class="vp-now-grid">'+
       '<div><span>Doing</span><strong>'+escapeHtml(actionLabel(agent.action,agent.state))+'</strong></div>'+
       '<div><span>Mood</span><strong>'+escapeHtml(moodLabel(agent))+'</strong></div>'+
       '<div><span>Current focus</span><strong>'+escapeHtml(agent.aiFocus||mind.goal||'Getting through the day')+'</strong></div>'+
-      '<div><span>Home</span><strong>'+(agent.home?'Has a home':'No home yet')+'</strong></div></div>';
+      '<div><span>Home</span><strong>'+(agent.home?'Has a home':'No home yet')+'</strong></div>'+
+      '<div><span>Life stage</span><strong>'+escapeHtml(title(agent.life&&agent.life.stage||'adult'))+'</strong></div>'+
+      '<div><span>Inherited appearance</span><strong>'+escapeHtml(skin+' skin · '+hairTexture+' hair')+'</strong></div>'+
+      '<div><span>Communication</span><strong>Gesture '+Math.round(agent.communication&&agent.communication.gestureSkill||0)+' · Voice '+Math.round(agent.communication&&agent.communication.vocalSkill||0)+'</strong></div></div>';
 
     var currentThought=agent.aiThought
       ? '<div class="vp-current-thought"><span>Current thought</span><blockquote>“'+escapeHtml(agent.aiThought)+'”</blockquote></div>'
@@ -165,7 +171,9 @@
 
     var work='<div class="vp-work-title"><strong>'+escapeHtml(roleTitle(agent.role))+'</strong><span>'+escapeHtml(stateLabel(agent.state))+'</span></div>'+
       (skills.length?'<div class="vp-skills">'+skills.map(function(s){ return '<span>'+escapeHtml(title(s[0]))+' <b>'+Math.round(s[1])+'</b></span>'; }).join('')+'</div>':empty('Still building work experience.'))+
-      '<p class="vp-small">Inventory: '+Math.round(agent.inv&&agent.inv.wood||0)+' wood · '+Math.round(agent.inv&&agent.inv.stone||0)+' stone · '+Math.round(agent.inv&&agent.inv.food||0)+' food · '+Math.round(agent.coins||0)+' coins</p>';
+      '<p class="vp-small">Inventory: '+Math.round(agent.inv&&agent.inv.wood||0)+' wood · '+Math.round(agent.inv&&agent.inv.timber||0)+' timber · '+Math.round(agent.inv&&agent.inv.stone||0)+' stone · '+Math.round(agent.inv&&agent.inv.fiber||0)+' fiber · '+Math.round(agent.inv&&agent.inv.clay||0)+' clay · '+Math.round(agent.inv&&agent.inv.ore||0)+' ore · '+Math.round(agent.inv&&agent.inv.food||0)+' food</p>'+
+      '<p class="vp-small">Physical prototypes: '+((agent.artifacts||[]).length?(agent.artifacts||[]).slice(-3).map(function(x){return escapeHtml(title(x.form)+' '+x.materials.join('/'));}).join(', '):'none yet')+'</p>'+
+      '<p class="vp-small">Proven capabilities: '+((mind.capabilities||[]).length?(mind.capabilities||[]).map(function(x){return escapeHtml(title(x.id));}).join(', '):'none yet')+'</p>';
 
     var relationshipBody=rels.length?'<div class="vp-rel-list">'+rels.map(function(r){
       var closeness=Math.round(((r.data.trust||50)+(r.data.affection||50)+(r.data.familiarity||0))/3);
@@ -180,17 +188,30 @@
       '</div>';
 
     var life='<div class="vp-life-grid">'+
-      '<div><span>Life age</span><strong>'+Math.floor(agent.age||0)+' days</strong></div>'+
+      '<div><span>Life age</span><strong>'+Math.floor(agent.age||0)+' years</strong></div>'+
       '<div><span>Experience</span><strong>'+Math.floor(mind.experience||0)+' lived events</strong></div>'+
       '<div><span>Goal</span><strong>'+escapeHtml(mind.goal||'No long-term goal formed yet')+'</strong></div>'+
       '<div><span>Known lessons</span><strong>'+((mind.knowledge&&mind.knowledge.length)||0)+'</strong></div></div>'+
       (memories.length?'<div class="vp-memories"><h4>Recent life memories</h4>'+memories.map(function(m){ return '<p><span>Day '+escapeHtml(m.day)+'</span>'+escapeHtml(m.text)+'</p>'; }).join('')+'</div>':'');
 
+    var body=agent.body||{},bodyView='<div class="vp-life-grid">'+
+      '<div><span>Hydration reserve</span><strong>'+Math.round(body.waterReserve==null?100:body.waterReserve)+'%</strong></div>'+
+      '<div><span>Core temperature</span><strong>'+Number(body.coreTemperature==null?37:body.coreTemperature).toFixed(1)+'°C</strong></div>'+
+      '<div><span>Alertness</span><strong>'+Math.round(body.alertness==null?75:body.alertness)+'%</strong></div>'+
+      '<div><span>Sleep debt</span><strong>'+Number(body.sleepDebtHours==null?0:body.sleepDebtHours).toFixed(1)+' hours</strong></div>'+
+      '<div><span>Current sleep</span><strong>'+(agent.state==='resting'?Number(body.sleepEpisodeHours||0).toFixed(1)+' hours':'Awake '+Number(body.awakeHours||0).toFixed(1)+' hours')+'</strong></div>'+
+      '<div><span>Blood volume</span><strong>'+Math.round((agent.healthState&&agent.healthState.bloodVolume!=null)?agent.healthState.bloodVolume:100)+'%</strong></div>'+
+      '<div><span>Blood oxygen</span><strong>'+Math.round((agent.healthState&&agent.healthState.oxygenSaturation!=null)?agent.healthState.oxygenSaturation:98)+'%</strong></div>'+
+      '<div><span>Infection pressure</span><strong>'+Math.round(agent.healthState&&agent.healthState.infectionLoad||0)+'%</strong></div>'+
+      '<div><span>Short-term fuel</span><strong>'+Math.round(body.glycogenReserve==null?100:body.glycogenReserve)+'%</strong></div>'+
+      '<div><span>Long-term fuel</span><strong>'+Number(body.fatReserveDays==null?0:body.fatReserveDays).toFixed(1)+' day equivalents</strong></div></div>'+
+      ((body.lastSymptoms||[]).length?'<div class="vp-memories"><h4>Personally felt symptoms</h4>'+(body.lastSymptoms||[]).map(function(x){return '<p>'+escapeHtml(x)+'</p>';}).join('')+'</div>':empty('No urgent body symptom is being felt.'));
+
     card.classList.remove('hidden');
     card.classList.add('villagerDrawer');
     card.setAttribute('data-villager-panel-id',String(agent.id));
     card.innerHTML='<div class="vp-shell">'+
-      '<header class="vp-header"><div><p class="vp-kicker">Civorian profile · live</p><h2>'+escapeHtml(agent.name)+'</h2><p>'+escapeHtml(roleTitle(agent.role))+' · '+escapeHtml(agent.trait)+' · Day '+Math.floor(agent.age||0)+' of life</p></div><button type="button" class="vp-close" aria-label="Close villager profile">×</button></header>'+
+      '<header class="vp-header"><div><p class="vp-kicker">Civorian profile · live</p><h2>'+escapeHtml(agent.name)+'</h2><p>'+escapeHtml(roleTitle(agent.role))+' · '+escapeHtml(agent.trait)+' · Age '+Math.floor(agent.age||0)+'</p></div><button type="button" class="vp-close" aria-label="Close villager profile">×</button></header>'+
       currentThought+
       section('Right now',now,'vp-first')+
       section('Recent thoughts',thoughtBody)+
@@ -198,6 +219,7 @@
       section('Decisions',decision)+
       section('Work & resources',work)+
       section('Relationships',relationshipBody)+
+      section('Body condition · visitor view',bodyView)+
       section('Life progress',life)+
       '<p class="vp-footnote">This panel separates what the AI is thinking from what the simulation actually does. Thoughts can influence priorities, but the shared world remains authoritative over physical outcomes.</p>'+
       '</div>';

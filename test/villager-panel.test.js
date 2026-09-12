@@ -43,3 +43,11 @@ test('villager click card is enhanced into the life drawer without changing the 
   assert.match(css,/#agentCard\.villagerDrawer/);
   assert.match(css,/@media \(max-width:760px\)/);
 });
+
+test('live profile refresh preserves the reader scroll position',()=>{
+  const js=fs.readFileSync('mind-feed.js','utf8');
+  assert.match(js,/existingShell\.scrollTop/);
+  assert.match(js,/data-villager-panel-id[^\n]+String\(agent\.id\)/);
+  assert.match(js,/refreshedShell\.scrollTop=previousScroll/);
+  assert.match(js,/feed\.scrollTop=previousScroll/);
+});

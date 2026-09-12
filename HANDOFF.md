@@ -4,6 +4,8 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner and any
 
 ## Current progress
 
+> 2026-09-12 profile-scroll fix candidate: The owner reported that scrolling down the live Civorian side profile jumps back to the top. Root cause confirmed in `mind-feed.js`: every tick/state refresh rebuilt the open drawer with `innerHTML`, discarding `.vp-shell.scrollTop`. The `fix/v08-profile-scroll` candidate now preserves scroll position across both drawer and mind-feed refreshes. Focused tests pass (5/5), the complete suite passes (116/116), build and `git diff --check` pass. Publish a draft preview and perform hosted verification; do not merge or deploy production without separate owner approval.
+
 > 2026-09-12 V0.8 release checkpoint: The owner explicitly approved “Push V0.8 live.” PR #22 merged to `main` as `243ef76b3a6f16962a29ac65a1642749b518b051`. GitHub Beta checks run #82 passed on the exact PR head, Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` is READY, and the live site serves V0.8.0. Live `/api/state` initialized the isolated primitive production V2 world on Day 1 with nine founders, zero buildings, zero farms, no market, no roles, no homes, and no timber. The previous V1 world remains preserved. The next selected work is a read-only Jarvis-style visitor profile on a new branch from current `main`; do not merge that future work without separate approval.
 
 > 2026-09-12 shared-assistant checkpoint: GitHub is now the owner-approved communication channel between connected assistants. The complete Jarvis requirements are in `docs/JARVIS_PROFILE.md`. Grok or another connected assistant should fetch current `main`, read `AGENTS.md`, this file and that specification, then work only on `beta/civorian-jarvis-profile` and a separate draft PR. Chat transcripts are not shared automatically. Every assistant must publish a GitHub handoff before another continues. Claude still needs a pasted pointer unless separately connected to the repository.
@@ -13,7 +15,7 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner and any
 | Field | Latest checkpoint |
 |---|---|
 | Status | Civoria V0.8.0 is live in production; exact release merge `243ef76`; production deployment READY and live API verified. |
-| Active work | Jarvis specification published at `docs/JARVIS_PROFILE.md`; implementation has not started. Next: create `beta/civorian-jarvis-profile` from current `main` and open a separate draft PR. |
+| Active work | `fix/v08-profile-scroll`; locally verified candidate awaiting draft PR and hosted preview. Jarvis specification remains at `docs/JARVIS_PROFILE.md` and implementation has not started. |
 | Live site | https://www.thecivoria.com |
 | Production branch | `main`; V0.8 release `243ef76b3a6f16962a29ac65a1642749b518b051` |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |

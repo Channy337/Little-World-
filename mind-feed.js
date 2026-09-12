@@ -96,6 +96,7 @@
     var feed=document.getElementById('mindFeed');
     var status=document.getElementById('mindStatus');
     if(!feed||!status) return;
+    var previousScroll=feed.scrollTop;
 
     var active=state.agents.filter(function(a){ return !!a.aiThought; }).length;
     status.textContent=active
@@ -113,6 +114,7 @@
         '<div class="mind-event-thought">“'+escapeHtml(evt.thought)+'”</div>'+
       '</article>';
     }).join('');
+    feed.scrollTop=previousScroll;
   }
 
   function identifySelectedAgent(card){
@@ -144,6 +146,10 @@
     if(!card||!agent) return;
     var sig=signature(agent);
     if(dismissedSignature===sig){ card.classList.add('hidden'); return; }
+    var existingShell=card.querySelector('.vp-shell');
+    var previousScroll=card.getAttribute('data-villager-panel-id')===String(agent.id)&&existingShell
+      ? existingShell.scrollTop
+      : 0;
 
     var mind=agent.mind||{}, emotions=mind.emotions||{}, thoughts=thoughtHistory(agent), rels=relationships(agent), memories=notableMemories(agent), skills=strongestSkills(agent);
     var appearance=agent.heritage&&agent.heritage.phenotype||{},skin=appearance.melanin<.2?'very light':appearance.melanin<.4?'light':appearance.melanin<.6?'medium':appearance.melanin<.8?'deep':'very deep';
@@ -223,6 +229,9 @@
       section('Life progress',life)+
       '<p class="vp-footnote">This panel separates what the AI is thinking from what the simulation actually does. Thoughts can influence priorities, but the shared world remains authoritative over physical outcomes.</p>'+
       '</div>';
+
+    var refreshedShell=card.querySelector('.vp-shell');
+    if(refreshedShell) refreshedShell.scrollTop=previousScroll;
 
     var close=card.querySelector('.vp-close');
     if(close) close.addEventListener('click',function(e){

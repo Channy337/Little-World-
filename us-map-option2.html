@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Civoria Option 2 — United States World Preview</title>
+<style>
+:root{--ink:#e9f1e6;--muted:#a9b8aa;--panel:#101815;--panel2:#16221d;--line:#2d3d34;--accent:#91d58e}
+*{box-sizing:border-box}html,body{margin:0;background:#0a0f0d;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+body{height:100vh}.app{height:100vh;display:flex;flex-direction:column}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(11,17,14,.96);border-bottom:1px solid var(--line);z-index:5}.title{font-weight:800;font-size:14px}.sub{font-size:11px;color:var(--muted);margin-top:2px}.controls{display:flex;gap:8px;flex-wrap:wrap}.controls button{border:1px solid #3d5145;background:#18231e;color:var(--ink);border-radius:7px;padding:8px 10px;font:inherit;font-size:12px}.controls button:active{transform:translateY(1px)}
+.viewport{position:relative;flex:1;min-height:0;overflow:hidden;background:#244d5b;touch-action:none}.stage{position:absolute;inset:0}.hud{position:absolute;left:10px;bottom:10px;background:rgba(8,13,11,.78);border:1px solid rgba(255,255,255,.12);padding:8px 10px;border-radius:8px;font-size:11px;line-height:1.5;pointer-events:none;max-width:270px}.badge{color:#bce8b7}.loading{position:absolute;inset:0;display:grid;place-items:center;background:#152a31;z-index:4;font-size:13px;color:#dbe9df}.error{color:#ffb3a7}.map-svg{width:100%;height:100%;display:block}.ocean{fill:#2f6477}.land{fill:#6f955d;stroke:#2f4a33;stroke-width:1.4;vector-effect:non-scaling-stroke}.state{fill:#739b61;stroke:#304631;stroke-width:.9;vector-effect:non-scaling-stroke}.state.alt{fill:#789f66}.state:hover{fill:#82aa6f}.terrain-dot{opacity:.5}.label{fill:#d9e7d7;font-size:9px;font-weight:700;paint-order:stroke;stroke:#1a2b20;stroke-width:3;stroke-linejoin:round}.river{fill:none;stroke:#79b8c9;stroke-width:2.2;stroke-linecap:round;opacity:.8;vector-effect:non-scaling-stroke}.road{fill:none;stroke:#ccb87f;stroke-width:1.25;stroke-dasharray:4 4;opacity:.45;vector-effect:non-scaling-stroke}.tree .trunk{fill:#614a32}.tree .leaf1{fill:#315e36}.tree .leaf2{fill:#3f7544}.mountain .base{fill:#65706d}.mountain .snow{fill:#d7dfd7}.house .wall{fill:#b78559}.house .roof{fill:#5f3a2c}.fire{fill:#f5a342}.water-spark{fill:#8bd3dc;opacity:.8}.cloud{fill:#dbe7e6;opacity:.62}.person .skin{fill:#d99b6c}.person .shirt{fill:#5d7db5}.person .pants{fill:#2d3840}.person .arm{stroke:#d99b6c;stroke-width:2.1;stroke-linecap:square;vector-effect:non-scaling-stroke}.person .leg{stroke:#2d3840;stroke-width:2.2;stroke-linecap:square;vector-effect:non-scaling-stroke}.person .head{fill:#d99b6c;stroke:#3a2a21;stroke-width:.7}.person .hair{fill:#3a2a21}.person .bubble{fill:#f2f4e9;stroke:#33443b;stroke-width:.7}.person .bubbleDot{fill:#596b61}.mini{position:absolute;right:10px;bottom:10px;width:126px;height:80px;border:1px solid rgba(255,255,255,.18);background:rgba(8,13,11,.68);border-radius:8px;overflow:hidden;pointer-events:none}.mini svg{width:100%;height:100%;display:block}.mini .viewbox{fill:none;stroke:#f0e7a9;stroke-width:2}
+@media(max-width:600px){.top{align-items:flex-start}.controls{justify-content:flex-end}.sub{display:none}.hud{max-width:210px;font-size:10px}.mini{width:102px;height:66px}.controls button{padding:8px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div><div class="title">CIVORIA • OPTION 2 • U.S. WORLD SAMPLE</div><div class="sub">Drag to travel • pinch or buttons to zoom • this is a visual prototype only</div></div>
+    <div class="controls"><button id="zoomIn">＋</button><button id="zoomOut">－</button><button id="home">Center</button><button id="detail">Detail: ON</button></div>
+  </div>
+  <div class="viewport" id="viewport">
+    <div class="loading" id="loading">Building the Civoria U.S. world…</div>
+    <svg class="map-svg" id="map" viewBox="0 0 1200 760" aria-label="Interactive Civoria world shaped like the continental United States"></svg>
+    <div class="hud"><span class="badge">Option #2:</span> richer browser graphics. The country is deliberately larger than the screen. Pan around and zoom in to find little settlements, moving villagers, clouds, trees, rivers and camp activity.</div>
+    <div class="mini"><svg id="mini" viewBox="0 0 1200 760"></svg></div>
+  </div>
+</div>
+<script type="module">
+(async()=>{
+const loading=document.getElementById('loading');
+try{
+  const [d3,topo,{default:us}]=await Promise.all([
+    import('https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm'),
+    import('https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm'),
+    import('https://cdn.jsdelivr.net/npm/us-atlas@3.0.1/states-10m.json/+esm')
+  ]);
+  const svg=d3.select('#map'), mini=d3.select('#mini');
+  const W=1200,H=760;
+  svg.append('rect').attr('class','ocean').attr('width',W).attr('height',H);
+  const defs=svg.append('defs');
+  const world=svg.append('g').attr('id','world');
+  const statesAll=topo.feature(us,us.objects.states).features;
+  const lower48=statesAll.filter(d=>![2,15,72].includes(+d.id));
+  const fc={type:'FeatureCollection',features:lower48};
+  const projection=d3.geoAlbersUsa().fitExtent([[55,45],[1145,715]],fc);
+  const path=d3.geoPath(projection);
+  defs.append('clipPath').attr('id','landClip').selectAll('path').data(lower48).join('path').attr('d',path);
+  world.selectAll('path.state').data(lower48).join('path').attr('class',(d,i)=>'state '+(i%2?'alt':'')).attr('d',path);
+
+  // rivers, intentionally stylized rather than cartographically exact
+  const rivers=[
+    [[-111,47],[-109,44],[-108,41],[-106,38],[-104,35],[-103,32]],
+    [[-95,47],[-94,44],[-93,41],[-91,38],[-90,35],[-90,31]],
+    [[-84,46],[-83,42],[-82,38],[-81,34],[-80,30]],
+    [[-121,47],[-120,44],[-119,41],[-118,38],[-117,35]]
+  ];
+  const line=d3.line().curve(d3.curveBasis);
+  rivers.forEach(r=>{const p=r.map(projection).filter(Boolean); if(p.length>1)world.append('path').attr('class','river').attr('d',line(p));});
+
+  const roadPts=[[-122,37],[-118,34],[-112,33],[-105,35],[-97,32],[-90,30],[-84,33],[-80,35],[-77,39],[-74,41]].map(projection).filter(Boolean);
+  world.append('path').attr('class','road').attr('d',line(roadPts));
+
+  function seeded(i){const x=Math.sin(i*999.123)*43758.5453;return x-Math.floor(x)}
+  function randLonLat(i){for(let k=0;k<40;k++){const lon=-124+seeded(i*17+k)*58,lat=25+seeded(i*31+k)*24;const pt=projection([lon,lat]);if(pt&&d3.geoContains(fc,[lon,lat]))return {lon,lat,pt};}return null}
+  const decor=world.append('g').attr('clip-path','url(#landClip)').attr('id','detailLayer');
+  for(let i=0;i<260;i++){
+    const q=randLonLat(i+20); if(!q)continue; const [x,y]=q.pt; const t=seeded(i*7);
+    if(t<.68){const g=decor.append('g').attr('class','tree').attr('transform',`translate(${x},${y}) scale(${.65+seeded(i*4)*.65})`);g.append('rect').attr('class','trunk').attr('x',-1).attr('y',1).attr('width',2).attr('height',5);g.append('rect').attr('class','leaf1').attr('x',-4).attr('y',-5).attr('width',8).attr('height',6);g.append('rect').attr('class','leaf2').attr('x',-3).attr('y',-8).attr('width',6).attr('height',5);}
+    else {const g=decor.append('g').attr('class','mountain').attr('transform',`translate(${x},${y}) scale(${.65+seeded(i*5)*.75})`);g.append('path').attr('class','base').attr('d','M-6,5 L0,-7 L7,5 Z');g.append('path').attr('class','snow').attr('d','M-2,-3 L0,-7 L3,-2 L1,-3 L0,-1 Z');}
+  }
+
+  const settlements=[
+    {name:'Pacific Camp',ll:[-121.7,45.5],count:3},{name:'Desert Crossing',ll:[-111.8,34.6],count:2},{name:'Great Plains',ll:[-99.4,40.2],count:4},{name:'River Town',ll:[-90.3,38.4],count:3},{name:'Forest Village',ll:[-84.1,35.8],count:4},{name:'Atlantic Camp',ll:[-77.2,39.5],count:3},{name:'Gulf Settlement',ll:[-95.1,29.8],count:3}
+  ];
+  const actors=[];
+  settlements.forEach((s,si)=>{const p=projection(s.ll); if(!p)return; const [x,y]=p; const g=world.append('g').attr('transform',`translate(${x},${y})`);
+    g.append('rect').attr('x',-22).attr('y',8).attr('width',44).attr('height',3).attr('fill','#6b5536').attr('opacity','.35');
+    for(let h=0;h<2;h++){const hg=g.append('g').attr('class','house').attr('transform',`translate(${h?14:-14},${h?2:-1})`);hg.append('rect').attr('class','wall').attr('x',-6).attr('y',-6).attr('width',12).attr('height',10);hg.append('path').attr('class','roof').attr('d','M-8,-6 L0,-12 L8,-6 Z');hg.append('rect').attr('x',-1).attr('y',0).attr('width',3).attr('height',4).attr('fill','#463224');}
+    g.append('circle').attr('class','fire').attr('cx',0).attr('cy',8).attr('r',2.8);
+    g.append('text').attr('class','label').attr('text-anchor','middle').attr('y',-18).text(s.name);
+    for(let j=0;j<s.count;j++){const pg=g.append('g').attr('class','person').attr('transform',`translate(${(j-(s.count-1)/2)*8},${13+(j%2)*4})`);pg.append('line').attr('class','leg').attr('x1',-1).attr('y1',7).attr('x2',-2).attr('y2',12);pg.append('line').attr('class','leg').attr('x1',1).attr('y1',7).attr('x2',2).attr('y2',12);pg.append('rect').attr('class','shirt').attr('x',-2.5).attr('y',1).attr('width',5).attr('height',7);pg.append('line').attr('class','arm armL').attr('x1',-2).attr('y1',3).attr('x2',-5).attr('y2',6);pg.append('line').attr('class','arm armR').attr('x1',2).attr('y1',3).attr('x2',5).attr('y2',5);pg.append('circle').attr('class','head').attr('cy',-2).attr('r',3);pg.append('rect').attr('class','hair').attr('x',-3).attr('y',-5).attr('width',6).attr('height',2);if(j===0&&si%2===0){const b=pg.append('g').attr('transform','translate(6,-10)');b.append('rect').attr('class','bubble').attr('x',0).attr('y',0).attr('rx',2).attr('width',13).attr('height',8);[3,6.5,10].forEach(cx=>b.append('circle').attr('class','bubbleDot').attr('cx',cx).attr('cy',4).attr('r',.8));}actors.push({g:pg,phase:si*2+j*1.7});}
+  });
+
+  // clouds
+  const cloudLayer=world.append('g');
+  const clouds=[];for(let i=0;i<9;i++){const c=cloudLayer.append('g').attr('class','cloud');c.append('rect').attr('x',-16).attr('y',-4).attr('width',32).attr('height',8).attr('rx',4);c.append('rect').attr('x',-8).attr('y',-8).attr('width',18).attr('height',8).attr('rx',4);clouds.push({g:c,x:seeded(i+91)*W,y:70+seeded(i+41)*320,s:4+seeded(i+11)*5});}
+
+  // state labels for a small readable subset
+  const names={6:'CA',48:'TX',12:'FL',36:'NY',17:'IL',53:'WA',8:'CO',4:'AZ',37:'NC',13:'GA',42:'PA',39:'OH'};
+  lower48.filter(d=>names[+d.id]).forEach(d=>{const c=path.centroid(d); if(Number.isFinite(c[0]))world.append('text').attr('class','label').attr('x',c[0]).attr('y',c[1]).attr('text-anchor','middle').text(names[+d.id]);});
+
+  // minimap
+  mini.append('rect').attr('width',W).attr('height',H).attr('fill','#234a56');
+  mini.selectAll('path').data(lower48).join('path').attr('d',path).attr('fill','#6e925e').attr('stroke','#26392b').attr('stroke-width','1.2');
+  const miniBox=mini.append('rect').attr('class','viewbox');
+
+  let detailOn=true;
+  const zoom=d3.zoom().scaleExtent([1.15,6.5]).on('zoom',(event)=>{world.attr('transform',event.transform); updateMini(event.transform);});
+  svg.call(zoom);
+  const start=d3.zoomIdentity.translate(-300,-120).scale(1.75);
+  svg.call(zoom.transform,start);
+  function updateMini(t){const vw=W/t.k,vh=H/t.k,x=-t.x/t.k,y=-t.y/t.k;miniBox.attr('x',x).attr('y',y).attr('width',vw).attr('height',vh);}
+  updateMini(start);
+  document.getElementById('zoomIn').addEventListener('click',()=>svg.transition().duration(220).call(zoom.scaleBy,1.35));
+  document.getElementById('zoomOut').addEventListener('click',()=>svg.transition().duration(220).call(zoom.scaleBy,1/1.35));
+  document.getElementById('home').addEventListener('click',()=>svg.transition().duration(350).call(zoom.transform,start));
+  document.getElementById('detail').addEventListener('click',(e)=>{detailOn=!detailOn;d3.select('#detailLayer').style('display',detailOn?null:'none');e.currentTarget.textContent='Detail: '+(detailOn?'ON':'OFF');});
+
+  let last=performance.now();
+  function tick(now){const dt=Math.min(.05,(now-last)/1000);last=now;actors.forEach((a,i)=>{const wave=Math.sin(now*.004+a.phase);a.g.select('.armL').attr('x2',-5-wave*1.8).attr('y2',5+wave*1.5);a.g.select('.armR').attr('x2',5+wave*1.5).attr('y2',5-wave*1.2);a.g.attr('data-bob',wave);});clouds.forEach(c=>{c.x+=c.s*dt;if(c.x>W+70)c.x=-70;c.g.attr('transform',`translate(${c.x},${c.y})`);});requestAnimationFrame(tick)}
+  requestAnimationFrame(tick);
+  loading.remove();
+}catch(err){loading.innerHTML='<span class="error">Could not load the map data. Refresh this preview.</span>';console.error(err)}
+})();
+</script>
+</body>
+</html>

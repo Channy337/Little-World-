@@ -4,14 +4,14 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner, ChatGP
 
 ## Current progress
 
-> 2026-09-12 preview-publish checkpoint: The owner explicitly approved “push through.” V0.8 is published at `4da65d03cf49d47590caee77eb48988ecb33c4a6` on draft PR #22. Vercel reports the preview READY. The complete local suite passes (115 tests plus build); the GitHub test workflow did not start for the connector-created commit, so do not claim hosted CI passed. The original local chain is retained at `backup/primitive-invention-runtime-before-push-20260912`. Production and v1 are untouched. Do not merge or promote without separate owner approval.
+> 2026-09-12 preview-publish checkpoint: The owner explicitly approved “push through.” V0.8 is published on draft PR #22 and synchronized with current `main` through merge commit `446b218fa777f17c3f6b9f9ce0e2406beaa9ac75`. GitHub Beta checks run #81 passed, Vercel reports the preview READY, and the complete local suite passes (115 tests plus build). The original local chain is retained at `backup/primitive-invention-runtime-before-push-20260912`. Production and v1 are untouched. Do not merge or promote without separate owner approval.
 
 > Parallel shelter checkpoint: draft PR #23 remains stacked on the earlier V0.6 PR #22 history at `df244c9711bf1273aea402d68ee924fc27a63537`. Its Vercel preview reports success and 102 local tests plus build passed. It should be reconciled with the newer V0.8 branch before any integration; do not merge it independently.
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Civoria 0.8 is published to draft PR #22; Vercel preview READY; owner visual review pending. |
-| Active work | `beta/primitive-invention-runtime` at remote commit `4da65d0`; synchronize with current `main`, then keep draft for review. |
+| Status | Civoria 0.8 is published to draft PR #22; Beta checks #81 passed; Vercel preview READY; owner visual review pending. |
+| Active work | `beta/primitive-invention-runtime`; functional merge checkpoint `446b218`; keep the PR draft until separately approved. |
 | Live site | https://www.thecivoria.com |
 | Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |

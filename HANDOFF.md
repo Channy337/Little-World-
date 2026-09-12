@@ -4,12 +4,14 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner, ChatGP
 
 ## Current progress
 
-> 2026-09-12 preview-publish checkpoint: The owner explicitly approved “push through.” Codex rebased the local V0.7/V0.8 commits onto the existing PR #22 head because the remote held content-equivalent V0.6 commits under different hashes; the original local chain is retained at `backup/primitive-invention-runtime-before-push-20260912`. The candidate remains preview-only. Production and v1 are untouched. Do not merge or promote without separate owner approval.
+> 2026-09-12 preview-publish checkpoint: The owner explicitly approved “push through.” V0.8 is published at `4da65d03cf49d47590caee77eb48988ecb33c4a6` on draft PR #22. Vercel reports the preview READY. The complete local suite passes (115 tests plus build); the GitHub test workflow did not start for the connector-created commit, so do not claim hosted CI passed. The original local chain is retained at `backup/primitive-invention-runtime-before-push-20260912`. Production and v1 are untouched. Do not merge or promote without separate owner approval.
+
+> Parallel shelter checkpoint: draft PR #23 remains stacked on the earlier V0.6 PR #22 history at `df244c9711bf1273aea402d68ee924fc27a63537`. Its Vercel preview reports success and 102 local tests plus build passed. It should be reconciled with the newer V0.8 branch before any integration; do not merge it independently.
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Civoria 0.8 candidate rebased safely onto PR #22; latest functional commit `529775d`, handoff head `4f2a1d8`, push in progress. |
-| Active work | `beta/primitive-invention-runtime`; draft PR #22; do not merge or deploy production before owner preview approval. |
+| Status | Civoria 0.8 is published to draft PR #22; Vercel preview READY; owner visual review pending. |
+| Active work | `beta/primitive-invention-runtime` at remote commit `4da65d0`; synchronize with current `main`, then keep draft for review. |
 | Live site | https://www.thecivoria.com |
 | Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
@@ -20,12 +22,12 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner, ChatGP
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Push the rebased branch to draft PR #22, wait for Beta/Vercel, perform hosted visual review, and request separate release authorization before any merge or production change. |
+| Still pending | Perform hosted visual review, reconcile stacked shelter PR #23 with V0.8, and request separate release authorization before any merge or production change. |
 | AI status | Persistent personal minds may hypothesize; deterministic physical rules alone create facts, resources and executable capabilities. |
 
 ### Owner-approved next milestone: Earth-like planet, biology, and discoverable subsistence
 
-The owner chose to hand this next milestone to Claude. No terrain/climate/ecosystem implementation for this milestone has begun. After the approved preview push, start from the latest PR #22 head on `beta/primitive-invention-runtime`; the current functional checkpoint is `529775d`. Do not merge, production-deploy, or touch production without a new explicit owner instruction.
+The owner chose to hand this next milestone to Claude. No terrain/climate/ecosystem implementation for this milestone has begun. Start from the latest PR #22 head on `beta/primitive-invention-runtime`. Do not merge, production-deploy, or touch production without a new explicit owner instruction.
 
 The governing rule is that discovery changes a Civorian's knowledge, never the world's prior physical truth. Terrain, climate, organisms, seeds, minerals, and physical possibilities must already be determined by canonical state or the fixed planet seed before anyone encounters them. Loading or exploring a region may reveal that truth but must not author resources in response to a discovery.
 
@@ -74,7 +76,7 @@ Ranked by how directly each gap violates the owner's experiment:
 6. **Emergent communication and institutions.** Civorians can speak immediately in a shared language. Writing gates exist but there is no invention path for symbols, media, teaching institutions, specialization, law or durable public archives; visitor Chronicle history also remains capped.
 7. **Deeper environmental physics.** The 118 elements exist as hidden catalog truth, but geology, air chemistry, pressure, fluid flow, electricity, optics and general energy/mass transformations are not yet simulated deeply enough to support arbitrary machines.
 
-The 0.8 local candidate addresses each item at a first functional depth. The next engineering step is not another hidden unlock list; it is deeper validation within these same layers, especially tool-mediated measurement, farming experiments, thermodynamics, geology, fluid flow, aerodynamics, electricity and optics.
+The 0.8 candidate addresses each item at a first functional depth. The next engineering step is not another hidden unlock list; it is deeper validation within these same layers, especially tool-mediated measurement, farming experiments, thermodynamics, geology, fluid flow, aerodynamics, electricity and optics.
 
 ## Visible routine follow-up — released 2026-09-09
 

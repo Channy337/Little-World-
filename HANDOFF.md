@@ -1,33 +1,33 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-12. This is the shared project checkpoint for the owner, ChatGPT/Codex, and Claude. Verify GitHub before editing and do not store secrets in this file.
+Updated: 2026-09-12. This is the shared project checkpoint for the owner and any coding assistant. Verify GitHub before editing and do not store secrets in this file.
 
 ## Current progress
 
-> 2026-09-12 preview-publish checkpoint: The owner explicitly approved “push through.” V0.8 is published on draft PR #22 and synchronized with current `main` through merge commit `446b218fa777f17c3f6b9f9ce0e2406beaa9ac75`. GitHub Beta checks run #81 passed, Vercel reports the preview READY, and the complete local suite passes (115 tests plus build). The original local chain is retained at `backup/primitive-invention-runtime-before-push-20260912`. Production and v1 are untouched. Do not merge or promote without separate owner approval.
+> 2026-09-12 V0.8 release checkpoint: The owner explicitly approved “Push V0.8 live.” PR #22 merged to `main` as `243ef76b3a6f16962a29ac65a1642749b518b051`. GitHub Beta checks run #82 passed on the exact PR head, Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` is READY, and the live site serves V0.8.0. Live `/api/state` initialized the isolated primitive production V2 world on Day 1 with nine founders, zero buildings, zero farms, no market, no roles, no homes, and no timber. The previous V1 world remains preserved. The next selected work is a read-only Jarvis-style visitor profile on a new branch from current `main`; do not merge that future work without separate approval.
 
 > Parallel shelter checkpoint: draft PR #23 remains stacked on the earlier V0.6 PR #22 history at `df244c9711bf1273aea402d68ee924fc27a63537`. Its Vercel preview reports success and 102 local tests plus build passed. It should be reconciled with the newer V0.8 branch before any integration; do not merge it independently.
 
 | Field | Latest checkpoint |
 |---|---|
-| Status | Civoria 0.8 is published to draft PR #22; Beta checks #81 passed; Vercel preview READY; owner visual review pending. |
-| Active work | `beta/primitive-invention-runtime`; functional merge checkpoint `446b218`; keep the PR draft until separately approved. |
+| Status | Civoria V0.8.0 is live in production; exact release merge `243ef76`; production deployment READY and live API verified. |
+| Active work | No implementation active. Next: create `beta/civorian-jarvis-profile` from current `main`, build the read-only visitor profile, and open a separate draft PR. |
 | Live site | https://www.thecivoria.com |
-| Production branch | main; PR #7 movement release 7291ff4778d8115da86a48a85a24270813257039 |
+| Production branch | `main`; V0.8 release `243ef76b3a6f16962a29ac65a1642749b518b051` |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
 | Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged earlier as `1facd30a1176548c6188ce74347af02552f741f2` |
-| World storage | One canonical Upstash-backed world per environment |
-| World pace | Candidate: 1 real day = 30 Civoria days; biological aging remains 360 Civoria days per year. Production remains unchanged. |
+| World storage | One canonical Upstash-backed world per environment; production V2 is active and previous V1 remains preserved. |
+| World pace | Live: 1 real day = 30 Civoria days; biological aging remains 360 Civoria days per year. |
 | Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
 | Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
 | Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
 | Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Perform hosted visual review, reconcile stacked shelter PR #23 with V0.8, and request separate release authorization before any merge or production change. |
+| Still pending | Jarvis visitor profile draft, reconciliation of stacked shelter PR #23 with V0.8, then the Earth-like terrain/organism/cultivation vertical slice. |
 | AI status | Persistent personal minds may hypothesize; deterministic physical rules alone create facts, resources and executable capabilities. |
 
-### Owner-approved next milestone: Earth-like planet, biology, and discoverable subsistence
+### Planned simulation milestone after the Jarvis visitor profile: Earth-like planet, biology, and discoverable subsistence
 
-The owner chose to hand this next milestone to Claude. No terrain/climate/ecosystem implementation for this milestone has begun. Start from the latest PR #22 head on `beta/primitive-invention-runtime`. Do not merge, production-deploy, or touch production without a new explicit owner instruction.
+No terrain/climate/ecosystem implementation for this milestone has begun. After the Jarvis profile work, start new simulation work from the latest approved `main`. Do not merge or production-deploy future work without a new explicit owner instruction.
 
 The governing rule is that discovery changes a Civorian's knowledge, never the world's prior physical truth. Terrain, climate, organisms, seeds, minerals, and physical possibilities must already be determined by canonical state or the fixed planet seed before anyone encounters them. Loading or exploring a region may reveal that truth but must not author resources in response to a discovery.
 
@@ -231,6 +231,8 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-09 — Claude: read-only production verification. Confirmed recurring `Civoria heartbeat` runs with GitHub event `Scheduled` completing successfully, latest at 20:16:48 CDT, confirmed `activity-clock.js` is served and loaded in production, and sampled `/api/state` at day 89, revision 3912, 22 agents with measurable canonical villager motion of about 0.034 world units per real second. No branch, commit, deployment or canonical data change. Updated this file only.
 
 - 2026-09-11 — Codex: owner approved starting civilization over. Implemented V0.4 primitive-origin candidate with a recoverable v2 namespace, 30 Civoria days per real day, age/calendar separation, physical experiment actions, personal repeated-evidence recipes, executable timber production, timber-backed shelters, and corresponding UI/visual changes. Published draft PR #22; Beta checks run #77 passed and Vercel preview deployment is READY but authentication-protected. Production and v1 data are unchanged.
+
+- 2026-09-12 — Codex: owner explicitly approved “Push V0.8 live.” Marked PR #22 ready and merged exact tested head `82e071e` to `main` as `243ef76`. Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` reached READY with no error/fatal runtime logs in the release window. Live verification returned V0.8.0 and a new primitive V2 world on Day 1 with nine founders and no inherited buildings, farms, market, roles, homes, or timber. Previous V1 storage remains preserved. Next selected work is the separate read-only Jarvis Civorian profile; PR #23 remains unmerged and requires reconciliation.
 
 
 ## AI decision cost model — measured 2026-09-10

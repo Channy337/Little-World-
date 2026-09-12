@@ -2,12 +2,15 @@
 
 ## Before every work session
 1. Read [HANDOFF.md](HANDOFF.md), starting with **Current progress**.
-2. Check the latest main branch, the recorded work branch, open PRs and local uncommitted changes. Do not reset or overwrite uncommitted work.
-3. Follow the owner's current request. State the last checkpoint and the task you are taking over.
-4. If another assistant is marked active, reconcile with the owner before overlapping writes. A status entry is coordination, not a technical lock; an old entry alone does not prove the other assistant is still running.
+2. Read the linked specification for the active task. The current Jarvis visitor-profile specification is [docs/JARVIS_PROFILE.md](docs/JARVIS_PROFILE.md).
+3. Check the latest main branch, the recorded work branch, open PRs and local uncommitted changes. Do not reset or overwrite uncommitted work.
+4. Follow the owner's current request. State the last checkpoint and the task you are taking over.
+5. If another assistant is marked active, reconcile with the owner before overlapping writes. A status entry is coordination, not a technical lock; an old entry alone does not prove the other assistant is still running.
 
 ## Keep shared progress current
 - HANDOFF.md is the single shared progress page. Do not maintain competing Claude/Codex status files.
+- GitHub is the communication channel between connected assistants. Chat transcripts are not shared. Every assistant must fetch before work and publish its branch, PR and handoff before another assistant continues.
+- Work on one implementation branch at a time unless the owner explicitly approves parallel work. Never have two assistants write to the same branch concurrently.
 - Update **Current progress** when starting substantive work, after meaningful milestones, and before stopping or approaching a usage limit.
 - Record: assistant, UTC update time, task, status, branch, last implementation commit, PR/deployment links, completed work, checks/results, unfinished work, local-only files and exact next action.
 - Append a short dated **Session history** entry at handoff; retain earlier entries.

@@ -6,12 +6,14 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner and any
 
 > 2026-09-12 V0.8 release checkpoint: The owner explicitly approved “Push V0.8 live.” PR #22 merged to `main` as `243ef76b3a6f16962a29ac65a1642749b518b051`. GitHub Beta checks run #82 passed on the exact PR head, Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` is READY, and the live site serves V0.8.0. Live `/api/state` initialized the isolated primitive production V2 world on Day 1 with nine founders, zero buildings, zero farms, no market, no roles, no homes, and no timber. The previous V1 world remains preserved. The next selected work is a read-only Jarvis-style visitor profile on a new branch from current `main`; do not merge that future work without separate approval.
 
+> 2026-09-12 shared-assistant checkpoint: GitHub is now the owner-approved communication channel between connected assistants. The complete Jarvis requirements are in `docs/JARVIS_PROFILE.md`. Grok or another connected assistant should fetch current `main`, read `AGENTS.md`, this file and that specification, then work only on `beta/civorian-jarvis-profile` and a separate draft PR. Chat transcripts are not shared automatically. Every assistant must publish a GitHub handoff before another continues. Claude still needs a pasted pointer unless separately connected to the repository.
+
 > Parallel shelter checkpoint: draft PR #23 remains stacked on the earlier V0.6 PR #22 history at `df244c9711bf1273aea402d68ee924fc27a63537`. Its Vercel preview reports success and 102 local tests plus build passed. It should be reconciled with the newer V0.8 branch before any integration; do not merge it independently.
 
 | Field | Latest checkpoint |
 |---|---|
 | Status | Civoria V0.8.0 is live in production; exact release merge `243ef76`; production deployment READY and live API verified. |
-| Active work | No implementation active. Next: create `beta/civorian-jarvis-profile` from current `main`, build the read-only visitor profile, and open a separate draft PR. |
+| Active work | Jarvis specification published at `docs/JARVIS_PROFILE.md`; implementation has not started. Next: create `beta/civorian-jarvis-profile` from current `main` and open a separate draft PR. |
 | Live site | https://www.thecivoria.com |
 | Production branch | `main`; V0.8 release `243ef76b3a6f16962a29ac65a1642749b518b051` |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |

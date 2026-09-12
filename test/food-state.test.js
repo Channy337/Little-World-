@@ -20,15 +20,19 @@ test('known-dangerous carried food no longer counts as an available meal',()=>{
   assert.equal(consume(a,10),null);
 });
 
-test('spoiled carried food is tracked separately and does not masquerade as edible food',()=>{
+test('spoiled carried food is tracked separately without granting automatic spoilage knowledge',()=>{
   const a=baseAgent();
   a.foodItems=[{appearance:'small dull-red fruit',calories:420,water:18,toxin:0,gatheredDay:1,spoilsDay:5,spoiled:false}];
   ensureEcology(stateWith(a,10));
-  assert.equal(a.inv.food,0);
+  assert.equal(a.inv.food,1);
   assert.equal(a.foodState.carried,1);
   assert.equal(a.foodState.spoiled,1);
-  assert.equal(a.foodState.usable,0);
-  assert.equal(canConsume(a),false);
+  assert.equal(a.foodState.risky,1);
+  assert.equal(a.foodState.usable,1);
+  assert.equal(canConsume(a),true);
+  const meal=consume(a,10);
+  assert.equal(meal.spoiled,true);
+  assert.ok(meal.toxin>0);
 });
 
 test('fresh food a Civorian has not rejected remains usable and is consumed reliably',()=>{
@@ -68,5 +72,5 @@ test('food summary exposes carried, safe, risky, spoiled, and dangerous buckets'
     {appearance:'danger',spoiled:false}
   ];
   a.foodExperience={safe:2,unknown:0,spoiled:2,danger:-2};
-  assert.deepEqual(foodSummary(a,10),{carried:5,usable:3,safe:2,risky:1,spoiled:1,dangerous:1,generic:1});
+  assert.deepEqual(foodSummary(a,10),{carried:5,usable:4,safe:2,risky:2,spoiled:1,dangerous:1,generic:1});
 });

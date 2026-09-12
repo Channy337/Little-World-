@@ -2,9 +2,9 @@
 
 Civoria is a pixel-art civilization experiment backed by one canonical server-side world. Every visitor to the same environment sees the same villagers, buildings, resources and Chronicle. The browser is a viewer, not the owner of the simulation.
 
-## Current milestone: Civoria 0.6 weather and human biology
+## Current milestone: Civoria 0.8 foundational realism
 
-Civoria 0.6 begins a new primitive-origin world and adds the first end-to-end physical learning and survival loop:
+Civoria 0.8 begins a new primitive-origin world and adds the first end-to-end physical learning, survival and invention loop:
 
 - **1 real day = 30 Civoria days = 1 Civoria month**
 - no inherited homes, farms, market, trades or recipes
@@ -29,6 +29,22 @@ Civoria 0.6 begins a new primitive-origin world and adds the first end-to-end ph
 - human-like bodies use water, glycogen, fat and muscle reserves; starvation and dehydration emerge from those reserves rather than fixed death timers
 - hidden anatomy includes organs and systems, but AI minds receive only personally felt symptoms and physically obtained observations
 - repeated non-invasive self-observation can establish pulse and breathing as a personal body discovery without revealing modern anatomical vocabulary
+- every Civoria day is 24 in-world hours; at the selected pace a full day passes in about 48 real minutes
+- individual circadian phase and accumulated sleep pressure make Civorians sleep without giving them medical knowledge
+- missed sleep creates persistent sleep debt, low alertness, slower movement and work, felt symptoms, and eventually health damage
+- rain, wind, temperature, thirst, hunger and shelter change sleep quality; homeless Civorians can sleep on the ground
+- sleeping is a canonical action rendered as a lying posture, and visitors can inspect alertness, time awake and sleep debt
+- Civorians navigate from personal sight and remembered or communicated places, not an invisible global resource map
+- varied plants have hidden calories, water, toxins, spoilage and fiber yields; individuals learn only from bodily outcomes
+- property-bearing material parts can be shaped, bound, stacked, heated, soaked, dried, balanced, spun or channeled
+- repeated successful prototypes become personal reproducible artifact methods instead of named technology unlocks
+- artifact behavior comes from form, material properties, assembly and shared world constants such as gravity and fluid density
+- blood loss, wounds, infection, smoke exposure, oxygen state, healing, sanitation and contaminated water have physical consequences
+- pregnancy takes 270 Civoria days; infants and children are dependent and cannot perform adult work
+- repeated interaction improves communication, can establish shared signs and can turn widely held practices into institutions
+- plants, animals, soil, waste, deposits and physical artifacts are visible without exposing hidden species, chemistry or safety labels
+- neutral polygenic appearance traits create varied skin, hair, eye and facial characteristics; children inherit one allele per locus from each parent
+- appearance never changes intelligence, personality, motivation, culture, knowledge, health or work capacity, and the engine contains no fixed race categories
 
 The release uses a new `v2` storage namespace to begin the primitive world. The earlier `v1` production key is left intact for recovery rather than deleted.
 
@@ -38,7 +54,14 @@ The release uses a new `v2` storage namespace to begin the primitive world. The 
 - `lib/affordances.js`: physical operation/material signatures. These are environmental laws, not knowledge granted to Civorians.
 - `lib/matter.js`: hidden elemental and molecular truth plus tool-gated observation and atom-conservation checks.
 - `lib/weather.js`: deterministic daily weather, seasonal climate, water-loss pressure and resource-growth effects.
-- `lib/biology.js`: hidden anatomy, metabolism, hydration, thermoregulation, organ condition and sensory symptoms.
+- `lib/biology.js`: hidden anatomy, metabolism, hydration, thermoregulation, circadian sleep, organ condition and sensory symptoms.
+- `lib/perception.js`: local sight, weather/light-limited sensory range, personal spatial memory and communicated places.
+- `lib/mechanics.js`: material properties, forms, assemblies and physically evaluated prototype behavior.
+- `lib/ecology.js`: hidden plant effects, food items, spoilage, soil, animals, waste and water contamination.
+- `lib/health.js`: wounds, bleeding, infection, smoke, oxygen state, immunity and healing.
+- `lib/lifecycle.js`: sex, life stages, pregnancy, dependency and age-dependent needs.
+- `lib/heritage.js`: inherited polygenic appearance, stable save upgrades and family resemblance without behavioral race rules.
+- `lib/communication.js`: learned communication clarity, shared conventions and practice-based institutions.
 - `lib/knowledge.js`: personal teaching, knowledge loss, literacy-gated records and causal discovery graph state.
 - `lib/store.js`: authenticated Upstash REST persistence with atomic initialization and compare-and-swap.
 - `lib/world.js`: versioned canonical state, validation, real-time scaling, catch-up limits, heartbeat metadata and structured logs.
@@ -74,6 +97,7 @@ The original engine is tuned around a 55-second internal day. `lib/world.js` sca
 
 - 86,400 real seconds map to 1,650 internal engine seconds
 - one internal day takes approximately 48 real minutes
+- each internal day contains 24 in-world hours, so one in-world hour takes approximately two real minutes
 - biological aging is decoupled: 360 internal days equal one year of age
 
 The minimum normal tick interval is five real seconds. Competing requests can calculate the same interval, but compare-and-swap allows only one result to commit. Duplicate deliveries and wall-clock rollback do not double-run or rewind the world.

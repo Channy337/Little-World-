@@ -33,3 +33,29 @@ Draft PR #22 adds deterministic weather and physiology to the isolated primitive
 Four deterministic 60-day whole-world samples retained all nine settlers while consuming different fat reserves under shared weather and food competition. Three deterministic 120-day samples retained five to seven settlers, with deaths caused by starvation and organ failure when the population did not develop a stronger food system. These are balance observations, not scripted population targets or guarantees.
 
 Production remains unchanged. Hosted preview visual review is required before any release.
+
+## Civoria 0.7 sleep candidate verification — September 11, 2026
+
+Draft PR #22 now adds a canonical 24-hour circadian system. Tests verify that night produces stronger circadian sleep drive than daylight; wakefulness accumulates sleep pressure and debt; a sheltered eight-hour sleep relieves pressure; exposed cold, wind and rain reduce sleep quality; severe deprivation reduces alertness, physical function and health; and a tired homeless Civorian will physically sleep on the ground. The visitor UI exposes alertness and sleep debt without giving those measurements to the Civorian mind, while AI cognition receives only alertness and personally felt symptoms.
+
+All 95 automated tests pass, the public build passes and `git diff --check` passes. Four deterministic 60-day samples retained all nine settlers and spent 29.5–37.8% of agent-time asleep, approximately seven to nine in-world hours per day. Four deterministic 120-day samples ended with eight or nine settlers; the two deaths were starvation and organ failure, not sleep failures.
+
+The local environment did not provide the `agent-browser` executable required by the browser-verification skill, so the lying sleep posture and 24-hour clock still require hosted visual review. Production remains unchanged.
+
+## Civoria 0.8 foundational-realism candidate — September 11, 2026
+
+The local candidate removes inherited wells and farms and adds personal perception, spatial memory and place sharing; property-based artifacts and physically generated behaviors; varied hidden food effects and personal food learning; wounds, bleeding, infection, smoke, oxygen, waste and water contamination; pregnancy, dependent childhood and life stages; and learned communication conventions and shared-practice institutions. The visitor can see animals, deposits, life stage, bodily condition and produced prototypes, while hidden species, chemistry, anatomy and safety facts remain unavailable to Civorian minds until physically evidenced.
+
+All 110 automated tests pass, the public build passes, syntax checks for all new simulation modules pass and `git diff --check` passes. The suite includes regression coverage proving that a Civorian who personally associates a food's appearance with illness can reject it without becoming trapped in an eating loop or losing the ability to sleep. It also verifies age-dependent sleep requirements and a dependent child's longer physical sleep episode.
+
+Four deterministic 60-day samples retained all nine settlers. At 120 days, two samples retained one settler and two became extinct between days 111 and 117; all observed deaths were starvation and organ failure. These runs intentionally used no AI-supplied experiments, so the settlers exhausted wild food without inventing a renewable food process. This is an allowed civilization outcome, not a scripted target or a guarantee about AI-enabled runs.
+
+This candidate is a bounded first physical layer, not atom-scale arbitrary engineering. Its material properties and assembly behaviors can validate unfamiliar constructions without a named technology tree, but future releases still need richer thermodynamics, geology, aerodynamics, fluid flow, electricity, optics, farming experiments and tool-mediated measurement. Hosted visual review has not been performed. Production and the preserved v1 world remain unchanged.
+
+### Inherited human diversity addition
+
+The local 0.8 candidate now stores simplified polygenic appearance traits instead of fixed race categories. Founders receive varied continuous alleles for melanin, hair pigmentation and texture, eye pigmentation and face breadth. A child's genome is fixed at conception, takes one allele per locus from each parent, and remains available if a parent dies before birth. Existing saves receive stable deterministic appearance without consuming the canonical random sequence.
+
+The renderer uses inherited pigmentation and hair texture, and the visitor profile shows a plain visible description. Civorian AI receives only visible appearance language for itself and nearby people, with no racial, cultural or behavioral label. Appearance has no path into intelligence, personality, motivation, knowledge, health or productive capacity.
+
+All 115 automated tests pass. The public build, relevant syntax checks and `git diff --check` pass. Hosted visual review remains pending, and nothing has been pushed or deployed.

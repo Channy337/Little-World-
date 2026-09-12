@@ -34,3 +34,11 @@ test('a primitive month is not mechanically guaranteed to cause extinction',()=>
   let s=createEngine(null,1).snapshot();ensureMinds(s);const e=createEngine(s);for(let i=0;i<16500;i++)e.step(.1);s=e.snapshot();
   assert.ok(s.agents.length>0&&s.agents.length<=9);
 });
+
+test('a tired Civorian sleeps even without a home and sleep is a physical action',()=>{
+  let s=createEngine(null,75).snapshot(),id=s.agents[0].id,a=s.agents[0];
+  s.time=.9;a.state='idle';a.action=null;a.hunger=0;a.energy=80;a.social=100;a.thirst=0;
+  a.body.sleepPressure=92;a.body.awakeHours=19;a.body.sleepDebtHours=2;
+  const e=createEngine(s);e.step(.1);s=e.snapshot();a=s.agents.find(x=>x.id===id);
+  assert.equal(a.state,'resting');assert.equal(a.action.sleep,true);assert.equal(a.action.home,false);
+});

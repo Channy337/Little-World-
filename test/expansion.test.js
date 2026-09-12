@@ -21,7 +21,7 @@ test('settlement growth unlocks deterministic canonical land outside the origina
   maybeExpandWorld(state);
   assert.deepEqual(state.worldBounds,{w:640,h:405,level:1});
   const frontier=[...state.trees,...state.rocks,...state.bushes,...state.farms].filter(v=>v.territoryLevel===1);
-  assert.equal(frontier.length,18);
+  assert.equal(frontier.length,15);
   assert.ok(frontier.every(v=>v.x>480||v.y>304));
   assert.ok(frontier.every(v=>v.x>=0&&v.x<=640&&v.y>=0&&v.y<=405));
   assert.ok(state.log.some(e=>e.type==='expansion'));

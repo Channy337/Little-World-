@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Civoria Pixel Village Slice</title>
+<style>
+:root{--bg:#0d1512;--panel:#152019;--line:#2c3d31;--ink:#edf4e9;--muted:#a6b5a7;--accent:#d6b86b}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}body{min-height:100vh}.app{min-height:100vh;display:flex;flex-direction:column}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;background:#101814;border-bottom:1px solid var(--line)}.title{font-size:14px;font-weight:800}.sub{font-size:11px;color:var(--muted);margin-top:2px}.controls{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.controls button{border:1px solid #45594a;background:#1a261f;color:var(--ink);border-radius:7px;padding:8px 10px;font:inherit;font-size:11px}.controls button.active{background:#3c4d34;border-color:#b59c5c}.wrap{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:10px;padding:10px;min-height:0;flex:1}.stageWrap{position:relative;min-height:460px;background:#17241d;border:1px solid var(--line);border-radius:10px;overflow:hidden;touch-action:none}.stageWrap canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;background:#7fa25f}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto}.panel h2{font-size:13px;margin:0 0 8px}.panel p{font-size:11px;line-height:1.55;color:var(--muted)}.chip{display:inline-block;padding:4px 7px;border:1px solid #51634f;border-radius:999px;font-size:10px;margin:0 4px 5px 0}.legend{font-size:10px;line-height:1.7;color:#c7d2c5}.selected{margin-top:10px;padding:9px;border:1px solid #3a4d3f;background:#111914;border-radius:8px;font-size:11px;line-height:1.55}.tag{color:#e6cd7f}.note{position:absolute;left:10px;bottom:10px;background:rgba(11,16,13,.78);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:7px 9px;font-size:10px;pointer-events:none;max-width:300px}.zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}.zoom button{width:38px;height:38px;border:1px solid rgba(255,255,255,.22);background:rgba(17,26,21,.82);color:#fff;border-radius:8px;font:700 18px ui-monospace}.statusDot{width:7px;height:7px;border-radius:50%;display:inline-block;background:#8bd47c;margin-right:5px}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}.panel{order:2}.stageWrap{min-height:420px}.sub{display:none}.top{align-items:flex-start}.controls button{padding:7px 8px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div><div class="title">CIVORIA • PIXEL VILLAGE VERTICAL SLICE</div><div class="sub">Designed pixel sprites + animated poses • visual proof only • production untouched</div></div>
+    <div class="controls" id="controls">
+      <button data-mode="all" class="active">All</button>
+      <button data-mode="walk">Walking</button>
+      <button data-mode="talk">Talking</button>
+      <button data-mode="sit">Sitting</button>
+      <button data-mode="work">Working</button>
+      <button data-mode="rest">Resting</button>
+      <button id="night">Day / Night</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="stageWrap" id="stageWrap">
+      <canvas id="c" width="480" height="300" aria-label="Interactive Civoria pixel village"></canvas>
+      <div class="zoom"><button id="zin" type="button">+</button><button id="zout" type="button">−</button></div>
+      <div class="note">Drag to pan • pinch or +/− to zoom • tap a villager to inspect the pose and animation.</div>
+    </div>
+    <aside class="panel">
+      <h2><span class="statusDot"></span>What this slice proves</h2>
+      <p>This is not the giant map yet. It is the art-and-animation test we agreed on. The villagers use dedicated pixel poses instead of generic circles and rectangles.</p>
+      <div>
+        <span class="chip">walk cycle</span><span class="chip">sit pose</span><span class="chip">talk gesture</span><span class="chip">work swing</span><span class="chip">sleep/rest</span><span class="chip">smoke</span><span class="chip">fire</span><span class="chip">water</span><span class="chip">wind</span>
+      </div>
+      <div class="selected" id="selected"><span class="tag">Tap a villager</span><br>to inspect what they are doing.</div>
+      <p class="legend">The goal is charm and readability at close range. If this feel is right, the same sprite/tile system can be repeated across the U.S.-scale world.</p>
+    </aside>
+  </div>
+</div>
+<script>
+(()=>{
+const c=document.getElementById('c'),ctx=c.getContext('2d'),stage=document.getElementById('stageWrap'),sel=document.getElementById('selected');
+ctx.imageSmoothingEnabled=false;
+const W=480,H=300;
+let cam={x:0,y:0,z:1},drag=null,night=false,filter='all',last=performance.now();
+const keys={};
+const palette={grass:'#799d5d',grass2:'#6f9155',darkGrass:'#587845',dirt:'#a58558',dirt2:'#8e704b',water:'#4f8f9d',water2:'#6fb0b5',wood:'#6a4630',wood2:'#8b603c',roof:'#59342d',roof2:'#7b4638',stone:'#747a72',stone2:'#9da39a',skin:'#d5a06e',skin2:'#b87850',hair:'#3f2d25',cloth:'#5b7399',cloth2:'#8d5f63',cloth3:'#6c8652',black:'#25302b',white:'#e9e2cf',fire:'#ef9c43',ember:'#ffd46a'};
+function px(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+function line(x1,y1,x2,y2,col){ctx.strokeStyle=col;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(Math.round(x1)+.5,Math.round(y1)+.5);ctx.lineTo(Math.round(x2)+.5,Math.round(y2)+.5);ctx.stroke();}
+function house(x,y,kind=0){
+  px(x-18,y-6,36,24,kind? '#b98a5f':'#b27a54'); px(x-20,y-11,40,5,palette.roof); px(x-15,y-16,30,5,palette.roof2);
+  px(x-4,y+6,8,12,'#5a3c29'); px(x+9,y+2,5,5,'#e7c56a'); px(x-14,y+2,5,5,'#8fb4b7');
+  px(x+10,y-24,4,10,palette.stone); px(x+11,y-26,3,3,palette.stone2);
+}
+function tree(x,y,s=1,t=0){
+  px(x-2*s,y,4*s,10*s,palette.wood); const sw=Math.sin(t*.001+x*.1)*1.5;
+  px(x-9*s+sw,y-8*s,18*s,8*s,'#365f38'); px(x-7*s+sw,y-14*s,14*s,7*s,'#437447'); px(x-4*s+sw,y-19*s,8*s,6*s,'#568451');
+}
+function rock(x,y){px(x-7,y-4,14,7,palette.stone);px(x-4,y-7,8,3,palette.stone2);px(x+3,y-3,3,2,'#5f6760');}
+function flower(x,y,i){px(x,y,1,3,'#46663c');px(x-1,y-1,3,2,i%2?'#e8d274':'#d89a9c');}
+function drawGround(t){
+  px(0,0,W,H,palette.grass);
+  for(let y=0;y<H;y+=8)for(let x=0;x<W;x+=8){const n=((x*13+y*7)%23);if(n<6)px(x,y,4,4,palette.grass2);else if(n===9)px(x+2,y+1,2,2,palette.darkGrass);}
+  // dirt paths
+  for(let i=0;i<110;i++){const x=235+Math.sin(i*.25)*13,y=84+i*2;px(x,y,18,3,palette.dirt);if(i%3===0)px(x+4,y,5,2,palette.dirt2)}
+  for(let i=0;i<95;i++){const x=72+i*3,y=177+Math.sin(i*.18)*9;px(x,y,8,10,palette.dirt);}
+  // pond
+  for(let yy=0;yy<52;yy+=4){for(let xx=0;xx<92;xx+=4){const dx=(xx-46)/46,dy=(yy-26)/26;if(dx*dx+dy*dy<1){px(345+xx,202+yy,4,4,(xx+yy)%12?palette.water:palette.water2)}}}
+  for(let i=0;i<8;i++){const sx=354+i*9+Math.sin(t*.002+i)*2;px(sx,223+(i%2)*6,7,1,'#a5d2c6')}
+  // farms
+  for(let r=0;r<5;r++){px(72,78+r*10,88,7,'#6e5037');for(let j=0;j<10;j++){px(76+j*8,76+r*10,2,5,'#557b3d');px(75+j*8,74+r*10,4,2,r%2?'#d9bd5f':'#84a851')}}
+  // fences
+  for(let x=58;x<178;x+=12){px(x,66,2,10,'#74523b');px(x,136,2,10,'#74523b')} px(58,70,120,2,'#8f6747');px(58,140,120,2,'#8f6747');
+  for(let i=0;i<30;i++){flower(20+(i*37)%430,40+(i*53)%225,i)}
+}
+function drawSmoke(x,y,t){for(let i=0;i<4;i++){const yy=y-i*7-((t*.012+i*5)%7),xx=x+Math.sin(t*.0015+i)*3;ctx.globalAlpha=.20-i*.03;px(xx,yy,5+i,4+i,'#d8ddd2');ctx.globalAlpha=1}}
+function drawFire(x,y,t){px(x-5,y+3,11,3,'#4d3729');px(x-1,y,3,5,palette.ember);px(x-3,y+1,7,3,palette.fire);if(Math.sin(t*.02)>0)px(x,y-2,2,3,'#ffe58d');}
+function drawBench(x,y){px(x-10,y,20,3,'#6f4c32');px(x-8,y+3,2,6,'#4f3929');px(x+6,y+3,2,6,'#4f3929')}
+function drawWell(x,y){px(x-9,y,18,9,palette.stone);px(x-6,y-5,12,5,palette.stone2);px(x-12,y-12,2,17,palette.wood);px(x+10,y-12,2,17,palette.wood);px(x-12,y-14,24,3,palette.roof)}
+function villager(v,t){
+  const visible=filter==='all'||filter===v.state;if(!visible){ctx.globalAlpha=.18}
+  const f=Math.floor(t/180)%2;let x=v.x,y=v.y;
+  if(v.state==='walk'){x+=Math.sin(t*.001+v.seed)*14; y+=Math.sin(t*.002+v.seed)*2;}
+  const bob=(v.state==='walk'&&f)?-1:0; y+=bob;
+  // shadow
+  px(x-5,y+11,11,2,'rgba(28,40,30,.25)');
+  const skin=v.skin||palette.skin,shirt=v.shirt||palette.cloth,hair=v.hair||palette.hair;
+  if(v.state==='sit'){
+    px(x-4,y-8,8,6,skin);px(x-4,y-10,8,3,hair);px(x-3,y-2,7,7,shirt);px(x+2,y+4,6,3,shirt);px(x+7,y+6,2,5,palette.black);px(x-2,y+5,2,5,palette.black);
+    if(f){px(x+3,y,5,2,skin)}else px(x-7,y,5,2,skin);
+  } else if(v.state==='rest'){
+    px(x-7,y+4,14,5,shirt);px(x+5,y+2,6,5,skin);px(x+6,y,5,2,hair);px(x-6,y+8,5,2,palette.black);px(x-1,y+8,5,2,palette.black);
+  } else {
+    // body + head
+    px(x-4,y-8,8,6,skin);px(x-4,y-11,8,4,hair);px(x-3,y-2,7,8,shirt);
+    if(v.state==='talk'){
+      const arm=f?5:7;px(x-7,y,4,2,skin);px(x+3,y-1,arm,2,skin);if(f)px(x+8,y-4,2,5,skin);
+    } else if(v.state==='work'){
+      const swing=f?-6:4;line(x+3,y, x+9+f*2,y+swing,skin);line(x+9+f*2,y+swing,x+11+f*2,y+swing-6,'#604331');px(x+8+f*2,y+swing-7,6,2,'#7f8580');px(x-7,y,4,2,skin);
+    } else {px(x-7,y,4,2,skin);px(x+3,y,4,2,skin)}
+    const step=v.state==='walk'?(f?3:-3):0;px(x-3,y+6,2,6,palette.black);px(x+1,y+6+Math.abs(step)*.2,2,6,palette.black);if(v.state==='walk'){px(x-4+step,y+11,4,2,palette.black);px(x-step,y+11,4,2,palette.black)}
+  }
+  if(v.state==='talk'&&v.partner){const pulse=(Math.sin(t*.006+v.seed)+1)/2;ctx.globalAlpha=.8;px(x+7,y-16,13,8,'#eee8d2');px(x+9,y-13,2,2,'#665f52');px(x+13,y-13,2,2,'#665f52');px(x+17,y-13,2,2,'#665f52');ctx.globalAlpha=1}
+  if(!visible)ctx.globalAlpha=1;
+  v.hit={x:x-8,y:y-14,w:18,h:28};
+}
+const villagers=[
+{name:'Tavi',state:'walk',x:221,y:158,seed:.2,shirt:'#5f7ea2',skin:'#d7a174'},
+{name:'Mira',state:'talk',x:287,y:153,seed:1.4,shirt:'#8b5e62',skin:'#bd7e57',partner:true},
+{name:'Orin',state:'talk',x:303,y:154,seed:2.4,shirt:'#688754',skin:'#d2a075'},
+{name:'Sela',state:'sit',x:320,y:182,seed:3.1,shirt:'#7b6c9e',skin:'#c88c64'},
+{name:'Bram',state:'work',x:137,y:118,seed:4.2,shirt:'#6d8557',skin:'#d4a171'},
+{name:'Nia',state:'rest',x:393,y:247,seed:5.2,shirt:'#8a7053',skin:'#b97855'}
+];
+function world(t){
+  drawGround(t);
+  // forests and rocks
+  for(let i=0;i<24;i++)tree(18+(i*31)%445,28+((i*47)%45),.8+(i%3)*.08,t);
+  for(let i=0;i<14;i++)tree(405+(i%4)*17,95+Math.floor(i/4)*24,.9,t);
+  for(let i=0;i<10;i++)rock(185+(i*23)%160,45+(i*19)%80);
+  house(230,104,0);house(285,103,1);house(337,111,0);house(202,216,1);
+  drawSmoke(240,76,t);drawSmoke(295,75,t);drawSmoke(347,83,t);drawSmoke(212,188,t);
+  drawWell(264,178);drawBench(322,193);drawFire(300,186,t);
+  // dock by pond
+  px(356,219,36,5,'#7a5738');for(let x=360;x<390;x+=7)px(x,224,2,8,'#5a402d');
+  // reeds
+  for(let i=0;i<13;i++){line(341+i*7,248+(i%3),341+i*7+Math.sin(t*.002+i)*2,239-(i%4),'#496c43')}
+  villagers.forEach(v=>villager(v,t));
+  // ambient birds
+  for(let i=0;i<5;i++){const bx=(t*.02+i*97)%530-25,by=30+i*7;line(bx,by,bx+3,by-2,'#2e3a33');line(bx+3,by-2,bx+6,by,'#2e3a33')}
+  if(night){ctx.fillStyle='rgba(20,29,48,.52)';ctx.fillRect(0,0,W,H);for(const p of [[230,106],[285,105],[337,113],[202,218],[300,186]]){const g=ctx.createRadialGradient(p[0],p[1],2,p[0],p[1],25);g.addColorStop(0,'rgba(255,207,103,.25)');g.addColorStop(1,'rgba(255,207,103,0)');ctx.fillStyle=g;ctx.fillRect(p[0]-25,p[1]-25,50,50)}}
+}
+function draw(t){
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);ctx.save();ctx.translate(cam.x,cam.y);ctx.scale(cam.z,cam.z);world(t);ctx.restore();requestAnimationFrame(draw)
+}
+function screenToWorld(clientX,clientY){const r=c.getBoundingClientRect();const sx=(clientX-r.left)*W/r.width,sy=(clientY-r.top)*H/r.height;return{x:(sx-cam.x)/cam.z,y:(sy-cam.y)/cam.z}}
+function selectAt(x,y){const v=villagers.find(v=>v.hit&&x>=v.hit.x&&x<=v.hit.x+v.hit.w&&y>=v.hit.y&&y<=v.hit.y+v.hit.h);if(v)sel.innerHTML=`<span class="tag">${v.name}</span><br>${v.state.toUpperCase()} animation. This pose is deliberately readable at close range.`}
+let pointers=new Map();
+stage.addEventListener('pointerdown',e=>{stage.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false}});
+stage.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const p=pointers.get(e.pointerId);p.x=e.clientX;p.y=e.clientY;if(pointers.size===1&&drag){const r=c.getBoundingClientRect();const dx=(e.clientX-drag.x)*W/r.width,dy=(e.clientY-drag.y)*H/r.height;if(Math.abs(dx)+Math.abs(dy)>3)drag.moved=true;cam.x=drag.cx+dx;cam.y=drag.cy+dy}else if(pointers.size===2){const arr=[...pointers.values()];const d=Math.hypot(arr[0].x-arr[1].x,arr[0].y-arr[1].y);if(!stage._pinch){stage._pinch={d,z:cam.z}}cam.z=Math.max(.8,Math.min(2.8,stage._pinch.z*d/stage._pinch.d))}});
+stage.addEventListener('pointerup',e=>{if(pointers.size===1&&drag&&!drag.moved){const q=screenToWorld(e.clientX,e.clientY);selectAt(q.x,q.y)}pointers.delete(e.pointerId);if(pointers.size<2)stage._pinch=null;if(!pointers.size)drag=null});
+document.getElementById('zin').onclick=()=>cam.z=Math.min(2.8,cam.z*1.2);document.getElementById('zout').onclick=()=>cam.z=Math.max(.8,cam.z/1.2);
+document.getElementById('night').onclick=()=>night=!night;
+document.getElementById('controls').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;filter=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));});
+requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

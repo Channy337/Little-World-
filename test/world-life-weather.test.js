@@ -6,11 +6,11 @@ const {generateDay}=require('../lib/weather');
 
 function sequence(values){let i=0;return function(){return values[Math.min(i++,values.length-1)];};}
 
-test('V0.9 ambient wildlife and weather layer is shipped after the world renderer',()=>{
+test('V0.10 ambient wildlife and weather layer is shipped after the world renderer',()=>{
   const html=fs.readFileSync('index.html','utf8');
   const build=fs.readFileSync('scripts/build.js','utf8');
   const viewer=fs.readFileSync('world-life-weather.js','utf8');
-  assert.match(html,/V0\.9\.0/);
+  assert.match(html,/V0\.10\.0/);
   assert.ok(html.indexOf('game.js')<html.indexOf('world-life-weather.js'));
   assert.match(build,/world-life-weather\.js/);
   assert.match(viewer,/rabbit\(/);
@@ -28,6 +28,8 @@ test('winter severe storm can become a blizzard',()=>{
   assert.equal(w.storm,true);
   assert.equal(w.temperatureC,2);
   assert.equal(w.hazard,'blizzard');
+  assert.equal(w.snowing,true);
+  assert.ok(w.snowDepthCm>0);
 });
 
 test('extreme rainfall near a full pond can become a flood',()=>{

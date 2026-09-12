@@ -4,6 +4,8 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner and any
 
 ## Current progress
 
+> 2026-09-12 profile-scroll fix revised candidate: The owner confirmed the first PR #24 preview still jumped to the top. The first change correctly preserved scroll inside `mind-feed.js`, but inspection found a second writer: `game.js` replaced `#agentCard.innerHTML` every five-second world sync before/after the mind renderer. The revised fix makes the main HUD leave an enhanced profile intact for the same selected Civorian while retaining normal replacement for a newly selected person. Syntax checks, focused tests (5/5), full suite (116/116), build and `git diff --check` pass locally. Update draft PR #24 and obtain new hosted verification; do not merge or deploy production without separate owner approval.
+
 > 2026-09-12 V0.8 release checkpoint: The owner explicitly approved “Push V0.8 live.” PR #22 merged to `main` as `243ef76b3a6f16962a29ac65a1642749b518b051`. GitHub Beta checks run #82 passed on the exact PR head, Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` is READY, and the live site serves V0.8.0. Live `/api/state` initialized the isolated primitive production V2 world on Day 1 with nine founders, zero buildings, zero farms, no market, no roles, no homes, and no timber. The previous V1 world remains preserved. The next selected work is a read-only Jarvis-style visitor profile on a new branch from current `main`; do not merge that future work without separate approval.
 
 > 2026-09-12 shared-assistant checkpoint: GitHub is now the owner-approved communication channel between connected assistants. The complete Jarvis requirements are in `docs/JARVIS_PROFILE.md`. Grok or another connected assistant should fetch current `main`, read `AGENTS.md`, this file and that specification, then work only on `beta/civorian-jarvis-profile` and a separate draft PR. Chat transcripts are not shared automatically. Every assistant must publish a GitHub handoff before another continues. Claude still needs a pasted pointer unless separately connected to the repository.
@@ -13,7 +15,7 @@ Updated: 2026-09-12. This is the shared project checkpoint for the owner and any
 | Field | Latest checkpoint |
 |---|---|
 | Status | Civoria V0.8.0 is live in production; exact release merge `243ef76`; production deployment READY and live API verified. |
-| Active work | Jarvis specification published at `docs/JARVIS_PROFILE.md`; implementation has not started. Next: create `beta/civorian-jarvis-profile` from current `main` and open a separate draft PR. |
+| Active work | `fix/v08-profile-scroll`; draft PR #24 ready for owner scroll verification. Jarvis specification remains at `docs/JARVIS_PROFILE.md` and implementation has not started. |
 | Live site | https://www.thecivoria.com |
 | Production branch | `main`; V0.8 release `243ef76b3a6f16962a29ac65a1642749b518b051` |
 | Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
@@ -235,6 +237,8 @@ Only one assistant should edit/deploy at a time. Before starting, read this file
 - 2026-09-11 — Codex: owner approved starting civilization over. Implemented V0.4 primitive-origin candidate with a recoverable v2 namespace, 30 Civoria days per real day, age/calendar separation, physical experiment actions, personal repeated-evidence recipes, executable timber production, timber-backed shelters, and corresponding UI/visual changes. Published draft PR #22; Beta checks run #77 passed and Vercel preview deployment is READY but authentication-protected. Production and v1 data are unchanged.
 
 - 2026-09-12 — Codex: owner explicitly approved “Push V0.8 live.” Marked PR #22 ready and merged exact tested head `82e071e` to `main` as `243ef76`. Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` reached READY with no error/fatal runtime logs in the release window. Live verification returned V0.8.0 and a new primitive V2 world on Day 1 with nine founders and no inherited buildings, farms, market, roles, homes, or timber. Previous V1 storage remains preserved. Next selected work is the separate read-only Jarvis Civorian profile; PR #23 remains unmerged and requires reconciliation.
+
+- 2026-09-12 — Codex: diagnosed the owner's recurring live side-profile scroll reset. Runtime logs were clean; code inspection found that every state refresh replaced the drawer DOM and lost `scrollTop`. Draft PR #24 on `fix/v08-profile-scroll` preserves drawer and mind-feed scroll during refreshes. Functional head `fc81e85`; 116 tests, build, diff check, Beta checks #83 and Vercel preview pass. Hosted automated scrolling could not run because `agent-browser` is unavailable. Production remains unchanged; next action is owner preview confirmation before any merge.
 
 
 ## AI decision cost model — measured 2026-09-10

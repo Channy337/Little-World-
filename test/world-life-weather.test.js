@@ -10,7 +10,7 @@ test('V0.10 ambient wildlife and weather layer is shipped after the world render
   const html=fs.readFileSync('index.html','utf8');
   const build=fs.readFileSync('scripts/build.js','utf8');
   const viewer=fs.readFileSync('world-life-weather.js','utf8');
-  assert.match(html,/V0\.10\.0/);
+  assert.match(html,/V0\.10\.1/);
   assert.ok(html.indexOf('game.js')<html.indexOf('world-life-weather.js'));
   assert.match(build,/world-life-weather\.js/);
   assert.match(viewer,/rabbit\(/);

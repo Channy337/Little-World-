@@ -3,11 +3,11 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 
-test('V0.9.0 world news ticker is wired into the live page',()=>{
+test('V0.10.0 world news ticker is wired into the live page',()=>{
   const html=fs.readFileSync('index.html','utf8');
   assert.match(html,/worldTicker/);
   assert.match(html,/World News/);
-  assert.match(html,/V0\.9\.0/);
+  assert.match(html,/V0\.10\.0/);
   assert.match(html,/world-ticker\.js/);
   assert.match(html,/world-ticker\.css/);
 });

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="world-ticker.css" />
 <link rel="stylesheet" href="observer-ui.css" />
+<link rel="stylesheet" href="ambient-music.css" />
 </head>
 <body>
 <div class="siteNav"><div class="brand"><span class="ico">✦</span>CLIVORIA</div><div class="worldTicker" aria-label="Major Civoria milestones"><span class="worldTickerLabel">World News</span><div class="worldTickerViewport"><span id="worldTickerTrack" class="worldTickerTrack">Civilization watch: checking the chronicle for major milestones…</span></div></div><nav><a href="#live-world">World</a><a href="chronicle.html">Chronicle</a><a href="discoveries.html">Discoveries</a><a href="#about">About</a></nav></div>
@@ -30,7 +31,8 @@
 <div id="momentOverlay" class="momentOverlay"><div class="momentCard"><img id="momentImg" alt="Clivoria world moment" /><div class="momentActions"><button id="momentDownload">Download</button><button id="momentShareNow">Share</button><button id="momentClose">Close</button></div></div></div>
 <section class="about" id="about"><h2>About Clivoria</h2><p>Clivoria is one persistent shared civilization beginning from a primitive state. The browser is only a window into it, while the canonical world continues on the server.</p><ul class="howList"><li><b>No inherited civilization.</b> The first people have no homes, professions, farms, market, controlled fire, or recipes.</li><li><b>No invisible map.</b> Each person acts from what they can currently sense, personally remember, or learn from someone else.</li><li><b>Ideas are physical prototypes.</b> Materials, forms, connections, forces and repeated tests create capabilities—there is no required technology tree.</li><li><b>Knowledge is personal.</b> A repeatable result belongs only to people who have proved it, learned it, or preserved it.</li><li><b>A living environment.</b> Deterministic terrain, regional climate, weather, soil, real plant forms, animal populations, food spoilage, toxins, waste and water contamination change survival.</li><li><b>Human bodies, unknown anatomy.</b> Metabolism, circadian sleep, wounds, blood, oxygen, infection, reproduction, dependency and aging behave physically, while Civorians begin with sensations rather than medical knowledge.</li><li><b>Communication must grow.</b> Gesture, vocal skill, shared signs, teaching and institutions develop through repeated contact.</li><li><b>Cultivation must be discovered.</b> Plant pieces can be gathered and placed in soil, but only suitable temperature, moisture, depth and viability allow growth. The people are not told this in advance.</li></ul></section>
 <footer><div class="shareRow"><button id="shareBtn">Share Clivoria</button></div><p>A persistent civilization experiment. One shared world, watched through your browser.</p></footer>
-<div class="versionBadge" aria-label="Civoria version V0.12.0">V0.12.0</div>
+<div class="ambientMusic" aria-label="Ambient music controls"><button id="musicToggle" type="button" aria-pressed="false">♫ Music</button><label for="musicVolume"><span>Volume</span><input id="musicVolume" type="range" min="0" max="100" value="28" aria-label="Music volume" aria-valuetext="28 percent" /></label><span id="musicStatus" class="srMusicStatus" role="status" aria-live="polite">Music off.</span></div>
+<div class="versionBadge" aria-label="Civoria version V0.12.1">V0.12.1</div>
 <div id="toast"></div>
 <script src="activity-clock.js"></script>
 <script src="growth-visuals.js"></script>
@@ -43,5 +45,6 @@
 <script src="game.js"></script>
 <script src="world-life-weather.js"></script>
 <script src="fahrenheit-display.js"></script>
+<script src="ambient-music.js"></script>
 </body>
 </html>

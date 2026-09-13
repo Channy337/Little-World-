@@ -50,7 +50,7 @@
 (function(){
   "use strict";
 
-  function escapeHtml(s){ return s.replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  function escapeHtml(s){ return s.replace(/[&<>]/g, function(c){ return {'&':'&','<':'<','>':'>'}[c]; }); }
 
   async function loadState(){
     var response=await fetch('/api/state',{cache:'no-store',signal:AbortSignal.timeout(10000)});

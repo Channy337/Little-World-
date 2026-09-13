@@ -734,7 +734,7 @@
     var card=document.createElement('canvas'); card.width=cardW; card.height=sceneH+textH;
     var cctx=card.getContext('2d'); cctx.fillStyle='#152119'; cctx.fillRect(0,0,cardW,sceneH+textH); cctx.drawImage(canvas,0,0,cardW,sceneH);
     var panel=cctx.createLinearGradient(0,sceneH,cardW,sceneH+textH); panel.addColorStop(0,'#17231b'); panel.addColorStop(1,'#223027'); cctx.fillStyle=panel; cctx.fillRect(0,sceneH,cardW,textH);
-    cctx.fillStyle='#d9b96c'; cctx.font='600 15px "DM Sans", Arial, sans-serif'; cctx.textAlign='left'; cctx.fillText('CLIVORIA · LIVE WORLD',24,sceneH+34);
+    cctx.fillStyle='#d9b96c'; cctx.font='600 15px "DM Sans", Arial, sans-serif'; cctx.textAlign='left'; cctx.fillText('CIVORIA · LIVE WORLD',24,sceneH+34);
     cctx.fillStyle='#aebcad'; cctx.font='14px "DM Sans", Arial, sans-serif';
     var houses=0; for(var i=0;i<S.buildings.length;i++) if(S.buildings[i].type==='house') houses++;
     cctx.fillText('Day '+S.day+'  ·  '+S.agents.length+' villagers  ·  '+houses+' homes'+(S.market?'  ·  market open':''),24,sceneH+60);
@@ -748,10 +748,10 @@
     if(!S) return;
     var card; try{ card=buildMomentCard(); }catch(e){ showToast('Could not build a share card right now.'); return; }
     var dataUrl=card.toDataURL('image/png'),overlay=document.getElementById('momentOverlay'),img=document.getElementById('momentImg'); if(overlay&&img){ img.src=dataUrl; overlay.classList.add('show'); }
-    card.toBlob(function(blob){ if(!blob) return; var file=new File([blob],'clivoria-day'+S.day+'.png',{type:'image/png'}); if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){ var shareBtn2=document.getElementById('momentShareNow'); if(shareBtn2) shareBtn2.onclick=function(){ navigator.share({files:[file],title:'Clivoria',text:'Day '+S.day+' in the living world of Clivoria.'}).catch(function(){}); }; } });
+    card.toBlob(function(blob){ if(!blob) return; var file=new File([blob],'civoria-day'+S.day+'.png',{type:'image/png'}); if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){ var shareBtn2=document.getElementById('momentShareNow'); if(shareBtn2) shareBtn2.onclick=function(){ navigator.share({files:[file],title:'Civoria',text:'Day '+S.day+' in the living world of Civoria.'}).catch(function(){}); }; } });
   }
   function downloadMoment(){
-    var img=document.getElementById('momentImg'); if(!img||!img.src) return; var a=document.createElement('a'); a.href=img.src; a.download='clivoria-day'+S.day+'.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    var img=document.getElementById('momentImg'); if(!img||!img.src) return; var a=document.createElement('a'); a.href=img.src; a.download='civoria-day'+S.day+'.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
   function showToast(msg){
     var t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); clearTimeout(showToast._h); showToast._h=setTimeout(function(){ t.classList.remove('show'); },2600);
@@ -759,8 +759,8 @@
   function shareVillage(){
     if(!S) return;
     var url=location.href.split('#')[0],houses=0; for(var i=0;i<S.buildings.length;i++) if(S.buildings[i].type==='house') houses++;
-    var text='Clivoria is on day '+S.day+' with '+S.agents.length+' villagers and '+houses+' homes. Come watch the same living world:';
-    if(navigator.share) navigator.share({title:'Clivoria',text:text,url:url}).catch(function(){});
+    var text='Civoria is on day '+S.day+' with '+S.agents.length+' villagers and '+houses+' homes. Come watch the same living world:';
+    if(navigator.share) navigator.share({title:'Civoria',text:text,url:url}).catch(function(){});
     else if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function(){ showToast('Link copied to clipboard.'); }).catch(function(){ showToast('Copy this page address to share it.'); });
     else showToast('Copy this page address to share it.');
   }

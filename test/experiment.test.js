@@ -65,9 +65,11 @@ test('a learned recipe remains executable and shelter construction records shape
   assert.equal(person.inv.wood,0);assert.equal(person.inv.timber,1);
   person.home=null;person.inv.timber=6;person.state='idle';person.action=null;person.hunger=0;person.thirst=0;person.energy=100;person.social=100;
   e=engine(s);for(let i=0;i<320;i++)e.step(.1);s=e.snapshot();person=s.agents.find(x=>x.id===id);
-  const built=s.buildings.find(x=>x.ownerId===id);
+  const built=s.buildings.find(x=>x.type==='house'&&x.methods&&x.methods.includes('shape:wood'));
   assert.ok(built);assert.ok(built.materials.timber>0);assert.deepEqual(built.methods,['shape:wood']);
-  assert.equal(person.home,built.id);
+  const resident=s.agents.find(x=>x.id===built.ownerId);
+  assert.ok(resident);assert.equal(resident.home,built.id);
+  assert.ok(person.mind.capabilities.some(x=>x.id==='shape:wood'));
 });
 
 test('invalid operation is rejected rather than becoming a hidden technology tree',()=>{

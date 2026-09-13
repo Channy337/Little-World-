@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Project board — Civoria</title>
+<meta name="description" content="Owner project board: what we did, what is next, what is planned, and the rules we keep." />
+<meta name="robots" content="noindex" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%23101813%22/><path d=%22M16 24V12M16 14c-4-1-6-4-6-7 4 0 7 2 8 5M16 17c4-1 7-4 7-8-4 0-7 2-8 5%22 stroke=%22%23d9b96c%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .boardWrap{max-width:720px;margin:0 auto;padding:28px 20px 80px;}
+  .boardWrap h1{font-size:22px;margin:0 0 6px;}
+  .boardWrap .lead{color:var(--muted);font-size:14px;line-height:1.55;margin:0 0 22px;}
+  .boardSection{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px;}
+  .boardSection h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;}
+  .boardSection h3{font-size:15px;margin:14px 0 6px;}
+  .boardSection p,.boardSection li{font-size:14px;line-height:1.55;margin:0 0 8px;}
+  .boardSection ul{margin:0 0 4px;padding-left:1.2em;}
+  .boardSection li{margin-bottom:6px;}
+  .liveGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:8px;}
+  .liveGrid .stat{background:#121c16;border:1px solid var(--line);border-radius:8px;padding:10px;}
+  .liveGrid .k{font-size:11px;color:var(--muted);text-transform:uppercase;}
+  .liveGrid .v{font-size:16px;margin-top:4px;}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-right:6px;}
+  .tag.do{border-color:#6e9e76;color:#9fcaaa;}
+  .tag.next{border-color:#b89354;color:#d9b96c;}
+  .tag.plan{border-color:#6a8a9a;color:#9fc4d5;}
+  .tag.rule{border-color:#85524b;color:#c98a7a;}
+  .muted{color:var(--muted);}
+  .updated{font-size:12px;color:var(--muted);margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div class="siteNav">
+  <div class="brand"><span class="ico">✦</span>CIVORIA</div>
+  <nav>
+    <a href="index.html#live-world">World</a>
+    <a href="chronicle.html">Chronicle</a>
+    <a href="discoveries.html">Discoveries</a>
+    <a href="project.html">Project</a>
+    <a href="index.html#about">About</a>
+  </nav>
+</div>
+
+<main class="boardWrap">
+  <h1>Project board</h1>
+  <p class="lead">Owner memory for Civoria. What is live, what we finished, what to do next, and the rules we do not break. This page does not control the world. It only helps us not forget.</p>
+
+  <section class="boardSection" aria-label="Live world">
+    <h2>Live world now</h2>
+    <div class="liveGrid" id="liveStats">
+      <div class="stat"><div class="k">Day</div><div class="v" id="dayVal">—</div></div>
+      <div class="stat"><div class="k">People</div><div class="v" id="popVal">—</div></div>
+      <div class="stat"><div class="k">Farms</div><div class="v" id="farmVal">—</div></div>
+      <div class="stat"><div class="k">Buildings</div><div class="v" id="buildVal">—</div></div>
+      <div class="stat"><div class="k">Speed</div><div class="v" id="speedVal">—</div></div>
+    </div>
+    <p id="survivorNote" class="muted">Loading shared world…</p>
+  </section>
+
+  <section class="boardSection">
+    <h2><span class="tag next">Next</span> Do next</h2>
+    <ul>
+      <li><strong>Set $25/month hard limit</strong> on the Anthropic API account at console.anthropic.com (Billing). This is separate from the $20 Claude and $20 ChatGPT chat plans.</li>
+      <li><strong>Cognition design (preview branch)</strong> — real decisions only at non-routine moments; rules handle body maintenance; prompt caching + batch where possible. Stay under $25/month.</li>
+      <li><strong>No reseed to rescue Joro.</strong> A deliberate restart is allowed only after the new cognition design is ready, if you still want a clean start.</li>
+    </ul>
+  </section>
+
+  <section class="boardSection">
+    <h2><span class="tag do">Done</span> Recently finished</h2>
+    <ul>
+      <li><strong>PR #34</strong> — Seeds are perceptible; food aversion can fade. No planting forced. Merged.</li>
+      <li><strong>PR #35</strong> — Real token logging on every AI call. Merged.</li>
+      <li><strong>Measured cost</strong> — ~2 hours production, 1 person: 8 calls, 9,750 input + 1,124 output tokens ≈ <strong>1.5 cents</strong>. About <strong>0.19 ¢ per thought</strong>.</li>
+      <li>V0.12.2 branding is Civoria everywhere public-facing.</li>
+      <li>Shelter construction, ambient music, living planet foundation are released.</li>
+    </ul>
+  </section>
+
+  <section class="boardSection">
+    <h2><span class="tag plan">Planned</span> On the roadmap</h2>
+    <h3>Real Civorian decisions</h3>
+    <p>Today the AI mostly re-ranks needs the rules already picked. Goal: flip that so people choose from what is in front of them, inside $25/month.</p>
+    <ul>
+      <li>Call AI only at non-routine moments</li>
+      <li>Prompt caching (same rules/schema every call)</li>
+      <li>Batch API where delay is fine</li>
+      <li>Slow the clock only if needed (biggest cost lever)</li>
+    </ul>
+    <h3>Hunting (unbuilt)</h3>
+    <p>Animals exist and are visible. There is still <strong>no</strong> hunt, trap, fish, or butcher path. Hunger only goes to farms, bushes, or market. Bone and hide stay unreachable until this is built.</p>
+    <p class="muted">Same design rule: discovery only. No hunt button. No forced behaviour.</p>
+    <h3>Other remembered items</h3>
+    <ul>
+      <li>Shelter UI should feel in-world later; not a permanent big visitor panel.</li>
+      <li>Jarvis-style life profile remains an observation UI, not a control panel.</li>
+    </ul>
+  </section>
+
+  <section class="boardSection">
+    <h2><span class="tag rule">Rules</span> Do not break</h2>
+    <ul>
+      <li>Public name is <strong>Civoria</strong> only. Repo and infra may still say little-world on purpose.</li>
+      <li><strong>Never</strong> reset or reseed production to fix a bug or rescue a starving generation.</li>
+      <li><strong>Never</strong> force planting, farming, or hunting. Fix senses and learning; discovery is theirs.</li>
+      <li>Browser is read-only observer. Server owns the truth.</li>
+      <li>No omniscient map or modern science in Civorian minds.</li>
+      <li>Preview branch + checks before production changes.</li>
+    </ul>
+  </section>
+
+  <section class="boardSection">
+    <h2>Money map</h2>
+    <ul>
+      <li><strong>Anthropic API</strong> — Civorian thoughts (Haiku). This is the $25 budget. Not the $20 Claude chat plan.</li>
+      <li><strong>Claude $20 / ChatGPT $20</strong> — your personal chat apps. Unrelated to the world.</li>
+      <li><strong>GitHub</strong> — repo + heartbeat Actions. Usually free at this scale.</li>
+      <li><strong>Vercel</strong> — hosting. Usually free Hobby at this scale.</li>
+    </ul>
+  </section>
+
+  <section class="boardSection">
+    <h2>Where the detailed notes live</h2>
+    <p>Assistants and the owner use <code>HANDOFF.md</code> in the GitHub repo as the shared checkpoint. This Project page is the human-friendly summary so plans do not get lost between chats.</p>
+    <p class="muted">Repo: Channy337/Little-World- · Site: thecivoria.com</p>
+  </section>
+
+  <p class="updated" id="boardUpdated">Board content last written 2026-09-13. Live numbers refresh from the shared world.</p>
+</main>
+
+<script>
+(function(){
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[c];
+    });
+  }
+  async function refresh(){
+    try{
+      var res = await fetch('/api/state',{cache:'no-store',signal:AbortSignal.timeout(10000)});
+      if(!res.ok) throw new Error('bad');
+      var S = (await res.json()).state || {};
+      var agents = S.agents || [];
+      document.getElementById('dayVal').textContent = S.day != null ? S.day : '—';
+      document.getElementById('popVal').textContent = agents.length;
+      document.getElementById('farmVal').textContent = (S.farms||[]).length;
+      document.getElementById('buildVal').textContent = (S.buildings||[]).length;
+      document.getElementById('speedVal').textContent = S.speed != null ? S.speed : '—';
+      var note = document.getElementById('survivorNote');
+      if(!agents.length){
+        note.textContent = 'No one is left alive. Do not reseed unless the owner explicitly chooses a deliberate restart after cognition work.';
+      } else {
+        var bits = agents.map(function(a){
+          var h = a.health != null ? Math.round(a.health*10)/10 : '?';
+          var g = a.hunger != null ? Math.round(a.hunger*10)/10 : '?';
+          return escapeHtml(a.name||'Someone')+' (health '+h+', hunger '+g+')';
+        });
+        note.innerHTML = 'Alive: '+bits.join('; ')+'.';
+      }
+    }catch(e){
+      document.getElementById('survivorNote').textContent = 'Shared world temporarily unavailable.';
+    }finally{
+      setTimeout(refresh, 20000);
+    }
+  }
+  refresh();
+})();
+</script>
+</body>
+</html>

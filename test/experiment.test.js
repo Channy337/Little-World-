@@ -53,19 +53,21 @@ test('two physical results create only the discoverer personal executable recipe
   assert.equal(s.agents[1].mind.capabilities.length,0);
 });
 
-test('a learned recipe is executable and shaped timber is recorded in visible construction',()=>{
+test('a learned recipe remains executable and shelter construction records shaped timber',()=>{
   let s=engine(null,35).snapshot();ensureMinds(s);
   const id=s.agents[0].id,a=s.agents[0];
   a.mind.capabilities.push({id:'shape:wood',kind:'recipe',evidence:2,discoveredDay:s.day});
-  a.inv.wood=1;a.inv.timber=0;a.hunger=0;a.energy=100;a.social=100;
+  // Temporarily mark this person housed so the recipe itself can execute without
+  // the shelter planner taking priority over a one-piece process test.
+  a.home=999;a.inv.wood=1;a.inv.timber=0;a.hunger=0;a.energy=100;a.social=100;
   let e=engine(s);for(let i=0;i<40;i++)e.step(.1);s=e.snapshot();
   let person=s.agents.find(x=>x.id===id);
   assert.equal(person.inv.wood,0);assert.equal(person.inv.timber,1);
-  person.inv.timber=6;person.state='idle';person.action=null;person.hunger=0;person.energy=100;
-  e=engine(s);for(let i=0;i<120;i++)e.step(.1);s=e.snapshot();person=s.agents.find(x=>x.id===id);
-  const shelter=s.buildings.find(x=>x.ownerId===id);
-  assert.ok(shelter);assert.ok(shelter.materials.timber>0);assert.deepEqual(shelter.methods,['shape:wood']);
-  assert.equal(person.home,shelter.id);
+  person.home=null;person.inv.timber=6;person.state='idle';person.action=null;person.hunger=0;person.thirst=0;person.energy=100;person.social=100;
+  e=engine(s);for(let i=0;i<320;i++)e.step(.1);s=e.snapshot();person=s.agents.find(x=>x.id===id);
+  const built=s.buildings.find(x=>x.ownerId===id);
+  assert.ok(built);assert.ok(built.materials.timber>0);assert.deepEqual(built.methods,['shape:wood']);
+  assert.equal(person.home,built.id);
 });
 
 test('invalid operation is rejected rather than becoming a hidden technology tree',()=>{

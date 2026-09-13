@@ -8,17 +8,19 @@ Updated: 2026-09-12 CDT / 2026-09-13 UTC. This is the shared checkpoint for the 
 - Live site: `https://www.thecivoria.com` / `https://thecivoria.com`
 - Repository: `Channy337/Little-World-`
 - Production branch: `main`
-- Current production release before the active branding PR: **V0.12.1**
-- Current production merge before the active branding PR: `539f2abe9f11d81b3da59e974f8ecb8e572c07a6`
-- Active branch: `beta/v0122-civoria-branding`
-- Active PR: **#33 — V0.12.2: standardize Civoria branding**
-- V0.12.2 changes only presentation/branding/tests/docs. It must not reset or alter canonical world state.
+- Current production release: **V0.12.2**
+- V0.12.2 release merge: `cf22a49c8abacf9419e6f31911723ca010ee2e60`
+- V0.12.2 production deployment: `dpl_6PsZvLh66P8N2s4EXA2UsNZbK9LW` — **READY**
+- PR #33 is merged.
+- Live production was fetched successfully and serves the corrected `Civoria` branding and V0.12.2.
+- Production runtime error/warning/fatal check after release returned no matching logs.
+- No implementation task is currently active.
 
 ### Naming rule
 
-`Civoria` is the one true public/project name. V0.12.2 replaces legacy visitor-facing `Clivoria`, `CLIVORIA`, `A Little World`, and `clivoria-day*.png` strings with Civoria equivalents.
+`Civoria` is the one true public/project name. V0.12.2 replaced legacy visitor-facing `Clivoria`, `CLIVORIA`, `A Little World`, and `clivoria-day*.png` strings with Civoria equivalents.
 
-Do **not** blindly rename technical infrastructure identifiers. The GitHub repository is still `Channy337/Little-World-`, and persistence/deployment identifiers containing `little-world` are intentionally preserved because changing them can break GitHub/Vercel integration or disconnect the existing saved world. A permanent regression test in `test/branding.test.js` guards this distinction.
+Do **not** blindly rename technical infrastructure identifiers. The GitHub repository remains `Channy337/Little-World-`, and persistence/deployment identifiers containing `little-world` are intentionally preserved because changing them could break GitHub/Vercel integration or disconnect the existing saved world. `test/branding.test.js` permanently guards this distinction.
 
 ## Released system state
 
@@ -57,7 +59,7 @@ Current shelter behavior:
 
 **Do not merge old PR #23.** It is obsolete historical work now that its shelter concept has been integrated properly in V0.12.
 
-Owner presentation decision: the large permanent **Shelter Project** panel should not be treated as a main visitor attraction. The shelter mechanic stays. Future UI work should make construction feel natural in-world, with detailed status available contextually (clicked site/Civorian or observer/debug view) and major milestones surfaced through World News/Chronicle.
+Owner presentation decision: the large permanent **Shelter Project** panel should not be treated as a main visitor attraction. The shelter mechanic stays. Future UI work should make construction feel natural in-world, with detailed status available contextually through a clicked site/Civorian or observer/debug view, and major milestones surfaced through World News/Chronicle.
 
 ### V0.12.1 — ambient instrumental music
 
@@ -68,32 +70,28 @@ Released from PR #32.
 - visitor must tap the music control to start because iPhone/modern browsers block unsolicited autoplay
 - quiet default volume and volume slider
 - music has no effect on canonical simulation state
-- production was verified after deployment with no runtime errors
 
-## Active V0.12.2 branding patch
+### V0.12.2 — canonical Civoria branding
 
-PR #33 standardizes all public branding to **Civoria** and bumps the visible version to V0.12.2.
+Released from PR #33.
 
-The branch cleanup already:
-
-- corrected homepage metadata, navigation/hero/about/share labels
-- corrected Discoveries branding
-- corrected Chronicle legacy `A Little World` branding
-- corrected generated share-card text, Web Share title/text and downloaded screenshot filename in `game.js`
-- updated release-label tests from V0.12.1 to V0.12.2
-- added `test/branding.test.js`
-- ran a repository public-brand scan with no legacy public names remaining in the guarded files
-- ran `npm test` successfully
-- ran `npm run build` successfully
-
-The temporary cleanup workflow used to safely patch the large renderer was removed from the branch after it completed.
+- homepage title, metadata, navigation, hero, About and Share text use `Civoria`
+- Discoveries uses `Civoria`
+- Chronicle legacy `A Little World` branding was replaced with `Civoria`
+- generated share cards and Web Share text use `Civoria`
+- downloaded moment screenshots now use `civoria-day*.png`
+- permanent regression test prevents legacy public names from returning
+- technical repository/persistence identifiers were deliberately left unchanged
+- exact-head Beta checks run #153 passed
+- Vercel preview was READY and verified before merge
+- production deployment was READY and live verification passed
 
 ## Core invariants
 
-- Preserve the existing canonical production world. Never reset/reseed it to solve an implementation problem.
+- Preserve the existing canonical production world. Never reset or reseed it to solve an implementation problem.
 - Browser/UI layers are observers/presentation. Canonical facts and outcomes remain server-owned.
 - Persistent personal minds may hypothesize; deterministic physical rules create facts, resources, executable capabilities and consequences.
-- Do not give Civorians omniscient map/scientific/medical knowledge that they did not personally sense, discover, remember, reproduce, or learn through grounded communication.
+- Do not give Civorians omniscient map/scientific/medical knowledge they did not personally sense, discover, remember, reproduce, or learn through grounded communication.
 - Preserve the one-real-hour / one-Civoria-month clock unless the owner explicitly changes it.
 - Use a preview branch, tests/build and preview verification before production changes unless the owner explicitly directs otherwise.
 
@@ -102,12 +100,9 @@ The temporary cleanup workflow used to safely patch the large renderer was remov
 - Production is Vercel-backed and uses the existing versioned Upstash V2 world namespace.
 - The old V1 world remains a recovery artifact and must not be deleted casually.
 - GitHub Actions heartbeat advances the world without a browser and uses short-lived GitHub OIDC authentication.
-- `README.md` contains older milestone wording in places; verify current code/HANDOFF rather than treating old release prose as the latest operational state.
+- `README.md` contains older milestone wording in places; use current code and this HANDOFF as the operational checkpoint.
 - `CLAUDE.md` and `AGENTS.md` instruct assistants to use this file as the shared checkpoint.
 
 ## Next action
 
-1. Finish GitHub Beta checks and Vercel preview verification for PR #33.
-2. If clean, merge PR #33 only with owner authorization and verify production serves V0.12.2 with no runtime errors.
-3. After release, update this checkpoint if any production SHA/deployment detail changed.
-4. Do not revive or directly merge old PR #23.
+No implementation is active. The next assistant should start from the latest `main`, read `CLAUDE.md`, `AGENTS.md`, and this file, verify production, and follow the owner's next instruction. Do not revive or directly merge old PR #23.

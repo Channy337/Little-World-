@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - beta/unattended-world
+      - beta/v012-shelter-integration
   pull_request:
     branches:
       - main

@@ -1,6 +1,6 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-13 UTC (post-merge). This is the shared checkpoint for the owner and any coding assistant. Verify GitHub and production before editing.
+Updated: 2026-09-13 UTC (token instrumentation live). This is the shared checkpoint for the owner and any coding assistant. Verify GitHub and production before editing.
 
 ## Current progress
 
@@ -8,11 +8,12 @@ Updated: 2026-09-13 UTC (post-merge). This is the shared checkpoint for the owne
 - Live site: `https://www.thecivoria.com` / `https://thecivoria.com`
 - Repository: `Channy337/Little-World-`
 - Production branch: `main`
-- Current production release: **V0.12.2 + PR #34** (seed perception + food relearning)
-- PR #34 merge commit: `8883c9d12b523e03d1843a7f27a49497061f6658`
-- PR #33 (branding) and earlier releases remain in history.
-- Live world at last check: day 109, 2 alive (Joro, Elin), both hungry, 0 farms/buildings. Speed currently 1.
-- No active open implementation PR for the seed/food work. Next decisions are owner-driven.
+- Current production: **V0.12.2 + PR #34 + PR #35**
+- PR #34 (seed perception + food relearning): `8883c9d12b523e03d1843a7f27a49497061f6658`
+- PR #35 (AI token instrumentation): `43777f61331a59a566a989211100c79d0fa639ec`
+- Live world at last check: day 451, 1 alive (Joro, health ~16, hunger ~62). Speed 1. Zero farms/buildings.
+- Owner budget for cognition: **$25 / month**.
+- One-hour real token measurement is now possible. Instrumentation is live on main. Structured logs (`civoria_ai_usage`) appear in Vercel function logs on every AI call.
 
 ### Naming rule
 
@@ -94,11 +95,17 @@ Also passes world state into forage so seeds receive real IDs.
 
 **No planting behaviour, no farming instruction, no nudge was added.** Discovery remains entirely theirs. They may never manage it; that is acceptable.
 
+### PR #35 — AI token instrumentation (merged 2026-09-13)
+
+Squash-merged to main as `43777f61331a59a566a989211100c79d0fa639ec`.
+
+Every successful Anthropic call now records real `input_tokens` and `output_tokens`. Structured `civoria_ai_usage` JSON lines are written to Vercel function logs. Process-local totals are accumulated and `getUsageStats()` is exported. No behaviour change.
+
+Purpose: measure actual cost over one real hour against the owner’s $25/month budget before any further cognition redesign.
+
 ## Saved world status
 
-Day 109 (last live check). Two survivors: Joro and Elin. Both still hungry, health 100. Zero farms, zero plantings, zero buildings. Bushes and animals remain. Population has fallen hard from starvation and organ failure. The PR #34 fixes are now on main and will apply to future ticks; they do not retroactively invent discoveries or plant anything.
-
-Do not reset or reseed to rescue this. If the settlement dies out, report it and wait for the owner decision.
+Day 451 (last live check). One survivor: Joro (health ~16, hunger ~62). Elin is gone. Zero farms, zero plantings, zero buildings. Bushes and animals remain. Population collapsed from starvation. The PR #34 fixes are live; they do not invent discoveries or plant anything. Do not reset or reseed.
 
 ## Known gap - hunting does not exist
 
@@ -108,12 +115,11 @@ Deer, rabbit, fox, songbird and fish live, breed, move seasonally and are visibl
 
 Verified 2026-09-13. Claude Haiku 4.5 is $1 per million input tokens and $5 per million output. Cached input is 90% cheaper; batch processing is 50% cheaper.
 
-- One priority thought costs roughly 0.15 cents (about 800 input tokens, 130 output). Roughly 700 thoughts per dollar.
-- At the previous clock (30 Civoria days per real hour) with a 16-26 second thought cooldown, each Civorian would generate about 78 thoughts per real hour. Nine alive is about $1/hour and $730/month; 34 alive is about $2,700/month.
-- Actual spend today is far lower because ticks are infrequent and each drains at most 20 requests.
-- Genuine per-decision agency at the old clock would be $2,000-3,500/month. Not viable.
+Earlier estimates (from reading the prompt only):
+- One priority thought ~0.15 cents (~800 input, ~130 output).
+- At the old 30-day/hour clock the cost of real per-decision agency was thousands per month.
 
-These are estimates from reading the prompt. Instrument real token usage over one hour of world time before committing to a design. Live speed at last check was 1.
+**Real measurement is now live.** Collect one real hour of `civoria_ai_usage` log lines from Vercel after the PR #35 deployment is active, then replace the estimates with measured numbers. Owner budget: $25/month.
 
 ## Design direction - toward real decisions
 
@@ -121,12 +127,12 @@ The owner goal is Civorians who decide from what is actually in front of them. T
 
 Proposed path, not yet approved or built:
 
-- Slow the world clock. Speed is the dominant cost multiplier; 30 days per real hour down to about 4 cuts cost roughly sevenfold and changes nothing else about the world.
-- Use the Batch API. The world already advances asynchronously on a heartbeat, so the delay costs nothing.
-- Use prompt caching. The rules and schema are identical in every call and are currently paid for in full each time.
+- Slow the world clock. Speed is the dominant cost multiplier.
+- Use the Batch API. The world already advances asynchronously on a heartbeat.
+- Use prompt caching. The rules and schema are identical in every call.
 - Let the AI choose actions at every non-routine moment, leaving routine body maintenance to the rules.
 
-Stacked, nine Civorians with real decision-making lands near $15-25/month. Suggested budget $20/month with a hard spend cap. AI failures already return null and the world continues without them.
+Stacked estimates previously landed near $15-25/month for nine people. Confirm with measured data before building.
 
 A deliberate world restart may be appropriate once a new cognition design is built. It is not appropriate as a rescue for the current starvation.
 
@@ -149,9 +155,10 @@ A deliberate world restart may be appropriate once a new cognition design is bui
 
 ## Next action
 
-PR #34 is merged. Watch production deploy and the two survivors. Owner still needs to decide whether to instrument one real hour of token usage before any cognition redesign. Hunting remains unbuilt. Do not reseed. Do not add forced behaviour.
+PR #35 is merged and instrumentation is on main. Wait for the production deploy to finish, then collect one real hour of `civoria_ai_usage` logs. Report measured tokens and cost against the $25 budget. Do not reseed. Do not add forced behaviour. Hunting remains unbuilt.
 
 ## Session history
 
+- 2026-09-13 - Grok. Owner approved merge of token instrumentation. Squash-merged PR #35 (`43777f...`). Updated this handoff. Live world still day 451 with only Joro (critical health). Measurement window can begin once the deploy is live.
 - 2026-09-13 - Grok. Owner directed to move forward with #34. Squash-merged PR #34 to main (`8883c9d...`). Updated this handoff. Live world still day 109 with Joro + Elin. No reseed, no forced planting. Awaiting owner on next step (token measurement / cognition design / watch survivors).
 - 2026-09-13 - Claude. Read the repo and live world. Diagnosed the starvation: seeds imperceptible to Civorian minds, and permanent food blacklisting. Opened PR #34 with both fixes plus the forage state-passing tidy-up; checks green, preview healthy, not merged. Found hunting entirely unbuilt. Priced Civorian cognition and recorded a design direction for real per-decision agency. No production code merged this session.

@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Project board — Civoria</title>
-<meta name="description" content="Owner project board: what we did, what is next, what is planned, and the rules we keep." />
-<meta name="robots" content="noindex" />
+<meta name="description" content="Owner project board for Civoria." />
+<meta name="robots" content="noindex,nofollow" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%23101813%22/><path d=%22M16 24V12M16 14c-4-1-6-4-6-7 4 0 7 2 8 5M16 17c4-1 7-4 7-8-4 0-7 2-8 5%22 stroke=%22%23d9b96c%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>" />
 <link rel="stylesheet" href="styles.css" />
 <style>
@@ -29,17 +29,37 @@
   .tag.rule{border-color:#85524b;color:#c98a7a;}
   .muted{color:var(--muted);}
   .updated{font-size:12px;color:var(--muted);margin-top:18px;}
+  #gate{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .gateCard{max-width:360px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px;}
+  .gateCard h1{font-size:18px;margin:0 0 8px;}
+  .gateCard p{font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 14px;}
+  .gateCard input{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#121c16;color:var(--text);margin-bottom:10px;}
+  .gateCard button{width:100%;padding:10px;border-radius:8px;border:1px solid #53705b;background:#1b2a20;color:var(--text);cursor:pointer;}
+  .gateErr{color:#c98a7a;font-size:13px;min-height:1.2em;margin:0 0 8px;}
+  #board{display:none;}
+  body.unlocked #gate{display:none;}
+  body.unlocked #board{display:block;}
 </style>
 </head>
 <body>
 
+<div id="gate">
+  <div class="gateCard">
+    <h1>Owner board</h1>
+    <p>Private project notes for Civoria. Enter the board password to continue.</p>
+    <p class="gateErr" id="gateErr"></p>
+    <input id="gateInput" type="password" autocomplete="current-password" placeholder="Password" />
+    <button type="button" id="gateBtn">Open board</button>
+  </div>
+</div>
+
+<div id="board">
 <div class="siteNav">
   <div class="brand"><span class="ico">✦</span>CIVORIA</div>
   <nav>
     <a href="index.html#live-world">World</a>
     <a href="chronicle.html">Chronicle</a>
     <a href="discoveries.html">Discoveries</a>
-    <a href="project.html">Project</a>
     <a href="index.html#about">About</a>
   </nav>
 </div>
@@ -128,17 +148,51 @@
     <p class="muted">Repo: Channy337/Little-World- · Site: thecivoria.com</p>
   </section>
 
-  <p class="updated" id="boardUpdated">Board content last written 2026-09-13. Live numbers refresh from the shared world.</p>
+  <p class="updated">Board content last written 2026-09-13. Live numbers refresh from the shared world. Not linked from the public menu.</p>
 </main>
+</div>
 
 <script>
 (function(){
+  // Lightweight gate only. Not real server security; anyone who can read page source can bypass.
+  // Keeps casual visitors out. Change BOARD_PASSWORD if you want a different phrase.
+  var BOARD_PASSWORD = 'civoria-board';
+  var KEY = 'civoria_project_board_ok';
+
+  function unlock(){
+    document.body.classList.add('unlocked');
+    try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+    refresh();
+  }
+
+  function tryUnlock(value){
+    if (String(value || '') === BOARD_PASSWORD) {
+      unlock();
+      return true;
+    }
+    document.getElementById('gateErr').textContent = 'Wrong password.';
+    return false;
+  }
+
+  try {
+    if (sessionStorage.getItem(KEY) === '1') unlock();
+  } catch (e) {}
+
+  document.getElementById('gateBtn').addEventListener('click', function(){
+    tryUnlock(document.getElementById('gateInput').value);
+  });
+  document.getElementById('gateInput').addEventListener('keydown', function(ev){
+    if (ev.key === 'Enter') tryUnlock(ev.target.value);
+  });
+
   function escapeHtml(s){
     return String(s).replace(/[&<>"']/g, function(c){
       return {'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[c];
     });
   }
+
   async function refresh(){
+    if (!document.body.classList.contains('unlocked')) return;
     try{
       var res = await fetch('/api/state',{cache:'no-store',signal:AbortSignal.timeout(10000)});
       if(!res.ok) throw new Error('bad');
@@ -166,7 +220,6 @@
       setTimeout(refresh, 20000);
     }
   }
-  refresh();
 })();
 </script>
 </body>

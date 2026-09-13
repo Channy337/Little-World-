@@ -1,264 +1,134 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-12. This is the shared project checkpoint for the owner and any coding assistant. Verify GitHub before editing and do not store secrets in this file.
+Updated: 2026-09-12 (CDT). This is the current shared checkpoint for the owner and any coding assistant. Verify GitHub before editing and do not store secrets here.
+
+## Current production
+
+- Live site: https://www.thecivoria.com
+- Production branch: `main`
+- Production release: **V0.10.1**
+- Production head: `849ec951b64a3d8bfb1606d6a760f3729c41d0e1`
+- Production was **not changed** by the V0.11 work below.
+- Existing production already includes the V0.9 wildlife/cloud/severe-weather layer and the V0.10 winter/Fahrenheit survival work.
+
+## Active candidate — V0.11 living planet
+
+The owner instructed: **implement the remaining Civoria systems except shelter**. Work was started from the exact V0.10.1 production head on a new preview branch.
+
+- Branch: `beta/v011-living-planet`
+- Draft PR: **#29 — V0.11: living planet, one-hour month, cultivation, and observer profiles**
+- Exact tested candidate: `7ef5be7638dbc6afbdbba156f0fe9ad8a81760b6`
+- Base: `main` at `849ec951b64a3d8bfb1606d6a760f3729c41d0e1`
+- GitHub Beta checks: **run #109 passed** on the exact candidate.
+- CI verification: `npm test` passed and `npm run build` passed.
+- Vercel preview deployment: `dpl_CFtW9JCB3iiF97Qe2b9Hky6GN7Aa` — **READY**.
+- Exact preview URL: `https://little-world-2r3rak7y4-small-villager.vercel.app`
+- Stable branch preview alias: `https://little-world-git-beta-v011-living-planet-small-villager.vercel.app`
+- Preview root was fetched successfully with HTTP 200 and serves V0.11.0.
+- Preview runtime error/warning/fatal log query returned no matching logs.
+- The automated `agent-browser` binary was unavailable in the current execution runtime, so no automated screenshot/pixel-level browser inspection was claimed. Manual owner visual review is still appropriate before any merge.
+
+### V0.11 implemented systems
+
+1. **One real hour = one Civoria month**
+   - Canonical pace is now 30 Civoria days per real hour (`720` Civoria days per real day).
+   - Biological aging remains based on Civoria calendar days, preserving 360 Civoria days per biological year.
+   - Catch-up stepping adapts for large elapsed windows so the faster clock does not require hundreds of millions of tiny simulation steps.
+   - Tests verify thirty two-minute heartbeats advance exactly thirty Civoria days and scheduler cadence does not double-advance.
+
+2. **Deterministic Earth-like planet truth**
+   - `lib/planet.js` creates and persists one fixed-seed continent-scale physical world before exploration.
+   - Includes Earth-like gravity, atmospheric pressure/oxygen, 24-hour rotation, axial tilt, latitude, oceans/land, elevation, western/eastern mountain belts, coast distance, a river system, groundwater, drainage, soils, temperature and precipitation.
+   - Biomes derive from those physical values rather than visitor labels.
+   - A habitable river-valley starting region is selected from the fixed seed.
+   - A 16×10 observer overview and a 12×8 local terrain slice are persisted from the same canonical planet seed.
+
+3. **Climate-aware weather**
+   - Daily weather now reads regional climate when available.
+   - Temperature and precipitation respond to latitude/elevation/coastal moisture rather than being only global random values.
+   - Existing storm, rain, snow, blizzard, flood, windstorm, heatwave, cold-snap and drought consequences remain.
+   - Warm coastal summer/autumn conditions can produce hurricane-class hazards.
+
+4. **Real plant morphology, physical plant pieces and cultivation**
+   - Added internally identified real plants including black raspberry, wild sunflower, wild rice, cattail and pokeweed.
+   - Civorians receive only visible morphology: leaf form, venation, growth habit, fruit/seed appearance. Scientific names remain hidden engine truth.
+   - Foraging now physically collects viable plant pieces/seeds into the individual inventory.
+   - Plant pieces carry inherited variation affecting temperature/moisture/depth response and vigor.
+   - Ground placement/burial is a physical experiment, not a named farming unlock.
+   - Germination depends on species-specific temperature, moisture, burial depth, dormancy and viability whether anyone understands the cause or not.
+   - Wrong conditions can fail without granting knowledge.
+   - Repeated personally observed successful growth is required before that individual gains a reproducible cultivation method.
+   - Discovery does not spawn a farm or alter physical truth.
+
+5. **Canonical animal populations**
+   - Canonical fish, deer, rabbit, fox and songbird populations now exist alongside the already released visitor wildlife layer.
+   - Populations respond to winter scarcity, deep snow, severe weather and simple predator/prey availability.
+   - Hidden scientific identity is separate from what Civorians can visibly perceive.
+
+6. **Grounded experiment expansion**
+   - Physical prototype mechanics now support `place` and `bury` operations plus a physical `plantbit` material.
+   - AI prompts may propose placement/burial as hypotheses but are explicitly forbidden from jumping directly to a farming concept or claiming an outcome before the deterministic world tests it.
+
+7. **Read-only Jarvis-style Civorian Life Profile**
+   - `jarvis-profile.js` adds a deep visitor profile opened from the existing villager panel.
+   - Separates **Civorian knowledge** from **observer analysis**.
+   - Shows mind state, personal observations, beliefs, lessons, proven capabilities, experiments, relationships and personal timeline.
+   - Observer-only section can show body/health measurements, inventory, artifacts and carried plant pieces without granting that information to the Civorian.
+   - GET-only `/api/state`; no browser write path, no localStorage authority, no simulation advance.
+
+8. **Living Planet Observer**
+   - `planet-view.js` + `observer-ui.css` add a continent observer map, regional physical measurements, animal population summary and plant-growth attempts.
+   - The map is visitor analysis only. Civorians do not receive an omniscient continent map.
+
+9. **V0.11 presentation/build wiring**
+   - `index.html` now labels the one-hour/month pace and serves V0.11.0.
+   - New observer assets are included by `scripts/build.js`.
+   - Existing two-clock visual motion, mind feed, scroll fix, world ticker, core renderer, wildlife/weather viewer and Fahrenheit overlay remain in place.
+
+### Verification added or updated
+
+Tests now cover:
+
+- fixed-seed planet determinism;
+- persisted planet/local terrain truth;
+- terrain/climate causality;
+- legacy food-state compatibility during real-plant migration;
+- physical plant-piece collection and inherited variation;
+- failed germination under wrong burial conditions;
+- successful germination without prior cultivation knowledge;
+- two successful personal growth cycles before reproducible cultivation knowledge;
+- no scientific identity leakage through plant sensory descriptions;
+- exact one-real-hour/one-Civoria-month clock behavior;
+- scheduler catch-up under the faster clock;
+- read-only visitor observer/profile boundaries;
+- missing/legacy optional profile data;
+- reduced-motion CSS;
+- existing weather, wildlife, body, ticker, Fahrenheit, persistence, concurrency and long-simulation regressions.
 
-## Current progress
+## Explicitly excluded
 
-> 2026-09-12 profile-scroll fix released: The owner verified the revised PR #24 preview and explicitly approved release. The final fix preserves scroll inside `mind-feed.js` and prevents `game.js` from replacing the enhanced profile during five-second world syncs when the selected Civorian has not changed. Exact tested head `6834b49ea8fb257c30e46f2513cfdbea05ef1ca0` merged to `main` as `840d1e6e2721050ed41bf0f05b25978d55f1ea4f`. Vercel production deployment `dpl_FpfBa7UGvTXhJAut9g4dUhW4qZZm` is READY, the live site serves V0.8.0, runtime logs are clean, and the existing V2 world continued without reset. This is a read-only presentation fix and does not alter simulation state.
+### Shelter
 
-> 2026-09-12 V0.8 release checkpoint: The owner explicitly approved “Push V0.8 live.” PR #22 merged to `main` as `243ef76b3a6f16962a29ac65a1642749b518b051`. GitHub Beta checks run #82 passed on the exact PR head, Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` is READY, and the live site serves V0.8.0. Live `/api/state` initialized the isolated primitive production V2 world on Day 1 with nine founders, zero buildings, zero farms, no market, no roles, no homes, and no timber. The previous V1 world remains preserved. The next selected work is a read-only Jarvis-style visitor profile on a new branch from current `main`; do not merge that future work without separate approval.
+Draft PR **#23** remains separate and was **not modified, merged, rebased or reconciled** during V0.11 work. Do not merge it as part of PR #29.
 
-> 2026-09-12 shared-assistant checkpoint: GitHub is now the owner-approved communication channel between connected assistants. The complete Jarvis requirements are in `docs/JARVIS_PROFILE.md`. Grok or another connected assistant should fetch current `main`, read `AGENTS.md`, this file and that specification, then work only on `beta/civorian-jarvis-profile` and a separate draft PR. Chat transcripts are not shared automatically. Every assistant must publish a GitHub handoff before another continues. Claude still needs a pasted pointer unless separately connected to the repository.
+### Artwork redesign
 
-> Parallel shelter checkpoint: draft PR #23 remains stacked on the earlier V0.6 PR #22 history at `df244c9711bf1273aea402d68ee924fc27a63537`. Its Vercel preview reports success and 102 local tests plus build passed. It should be reconciled with the newer V0.8 branch before any integration; do not merge it independently.
+No new character/sprite artwork was integrated. The OpenArt/character-style experiment is separate from this engineering candidate.
 
-| Field | Latest checkpoint |
-|---|---|
-| Status | Civoria V0.8.0 and the verified Civorian profile-scroll fix are live in production; current release merge `840d1e6`; production deployment READY and live API verified. |
-| Active work | No implementation is active. Next: build the read-only Jarvis visitor profile from `docs/JARVIS_PROFILE.md` on `beta/civorian-jarvis-profile`; do not merge it without separate owner approval. |
-| Live site | https://www.thecivoria.com |
-| Production branch | `main`; current release `840d1e6e2721050ed41bf0f05b25978d55f1ea4f`; V0.8 base `243ef76b3a6f16962a29ac65a1642749b518b051` |
-| Two-clock verification | GitHub Beta checks run 28 passed on exact candidate `2d16d5a8baf09137cde2fd3ce841542ada25237f`; Vercel production status for merge `36ca79f8` reported success |
-| Visual release | PR #5, **Release approved Clivoria living-world visuals**, merged earlier as `1facd30a1176548c6188ce74347af02552f741f2` |
-| World storage | One canonical Upstash-backed world per environment; production V2 is active and previous V1 remains preserved. |
-| World pace | Live: 1 real day = 30 Civoria days; biological aging remains 360 Civoria days per year. |
-| Scheduler | GitHub Actions, minutes 2, 17, 32 and 47 of each hour |
-| Scheduler auth | Short-lived GitHub Actions OIDC JWT; no new paid scheduler and no required static heartbeat secret |
-| Catch-up fuse | Up to 7 real days per invocation; excess is discarded once and logged |
-| Scheduler verification | Confirmed 2026-09-09. `Civoria heartbeat` runs #57-#62 all completed successfully with GitHub event `Scheduled` on `main`, latest at 20:16:48 CDT. Observed delivery gaps were 12-28 minutes rather than an exact 15-minute cadence; this is normal GitHub scheduler drift and is absorbed by the catch-up fuse. |
-| Still pending | Jarvis visitor profile draft, reconciliation of stacked shelter PR #23 with V0.8, then the Earth-like terrain/organism/cultivation vertical slice. |
-| AI status | Persistent personal minds may hypothesize; deterministic physical rules alone create facts, resources and executable capabilities. |
+### Production
 
-### Planned simulation milestone after the Jarvis visitor profile: Earth-like planet, biology, and discoverable subsistence
+PR #29 is still a **draft**. Do not merge or deploy it to production without a fresh explicit instruction from the owner.
 
-No terrain/climate/ecosystem implementation for this milestone has begun. After the Jarvis profile work, start new simulation work from the latest approved `main`. Do not merge or production-deploy future work without a new explicit owner instruction.
+## Honest scope limits
 
-The governing rule is that discovery changes a Civorian's knowledge, never the world's prior physical truth. Terrain, climate, organisms, seeds, minerals, and physical possibilities must already be determined by canonical state or the fixed planet seed before anyone encounters them. Loading or exploring a region may reveal that truth but must not author resources in response to a discovery.
+V0.11 is a functional continent/climate/ecology/cultivation foundation, not a literal molecular Earth or a 1:1 geographic simulation. The current playable camera remains the existing local 2.5D settlement view, with the continent exposed through the new observer map. Regional long-distance travel/exploration across the whole continent is not yet a full agent navigation system. The biological model uses meaningful inherited functional loci rather than billions of literal DNA base pairs. Those limits are deliberate so the world stays deterministic, persistent and computationally practical.
 
-Required causality:
+The existing deeper realism roadmap still includes richer geology, erosion through time, fluid flow, thermodynamics, electricity, optics, broader disease/pathogen ecology, more complete food webs and long-distance regional migration/exploration. Do not represent those as already complete.
 
-1. A physical object or process already exists.
-2. A Civorian personally senses only what their location, weather, light, body, and tools permit.
-3. They may form a correct or incorrect hypothesis using their own vocabulary.
-4. A real action consumes time, energy, materials, and may cause harm or failure.
-5. The deterministic world evaluates the outcome.
-6. The individual retains evidence, not omniscient explanation.
-7. Repeated success may create only that individual's reproducible capability.
-8. Capability spreads only through demonstration, teaching, independent reproduction, or literacy-gated durable records; it can be lost when holders die.
+## Next action
 
-Natural-world requirements:
-
-- Use Earth-like gravity, atmosphere, 24-hour rotation, axial seasonality, water cycle, geology, soils, erosion, elevation, drainage, rivers, groundwater, and climate behavior.
-- Support physically caused terrain and ecosystems such as oceans, mountains, valleys, rivers, wetlands, deserts, grasslands, temperate forests, tropical rainforests, and tundra. Biomes must derive from latitude, elevation, heat, precipitation, soil, and water—not arbitrary visitor labels.
-- Weather such as rain, snow, drought, floods, storms, hurricanes, heat, cold, humidity, and wind must have local ecosystem and survival consequences.
-- Natural organisms use one shared DNA-based inheritance framework with mutation, genotype-to-phenotype expression, reproduction, life cycles, environmental tolerances, nutrition, toxins, disease, and competition. Individual acclimation is not genetic evolution; population traits change only across reproduction and selection.
-- Plants and animals should correspond to real Earth biology and visible morphology. A real leaf should have the appropriate shape, venation, texture, growth habit, and seasonal behavior. Internal species identity may exist as hidden engine truth, but Civorians initially see only sensory features and may invent entirely different names.
-- Do not store billions of literal base pairs. Model biologically meaningful loci and inherited traits deeply enough to preserve real causal behavior. DNA, cells, molecules, taxonomy, biome names, and modern anatomy remain inaccessible until adequate tools and evidence exist.
-- The current `lib/heritage.js` and `lib/ecology.js` are simplified scaffolding, not claims of complete human or ecosystem genetics. Unify their inheritance principles rather than creating unrelated magic systems.
-
-First concrete delivery should be one vertical slice, not a hardcoded technology tree:
-
-- Generate and persist a deterministic planet/climate/terrain truth before exploration, with a habitable river-valley starting region and other Earth-like climate regions elsewhere.
-- Add a small set of real plant organisms suited to the starting region, each with hidden biological identity, inherited functional loci, real visible leaf/seed morphology, germination needs, growth, reproduction, nutrition, and toxicity.
-- Seeds must physically exist and be collected. Civorians do not know that seeds grow.
-- Permit grounded actions such as placing, burying, watering, drying, heating, eating, and combining. Germination follows soil, moisture, temperature, depth, sunlight, dormancy, and seed viability whether or not anyone understands it.
-- Require personally observed, repeated success before cultivation becomes a reproducible personal method. Do not grant a named `farming` unlock, spawn a farm, or change yield because the concept was discovered.
-- Let unfamiliar but physically successful methods work, so Civorian subsistence may differ from human history.
-- Render local terrain, weather effects, real plant forms, seeds, growth attempts, failures, and successful cultivation for visitors without leaking hidden scientific names to Civorian prompts.
-
-Verification must include fixed-seed world determinism, save upgrades, biome causality, organism inheritance, species-appropriate phenotype, failed germination under wrong conditions, successful germination without prior knowledge, material/time consumption, two-result personal capability, knowledge loss/transfer, no resource creation on discovery, browser read-only behavior, full tests/build, and long-world balance samples. Real extinction remains allowed. Record limitations honestly; this first slice will not be a full molecular Earth simulator.
-
-### Foundational realism audit after Civoria 0.7 — first layer implemented locally in 0.8
-
-Ranked by how directly each gap violates the owner's experiment:
-
-1. **Local perception and spatial memory.** Built-in behavior still reads the full canonical map to find the nearest pond, bush, tree or rock. Replace this with sensory range, line of sight and remembered locations so a Civorian can act only on what they have personally perceived or been told.
-2. **General artifacts and mechanisms.** The open-ended prompt currently accepts eight broad operations and four material labels, but canonical success contains only `shape:wood` and `observe:body`. A plane or genuinely different technology cannot yet emerge. Add property-bearing parts, joints, containers, edges, fibers, heat/work inputs, assemblies and measured forces; capabilities should be generated from validated constructions rather than a named recipe whitelist.
-3. **Ecology and a real food system.** Primitive food is effectively generic bush food. Add varied plants, seeds, soils, nutrients, seasons, animals/fish, calories, spoilage, toxins, cooking and water contamination without labeling safe choices in advance.
-4. **Injury, disease and sanitation.** Fire, temperature, thirst and starvation exist, but bleeding, wounds, fractures, infection, pathogens, immunity, smoke, drowning, waste and healing do not.
-5. **Human lifecycle.** Birth is still an abstract social chance; newborns can behave like adults. Add sex/reproduction, pregnancy, infancy, dependency, childhood learning, puberty, fertility, aging effects and age-dependent sleep/metabolism.
-6. **Emergent communication and institutions.** Civorians can speak immediately in a shared language. Writing gates exist but there is no invention path for symbols, media, teaching institutions, specialization, law or durable public archives; visitor Chronicle history also remains capped.
-7. **Deeper environmental physics.** The 118 elements exist as hidden catalog truth, but geology, air chemistry, pressure, fluid flow, electricity, optics and general energy/mass transformations are not yet simulated deeply enough to support arbitrary machines.
-
-The 0.8 candidate addresses each item at a first functional depth. The next engineering step is not another hidden unlock list; it is deeper validation within these same layers, especially tool-mediated measurement, farming experiments, thermodynamics, geology, fluid flow, aerodynamics, electricity and optics.
-
-## Visible routine follow-up — released 2026-09-09
-
-Owner confirmed “it's moving now” and explicitly approved publication. PR #7 merged as 7291ff4778d8115da86a48a85a24270813257039. Final branch head 1678bec1 passed Beta checks run 31. Vercel production deployment 4afhSiLsdPuKj5BfdLywr9Ky4EHH succeeded. Earlier preview-pending statements below describe pre-release checkpoints.
-
-Owner reported no actual travel, only animation. Codex found two problems: the previous viewer stops at a destination while waiting on the macro clock, and scripts/build.js omitted activity-clock.js entirely from public output. Earlier release/CI success did not establish browser delivery of the activity layer. PR #7 adds the missing build asset, an output-asset regression test, and repeating visual outbound/work/return/pause routines with a return-leg prop. No canonical resource, clock, API, or database changes. Seven targeted activity tests pass locally; full checks passed the first candidate, build-fix candidate 0a1ad232 passed full Beta checks run 30 and Vercel deployment. Hosted browser showed villagers dispersed to trees, farms and rocks after loading the exact preview. Repeated return cycles are verified by deterministic tests; no automated pixel-tracking assertion was used. Production is unchanged.
-
-## Two-clock activity fix — released 2026-09-09
-
-After the richer 2.5D visuals shipped, the owner noticed villagers appeared to stand in one place. The cause was the Civoria 0.2 real-time scale: the original 55-second internal day is mapped to 24 real hours, so the engine's original movement speed also became extremely slow in wall-clock time.
-
-The owner explicitly approved keeping the 1:1 civilization clock while separating visible activity from long-term progression. The fix was implemented as a browser-only viewer layer rather than changing the canonical engine.
-
-Production behavior now:
-
-- `activity-clock.js` runs only in the browser and wraps the viewer's `/api/tick` response before `game.js` renders it.
-- Canonical server state remains authoritative and untouched.
-- Villagers in a canonical `moving` state are visually advanced toward their existing canonical `tx/ty` at about 4.2 world units per real second, so a typical 60-unit trip takes about 14 seconds to watch.
-- If the visual proxy reaches its canonical target before the slow macro engine does, only the browser drawing state switches into a work/rest animation. No server action completes early.
-- Idle villagers take small local visual strolls around their canonical position so quiet periods still look alive.
-- Working, socializing and resting villagers receive only small presentation offsets/animations. Hunger, aging, crops, resources, births, buildings and other canonical consequences continue on the 1:1 world schedule.
-- Large discrepancies re-anchor to canonical position to avoid inventing travel after restores or major catch-up events.
-- The activity clock loads before `game.js` and has no write path back to the canonical world.
-
-### Two-clock release verification
-
-- Branch: `beta/two-clock-activity`.
-- PR: #6, **Fix villager motion with a separate viewer activity clock**.
-- Exact tested candidate: `2d16d5a8baf09137cde2fd3ce841542ada25237f`.
-- First Beta check run 27 failed only because the arrival test expected a target after two capped visual updates instead of three; implementation behavior was correct. The test was corrected without changing the activity algorithm.
-- Fresh Beta checks run 28: **success** (`npm test` and `npm run build`).
-- Vercel preview on the final candidate: **success**.
-- PR #6 merged to `main` as `36ca79f8f92910465d73948f6dd505042821066d`.
-- Vercel production status for `36ca79f8`: **success**.
-- No `lib/engine.js`, `lib/world.js`, `/api`, Upstash, scheduler, or canonical state changes were made by this fix.
-
-## Production visual release — 2026-09-09
-
-The owner reviewed the stronger `beta/living-world-visuals` preview and explicitly approved rolling it to production. During the final release check, `main` was found to have moved independently through a separate earlier graphics upgrade. To avoid overwriting or force-merging parallel work, the approved presentation files were rebased cleanly onto the then-current production `main` and released through PR #5.
-
-The release changed presentation only. It did not modify `lib/`, `/api`, Upstash configuration, heartbeat scheduling, canonical world state, or simulation mechanics.
-
-Released visual changes include:
-
-- Perspective projection from the existing 480×304 simulation coordinate system into a taller 2.5D scene with a horizon and depth scaling.
-- Distant sky, sun/moon, mountains, layered forest line, moving clouds and birds.
-- A perspective meadow instead of a rectangular board, with depth-scaled ground texture and flowers.
-- Perspective-scaled paths, pond, farms, resources, well, homes, market, villagers and click hit-testing; simulation coordinates themselves are unchanged.
-- Depth sorting across villagers, buildings, trees, rocks, bushes and the well so foreground objects naturally overlap background objects.
-- Larger and more varied homes with multiple palettes, fences/gardens, roof/wall detail, chimney smoke and night-window glow.
-- A more substantial market with crates, produce, awning, flag and hanging lanterns.
-- More distinctive villagers using deterministic visual variation only: multiple skin tones, hair colors/styles and role-specific silhouettes/accessories such as farmer hats, miner helmets, trader satchels and woodcutter accents.
-- Animated breeze, drifting particles, dawn fog, fireflies, dusk/dawn color treatment, night lighting and foreground vegetation framing.
-- Share-card rendering updated to the taller visual scene.
-- Public-facing Clivoria branding and non-pixel UI treatment.
-- Yellow “Enter the living world” hero CTA removed at the owner's request.
-
-### Visual release verification
-
-- Release candidate branch: `release/living-world-visuals`.
-- Exact candidate commit: `cab9c38a2ba939ab2ee7654ff4646fee8c4cf965`.
-- Fresh GitHub Beta checks run 26: **success** (`npm test` and `npm run build`).
-- Vercel preview status on candidate: **success**.
-- PR #5 merged to `main` as `1facd30a1176548c6188ce74347af02552f741f2`.
-- Vercel production status for `1facd30a`: **success**.
-- Superseded PR #3 was closed and not merged.
-
-## Civoria 0.2 behavior now live
-
-The browser is a viewer of one shared server-side civilization. It does not own or save the canonical world. Upstash stores the world state, Vercel serves the state/tick/heartbeat endpoints, and GitHub Actions supplies the unattended pulse.
-
-The original engine was tuned around a 55-second internal day. `lib/world.js` scales real elapsed time so 86,400 real seconds map to 55 internal engine seconds. This keeps the long-term world pace at approximately one Civoria day per real day.
-
-`/api/heartbeat` advances the same canonical world as browser ticks. It records `lastHeartbeatAt` atomically, retries bounded write conflicts, never accepts client world state, and returns compact timing/revision/day metadata rather than the full village.
-
-The GitHub Actions workflow `.github/workflows/heartbeat.yml` is scheduled at `2,17,32,47 * * * *`. It requests a short-lived OIDC token with audience `civoria-heartbeat`, then calls `https://www.thecivoria.com/api/heartbeat`. The server validates GitHub's signature and requires the expected repository, repository ID, owner ID, `main` ref, workflow ref, audience and permitted workflow event. A legacy `CRON_SECRET` remains supported as an optional fallback.
-
-## Key files
-
-- `lib/engine.js` — deterministic village simulation and original built-in instincts.
-- `lib/store.js` — Upstash REST persistence, initialization and compare-and-swap.
-- `lib/world.js` — canonical world service, real-time scaling, seven-day catch-up fuse and heartbeat metadata.
-- `lib/http.js` — HTTP guards and scheduler authentication.
-- `lib/github-oidc.js` — GitHub Actions OIDC signature and claim validation.
-- `api/state.js` — read shared state.
-- `api/tick.js` — browser/server tick path.
-- `api/heartbeat.js` — unattended advancement endpoint.
-- `.github/workflows/heartbeat.yml` — recurring production heartbeat.
-- `.github/workflows/test.yml` — Beta test/build checks.
-- `SCHEDULING.md` — scheduler design and release notes.
-- `activity-clock.js` — browser-only visible activity layer; must never write canonical state.
-- `game.js` — shared-world viewer and visual renderer; no local canonical simulation.
-- `chronicle.html` — shared Chronicle viewer.
-
-## Safety/data guarantees
-
-- No browser-provided state, speed, reset or clock commands are accepted.
-- State writes use compare-and-swap to prevent double advancement from concurrent requests.
-- Duplicate or backwards heartbeat deliveries cannot replay elapsed simulation.
-- Corrupt or unsupported saved data fails closed rather than silently reseeding.
-- Production and preview namespaces remain separate.
-- World and initialization marker are persistent; do not delete keys to recover from an error without a reviewed restore plan.
-- Chronicle is capped at 400 entries and the recent log at 40, so this is not yet a permanent historical archive.
-- The two-clock activity layer is presentation-only and has no canonical write path.
-
-## Services and secrets
-
-Existing services: GitHub, Vercel and Upstash. No new paid service was created for Civoria 0.2, the visual release, or the activity-clock fix.
-
-Upstash server variables remain managed in Vercel. Existing `ANTHROPIC_API_KEY` was not changed and is not used by the current canonical persistent engine. Never paste secret values into chats, commits or logs.
-
-## Production verification — 2026-09-09 (Claude)
-
-Read-only checks against production. No code, configuration, canonical state or deployment was changed by this pass.
-
-- `Civoria heartbeat` workflow: 62 total runs. The six most recent all report event `Scheduled`, branch `main`, completed successfully — 20:16:48, 19:48:36, 19:23:33, 18:55:48, 18:43:54 and 18:30:07 CDT. This closes the previously pending scheduled-event requirement.
-- Observed delivery gaps were 12-28 minutes, not the exact 15 implied by `2,17,32,47 * * * *`. Treat the cron as approximate; the 7-day catch-up fuse absorbs the drift.
-- `activity-clock.js` returns HTTP 200 from `https://www.thecivoria.com` and appears in the served page script tags ahead of `game.js`. This objectively confirms the PR #7 build-output fix reached production.
-- `/api/state`: day 89, revision 3912, 22 agents. `lastHeartbeatAt` was roughly six minutes before the check and matches the most recent scheduled run.
-- Canonical motion sampled twice 12.1 seconds apart: agent `Vesh` moved from (262.15, 210.36) to (262.51, 210.55), about 0.41 units, or roughly 0.034 world units per real second. A second agent changed state from `resting` to `idle` in the same window.
-- That canonical rate against the viewer's approximately 4.2 units per real second is a factor of about 124, which is the measured justification for the two-clock design.
-
-Not verified in this pass: on-screen rendering of villager travel was not observed directly. Delivery and loading of the activity layer were confirmed; visible motion remains attested by the owner's own pre-release review rather than by an independent observation.
-
-## Next exact action
-
-Review PR #7 preview: https://little-world-mancil1fq-small-villager.vercel.app/index.html#live-world . Owner confirmed preview movement and approved release; PR #7 is now merged and production deployment succeeded. The local routine-fix directory contains the presentation files and focused tests; build/test additions are saved on GitHub. Do not use the older local village checkouts to overwrite current main.
-
-1. Done 2026-09-09 — the scheduled-event heartbeat requirement is verified. See "Production verification". No further action.
-2. Optional — confirm on-screen villager travel by direct visual observation, which has not been independently checked since PR #7 shipped.
-3. Before any Civoria 0.3 work, produce a cost model for server-side AI decisions. Required input from the owner: the intended decision cadence, whether per internal engine day, per state change, or per heartbeat. With 22 agents these differ by orders of magnitude, so do not assume one.
-4. Open design question: the Chronicle caps at 400 entries and the recent log at 40, so world history is silently discarded over time. Decide whether history is archival or disposable before the project is promoted as a persistent civilization.
-5. Owner may continue presentation tuning or choose the next milestone.
-6. Persistent AI minds remain a separate Civoria 0.3 milestone and should not start without owner direction.
-
-## Coordination rule
-
-Only one assistant should edit/deploy at a time. Before starting, read this file and current GitHub state. Before handing off, record branch/commit/PR, tests, deployment state, blockers and the exact next action.
-
-## Session history
-
-- 2026-09-09 — ChatGPT traced the Vercel `little-world` deployment to `Channy337/Little-World-`, created `beta/living-world-visuals`, replaced the pixel-art presentation with an illustrated Canvas/UI pass, and opened preview PR #3.
-- 2026-09-09 — At the owner's request, ChatGPT pushed the real renderer substantially further: perspective 2.5D camera, distant landscape layers, stronger buildings/citizen variation, depth sorting and atmospheric animation.
-- 2026-09-09 — Owner requested removal of the yellow “Enter the living world” CTA, reviewed the updated preview, then explicitly approved production rollout.
-- 2026-09-09 — Final visual release detected a parallel earlier graphics change already on `main`. ChatGPT rebuilt the approved visuals cleanly on top of current production, opened PR #5, confirmed fresh Beta checks and Vercel preview success, merged as `1facd30a`, confirmed Vercel production success, and closed superseded PR #3.
-- 2026-09-09 — Owner noticed villagers appeared frozen under the 1:1 real-time scale and approved a two-clock fix. ChatGPT created `beta/two-clock-activity`, implemented a browser-only activity layer plus tests, corrected one test expectation caught by CI, passed Beta checks run 28, merged PR #6 as `36ca79f8`, and confirmed Vercel production success without changing canonical simulation mechanics.
-
-- 2026-09-09 — Codex: PR #7 fixes missing deployment of activity-clock.js and adds repeated presentation work routines. Changed activity-clock.js, game.js, scripts/build.js, test/activity-clock.test.js; added test/build-assets.test.js. Exact candidate 0a1ad232 passed Beta checks run 30 and Vercel; hosted travel observed. No production or canonical data changes. Next: owner preview review, then authorized release.
-
-- 2026-09-09 — Codex: Owner approved PR #7 release after confirming preview movement. Merged exact tested head 1678bec1 as 7291ff47; Vercel production succeeded. Existing saved civilization and real-time progression preserved. Dashboard reads this release checkpoint automatically.
-
-- 2026-09-09 — Claude: read-only production verification. Confirmed recurring `Civoria heartbeat` runs with GitHub event `Scheduled` completing successfully, latest at 20:16:48 CDT, confirmed `activity-clock.js` is served and loaded in production, and sampled `/api/state` at day 89, revision 3912, 22 agents with measurable canonical villager motion of about 0.034 world units per real second. No branch, commit, deployment or canonical data change. Updated this file only.
-
-- 2026-09-11 — Codex: owner approved starting civilization over. Implemented V0.4 primitive-origin candidate with a recoverable v2 namespace, 30 Civoria days per real day, age/calendar separation, physical experiment actions, personal repeated-evidence recipes, executable timber production, timber-backed shelters, and corresponding UI/visual changes. Published draft PR #22; Beta checks run #77 passed and Vercel preview deployment is READY but authentication-protected. Production and v1 data are unchanged.
-
-- 2026-09-12 — Codex: owner explicitly approved “Push V0.8 live.” Marked PR #22 ready and merged exact tested head `82e071e` to `main` as `243ef76`. Vercel production deployment `dpl_EdpHrKWrUGvKRyTMVZCiEcPETj1h` reached READY with no error/fatal runtime logs in the release window. Live verification returned V0.8.0 and a new primitive V2 world on Day 1 with nine founders and no inherited buildings, farms, market, roles, homes, or timber. Previous V1 storage remains preserved. Next selected work is the separate read-only Jarvis Civorian profile; PR #23 remains unmerged and requires reconciliation.
-
-- 2026-09-12 — Codex: diagnosed the owner's recurring live side-profile scroll reset. Runtime logs were clean; code inspection found that every state refresh replaced the drawer DOM and lost `scrollTop`. Draft PR #24 on `fix/v08-profile-scroll` preserves drawer and mind-feed scroll during refreshes. Functional head `fc81e85`; 116 tests, build, diff check, Beta checks #83 and Vercel preview pass. Hosted automated scrolling could not run because `agent-browser` is unavailable. Production remains unchanged; next action is owner preview confirmation before any merge.
-
-- 2026-09-12 — Codex: owner confirmed the revised PR #24 preview fixed the scroll behavior and approved release. Exact tested head `6834b49` merged as `840d1e6`; Vercel production deployment `dpl_FpfBa7UGvTXhJAut9g4dUhW4qZZm` reached READY with no error/fatal runtime logs. Live V0.8.0 and API checks passed, and the existing primitive V2 world continued without reset. The fix is presentation-only.
-
-
-## AI decision cost model — measured 2026-09-10
-
-Answered. Do not re-run this. lib/engine.js was extracted from main and run directly in a sandbox: 5 villages, 90 simulated days each, 8,027 villager-days total.
-
-Measured firing rates, per villager per day:
-
-| Stub | Rate |
-|---|---|
-| requestPriorityThought | 2.35 |
-| requestChatLine | 0.26 |
-| requestRoleThought | 0.007 |
-
-At 22 villagers that is 52 priority thoughts a day, 1,549 a month. At an estimated 200 input and 40 output tokens per call: about $0.60/month on Haiku 4.5, $1.25 on Sonnet 5, $3.10 on Opus 5. The token count is an estimate, not a measurement; the villager state JSON is 275 characters. Everything else is measured. Treat these figures as a ceiling.
-
-Corrections to earlier sessions. First, requestChatLine is NOT the cost risk: priority thoughts outnumber chat lines 9 to 1, because the social meter is a tighter brake than the cooldown. Second, do not feed the engine large dt: lib/world.js caps every step at ENGINE_STEP_SECONDS = 0.1 and the engine assumes it. Third, calling the AI on every decision rather than on the cooldown is 13x more calls, 690 a day at 22 villagers, roughly $8/month on Haiku, $17 on Sonnet 5 and $41 on Opus 5; population caps at 34.
-
-Decision: proceed with AI villagers on Haiku 4.5, aiCooldown unchanged. Cost is not a blocker.
-
-Session note, 2026-09-10 (Claude): documentation only. No code, branch, deployment or canonical state change.
+1. Owner reviews PR #29 preview visually.
+2. Fix any presentation or behavior issue found in preview.
+3. Re-run Beta checks on the exact final head if any file changes.
+4. Only after explicit owner approval, merge PR #29 to `main` and verify the production V2 world upgrades in place without reset.
+5. Leave shelter PR #23 separate unless the owner later asks for it.

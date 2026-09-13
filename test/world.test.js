@@ -16,6 +16,8 @@ function fixture(){
 function advanceControl(e,realMs){
   let remaining=(realMs/1000)*SIMULATION_RATE;
   while(remaining>1e-12){const dt=Math.min(.1,remaining);e.step(dt);remaining-=dt;}
+  const {queue}=e.drainAIRequests();
+  e.applyAIResults(queue,queue.map(()=>null),{});
 }
 test('concurrent first visitors receive exactly one initialized world',async()=>{
   const f=fixture();

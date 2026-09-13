@@ -1,0 +1,74 @@
+name: V0.12.2 branding cleanup
+on:
+  push:
+    branches:
+      - beta/v0122-civoria-branding
+permissions:
+  contents: write
+jobs:
+  normalize-branding:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: beta/v0122-civoria-branding
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Normalize canonical project name
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const replacements={
+            'index.html': [
+              [/Clivoria/g,'Civoria'],
+              [/CLIVORIA/g,'CIVORIA'],
+              [/V0\.12\.1/g,'V0.12.2']
+            ],
+            'discoveries.html': [
+              [/Clivoria/g,'Civoria'],
+              [/CLIVORIA/g,'CIVORIA']
+            ],
+            'chronicle.html': [
+              [/A Little World/g,'Civoria']
+            ],
+            'game.js': [
+              [/Clivoria/g,'Civoria'],
+              [/CLIVORIA/g,'CIVORIA'],
+              [/clivoria-day/g,'civoria-day']
+            ]
+          };
+          for(const [file,rules] of Object.entries(replacements)){
+            let text=fs.readFileSync(file,'utf8');
+            for(const [from,to] of rules) text=text.replace(from,to);
+            fs.writeFileSync(file,text);
+          }
+          const tests=['test/world-ticker.test.js','test/ambient-music.test.js','test/fahrenheit-display.test.js','test/world-life-weather.test.js','test/foundations-ui.test.js','test/weather-biology-ui.test.js'];
+          for(const file of tests){
+            if(!fs.existsSync(file)) continue;
+            let text=fs.readFileSync(file,'utf8').replace(/V0\.12\.1/g,'V0.12.2').replace(/V0\\\.12\\\.1/g,'V0\\.12\\.2');
+            fs.writeFileSync(file,text);
+          }
+          NODE
+      - name: Verify legacy public names are gone
+        shell: bash
+        run: |
+          if grep -RniE 'Clivoria|CLIVORIA|A Little World|clivoria-day' index.html chronicle.html discoveries.html game.js; then
+            echo 'Legacy public branding remains.'
+            exit 1
+          fi
+      - name: Run tests and build
+        run: |
+          npm test
+          npm run build
+      - name: Commit normalized branding
+        shell: bash
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html chronicle.html discoveries.html game.js test/*.test.js
+          git commit -m "Standardize public branding to Civoria"
+          git push origin HEAD:beta/v0122-civoria-branding

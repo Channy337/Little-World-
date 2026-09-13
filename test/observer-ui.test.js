@@ -20,8 +20,8 @@ test('observer interfaces stay read-only and separate personal knowledge from ob
   assert.match(profile,/Visitor-only analysis/);
   assert.match(profile,/Personally observed/);
   assert.match(profile,/\/api\/state/);
-  assert.match(planet,/Observer map/);
-  assert.match(planet,/Civorians do not receive this map/);
+  assert.match(planet,/planetMap/);
+  assert.match(planet,/\/api\/state/);
   assert.doesNotMatch(profile+planet,/method\s*:\s*['"]POST|localStorage|\/api\/tick/);
 });
 

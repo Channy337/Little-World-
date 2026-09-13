@@ -16,6 +16,8 @@ function fixture(){
 function advanceControl(e,realMs){
   let remaining=(realMs/1000)*SIMULATION_RATE;
   while(remaining>1e-12){const dt=Math.min(.1,remaining);e.step(dt);remaining-=dt;}
+  const {queue}=e.drainAIRequests();
+  e.applyAIResults(queue,queue.map(()=>null),{});
 }
 test('concurrent first visitors receive exactly one initialized world',async()=>{
   const f=fixture();
@@ -36,9 +38,9 @@ test('repeated calls cannot accelerate the simulation',async()=>{
   const first=await f.service.tick();
   for(let i=0;i<20;i++)assert.equal((await f.service.tick()).revision,first.revision);
 });
-test('720 two-minute heartbeats equal one thirty-day Civoria month',async()=>{
+test('thirty two-minute heartbeats equal one thirty-day Civoria month',async()=>{
   const f=fixture();const before=await f.service.state();
-  for(let i=0;i<720;i++){f.advance(120000);await f.service.heartbeat();}
+  for(let i=0;i<30;i++){f.advance(120000);await f.service.heartbeat();}
   const after=await f.service.state();
   assert.equal(after.state.day,before.state.day+30);
   assert.ok(Math.abs(after.state.time-before.state.time)<1e-9);

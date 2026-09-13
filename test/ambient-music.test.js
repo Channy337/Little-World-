@@ -3,12 +3,12 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 
-test('V0.12.1 ships visitor-controlled ambient instrumental music',()=>{
+test('V0.12.2 ships visitor-controlled ambient instrumental music',()=>{
   const html=fs.readFileSync('index.html','utf8');
   const js=fs.readFileSync('ambient-music.js','utf8');
   const css=fs.readFileSync('ambient-music.css','utf8');
   const build=fs.readFileSync('scripts/build.js','utf8');
-  assert.match(html,/V0\.12\.1/);
+  assert.match(html,/V0\.12\.2/);
   assert.match(html,/id="musicToggle"/);
   assert.match(html,/aria-pressed="false"/);
   assert.match(html,/id="musicVolume"/);

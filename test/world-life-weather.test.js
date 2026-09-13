@@ -6,11 +6,11 @@ const {generateDay}=require('../lib/weather');
 
 function sequence(values){let i=0;return function(){return values[Math.min(i++,values.length-1)];};}
 
-test('V0.12.1 keeps the ambient wildlife and weather layer after the world renderer',()=>{
+test('V0.12.2 keeps the ambient wildlife and weather layer after the world renderer',()=>{
   const html=fs.readFileSync('index.html','utf8');
   const build=fs.readFileSync('scripts/build.js','utf8');
   const viewer=fs.readFileSync('world-life-weather.js','utf8');
-  assert.match(html,/V0\.12\.1/);
+  assert.match(html,/V0\.12\.2/);
   assert.ok(html.indexOf('game.js')<html.indexOf('world-life-weather.js'));
   assert.match(build,/world-life-weather\.js/);
   assert.match(viewer,/rabbit\(/);

@@ -25,11 +25,11 @@ test('observer interfaces stay read-only and separate personal knowledge from ob
   assert.doesNotMatch(profile+planet,/method\s*:\s*['"]POST|localStorage|\/api\/tick/);
 });
 
-test('profile is resilient to missing optional legacy fields',()=>{
-  const profile=fs.readFileSync('jarvis-profile.js','utf8');
+test('profile is resilient to missing optional legacy fields and supports reduced motion',()=>{
+  const profile=fs.readFileSync('jarvis-profile.js','utf8'),css=fs.readFileSync('observer-ui.css','utf8');
   assert.match(profile,/agent\.mind\|\|\{\}/);
   assert.match(profile,/agent\.body\|\|\{\}/);
   assert.match(profile,/agent\.healthState\|\|\{\}/);
   assert.match(profile,/agent\.seeds\|\|\[\]/);
-  assert.match(profile,/prefers-reduced-motion|observer-ui\.css/);
+  assert.match(css,/prefers-reduced-motion/);
 });

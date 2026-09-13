@@ -27,10 +27,12 @@
     else panel.textContent='No shelter can be built yet. A Civorian must first discover a repeatable way to shape wood into usable timber.';
   }
   function draw(){
-    if(!ctx||!canvas)return;ctx.clearRect(0,0,canvas.width,canvas.height);if(!latest)return;
+    requestAnimationFrame(draw);
+    ensureOverlay();if(!ctx||!canvas)return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);if(!latest)return;
     var site=(latest.constructionSites||[])[0];if(!site)return;
-    var bounds=latest.renderTerritory||latest.worldBounds||{w:480,h:304};
-    var wx=site.x*(480/(bounds.w||480)),wy=site.y*(304/(bounds.h||304));
+    // growth-visuals has already projected world coordinates into the 480x304 display space.
+    var wx=site.x,wy=site.y;
     var d=Math.max(0,Math.min(1,wy/304)),spread=.76+.24*d;
     var sx=240+(wx-240)*spread,sy=78+wy*.78,scale=.76+.36*d;
     var base=document.getElementById('world'),cw=(base&&base.width)||480,ch=(base&&base.height)||356;
@@ -46,7 +48,6 @@
     ctx.fillStyle='#15251c';ctx.fillRect(-23,23,46,5);ctx.fillStyle='#d8b965';ctx.fillRect(-22,24,44*((site.work||0)/3),3);
     ctx.fillStyle='#fff4d2';ctx.font='6px sans-serif';ctx.textAlign='center';ctx.fillText((site.work||0)>0?Math.floor((site.work||0)/3*100)+'% built':(site.timber||0)+'/6 timber',0,36);
     ctx.restore();
-    requestAnimationFrame(draw);
   }
   function capture(data){if(data&&data.state){latest=data.state;ensureOverlay();message(latest);}return data;}
   function isTick(input){var u=typeof input==='string'?input:(input&&input.url)||'';return /(?:^|\/)api\/tick(?:\?|$)/.test(u);}

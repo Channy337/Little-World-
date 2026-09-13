@@ -1,6 +1,6 @@
 # Civoria — assistant handoff
 
-Updated: 2026-09-13 UTC. This is the shared checkpoint for the owner and any coding assistant. Verify GitHub and production before editing.
+Updated: 2026-09-13 UTC (post-merge). This is the shared checkpoint for the owner and any coding assistant. Verify GitHub and production before editing.
 
 ## Current progress
 
@@ -8,13 +8,11 @@ Updated: 2026-09-13 UTC. This is the shared checkpoint for the owner and any cod
 - Live site: `https://www.thecivoria.com` / `https://thecivoria.com`
 - Repository: `Channy337/Little-World-`
 - Production branch: `main`
-- Current production release: **V0.12.2**
-- V0.12.2 release merge: `cf22a49c8abacf9419e6f31911723ca010ee2e60`
-- V0.12.2 production deployment: `dpl_6PsZvLh66P8N2s4EXA2UsNZbK9LW` — **READY**
-- PR #33 is merged.
-- Live production was fetched successfully and serves the corrected `Civoria` branding and V0.12.2.
-- Production runtime error/warning/fatal check after release returned no matching logs.
-- Active implementation: PR #34, open and not merged. See Active work below.
+- Current production release: **V0.12.2 + PR #34** (seed perception + food relearning)
+- PR #34 merge commit: `8883c9d12b523e03d1843a7f27a49497061f6658`
+- PR #33 (branding) and earlier releases remain in history.
+- Live world at last check: day 109, 2 alive (Joro, Elin), both hungry, 0 farms/buildings. Speed currently 1.
+- No active open implementation PR for the seed/food work. Next decisions are owner-driven.
 
 ### Naming rule
 
@@ -82,27 +80,23 @@ Released from PR #33.
 - downloaded moment screenshots now use `civoria-day*.png`
 - permanent regression test prevents legacy public names from returning
 - technical repository/persistence identifiers were deliberately left unchanged
-- exact-head Beta checks run #153 passed
-- Vercel preview was READY and verified before merge
-- production deployment was READY and live verification passed
 
-## Active work - PR #34 (open, not merged)
+### PR #34 — seed perception and food relearning (merged 2026-09-13)
 
-Branch preview/seed-perception-and-food-relearning, titled "Restore seed perception and food relearning". Four commits, +27 -8. Beta checks run #154 passed. Vercel preview deployed and healthy. Production untouched.
+Squash-merged to main as `8883c9d12b523e03d1843a7f27a49497061f6658`.
 
-Fixes two defects found while investigating mass starvation in the saved world.
+Restores two missing pieces so the existing cultivation and food systems can actually be used by Civorian minds:
 
-**Seeds were imperceptible.** Every Civorian carries up to 24 seeds. The planting chain works end to end - a buried seed germinates, grows, matures and teaches its owner - but nothing ever made a Civorian aware the seeds existed. Three gaps: collectSeed in lib/cultivation.js stored seeds silently with no observation; requestPriorityThought in lib/engine.js omitted plantbit from the carried-materials summary; and buildPrompt in lib/ai.js excluded plantbit from the material names and from the allowed materials in the response schema. Cultivation was undiscoverable in practice, not merely undiscovered.
+1. **Seeds are now perceptible.** Foraging records a plain sensory observation. Carried seeds appear in the materials summary given to priority thought. The response schema allows naming plantbit. Previously every Civorian carried up to 24 seeds they could not see or act on.
+2. **Food aversion is no longer permanent.** A bad (spoiled) meal no longer blacklists a plant forever. Aversion drifts back toward zero at 0.05 per day. Caution is kept; the permanent ban is gone.
 
-**A bad meal blacklisted a plant permanently.** recordFoodOutcome in lib/ecology.js scores spoiled food and genuinely toxic food identically, and at -2 a food type is dropped by consume, canConsume and bush targeting with no route back. Harmless plants were written off for good after being eaten spoiled. This is why the only bushes still holding full fruit were the ones survivors refused to approach. New relaxFoodAversion, called from advance, lets a negative score drift back toward zero at .05 per day. Caution retained; permanent ban removed.
+Also passes world state into forage so seeds receive real IDs.
 
-Also: lib/engine.js now passes world state into forageFood so seeds receive real IDs.
-
-Owner rule governing this work: **do not make them plant.** No planting behaviour, no farming instruction, no nudge. These changes restore senses and learning only. Cultivation must be discovered by the Civorians themselves, and they may never manage it.
+**No planting behaviour, no farming instruction, no nudge was added.** Discovery remains entirely theirs. They may never manage it; that is acceptable.
 
 ## Saved world status
 
-Collapsing from starvation. Day 72 at the start of the investigation, day 101 by the end of the session; population fell from 8 to 2 (Joro and Elin), both starving. Deaths recorded as starvation and organ failure. Zero farms, zero plantings, zero buildings, zero construction sites. Four of six bushes stripped; the two still full are the ones scored -2 and avoided.
+Day 109 (last live check). Two survivors: Joro and Elin. Both still hungry, health 100. Zero farms, zero plantings, zero buildings. Bushes and animals remain. Population has fallen hard from starvation and organ failure. The PR #34 fixes are now on main and will apply to future ticks; they do not retroactively invent discoveries or plant anything.
 
 Do not reset or reseed to rescue this. If the settlement dies out, report it and wait for the owner decision.
 
@@ -115,11 +109,11 @@ Deer, rabbit, fox, songbird and fish live, breed, move seasonally and are visibl
 Verified 2026-09-13. Claude Haiku 4.5 is $1 per million input tokens and $5 per million output. Cached input is 90% cheaper; batch processing is 50% cheaper.
 
 - One priority thought costs roughly 0.15 cents (about 800 input tokens, 130 output). Roughly 700 thoughts per dollar.
-- At the current clock (30 Civoria days per real hour) with a 16-26 second thought cooldown, each Civorian would generate about 78 thoughts per real hour. Nine alive is about $1/hour and $730/month; 34 alive is about $2,700/month.
+- At the previous clock (30 Civoria days per real hour) with a 16-26 second thought cooldown, each Civorian would generate about 78 thoughts per real hour. Nine alive is about $1/hour and $730/month; 34 alive is about $2,700/month.
 - Actual spend today is far lower because ticks are infrequent and each drains at most 20 requests.
-- Genuine per-decision agency at the current clock would be $2,000-3,500/month. Not viable.
+- Genuine per-decision agency at the old clock would be $2,000-3,500/month. Not viable.
 
-These are estimates from reading the prompt. Instrument real token usage over one hour of world time before committing to a design.
+These are estimates from reading the prompt. Instrument real token usage over one hour of world time before committing to a design. Live speed at last check was 1.
 
 ## Design direction - toward real decisions
 
@@ -155,8 +149,9 @@ A deliberate world restart may be appropriate once a new cognition design is bui
 
 ## Next action
 
-Verify main, production and PR #34 before anything else. Then: decide with the owner whether to merge PR #34 (checks pass, preview healthy, production untouched); re-check the saved world day and population, since it may have died out; and if the owner proceeds on real decision-making, instrument one hour of token usage before building anything. Do not revive or directly merge old PR #23.
+PR #34 is merged. Watch production deploy and the two survivors. Owner still needs to decide whether to instrument one real hour of token usage before any cognition redesign. Hunting remains unbuilt. Do not reseed. Do not add forced behaviour.
 
 ## Session history
 
+- 2026-09-13 - Grok. Owner directed to move forward with #34. Squash-merged PR #34 to main (`8883c9d...`). Updated this handoff. Live world still day 109 with Joro + Elin. No reseed, no forced planting. Awaiting owner on next step (token measurement / cognition design / watch survivors).
 - 2026-09-13 - Claude. Read the repo and live world. Diagnosed the starvation: seeds imperceptible to Civorian minds, and permanent food blacklisting. Opened PR #34 with both fixes plus the forage state-passing tidy-up; checks green, preview healthy, not merged. Found hunting entirely unbuilt. Priced Civorian cognition and recorded a design direction for real per-decision agency. No production code merged this session.

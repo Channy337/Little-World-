@@ -34,6 +34,7 @@
     <a href="index.html#live-world">World</a>
     <a href="chronicle.html">Chronicle</a>
     <a href="discoveries.html">Discoveries</a>
+    <a href="project.html">Project</a>
     <a href="index.html#about">About</a>
   </nav>
 </div>
@@ -50,7 +51,7 @@
 (function(){
   "use strict";
 
-  function escapeHtml(s){ return s.replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  function escapeHtml(s){ return s.replace(/[&<>]/g, function(c){ return {'&':'&','<':'<','>':'>'}[c]; }); }
 
   async function loadState(){
     var response=await fetch('/api/state',{cache:'no-store',signal:AbortSignal.timeout(10000)});
